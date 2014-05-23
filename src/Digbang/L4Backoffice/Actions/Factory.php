@@ -21,4 +21,15 @@ class Factory
 
 	    return $link;
     }
+
+    public function form($target, $label, $options = [])
+    {
+	    $form = new Form($this->viewFactory);
+
+	    $form->setTarget($target);
+	    $form->setLabel($label);
+	    $form->setOptions($options);
+
+	    return $form;
+    }
 }

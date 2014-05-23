@@ -8,6 +8,7 @@ trait ControlTrait
 {
 	protected $options;
 	protected $label;
+	protected $view;
 
 	/**
 	 * @param mixed $label
@@ -49,5 +50,15 @@ trait ControlTrait
 		}
 
 		return $this->options[$name];
+	}
+
+	public function setView($view)
+	{
+		$this->view = $view;
+	}
+
+	public function view()
+	{
+		return $this->view;
 	}
 } 

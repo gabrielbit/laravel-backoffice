@@ -11,9 +11,15 @@ interface ControlInterface extends RenderableInterface
 	public function label();
 
 	/**
-	 * The filter HTML options. May access a specific one through parameter, null should return all of them.
+	 * The control HTML options. May access a specific one through parameter, null should return all of them.
 	 * @param string $name
 	 * @return \Illuminate\Support\Collection
 	 */
 	public function options($name = null);
-} 
+
+	/**
+	 * The view that will be rendered. Controls always render a view of some sort.
+	 * @return string
+	 */
+	public function view();
+}

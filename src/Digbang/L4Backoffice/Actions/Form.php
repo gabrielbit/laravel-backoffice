@@ -2,7 +2,7 @@
 
 use Illuminate\View\Environment as ViewFactory;
 
-class Link implements ActionInterface
+class Form implements ActionInterface
 {
 	use ActionTrait;
 
@@ -11,12 +11,17 @@ class Link implements ActionInterface
 	function __construct(ViewFactory $viewFactory)
 	{
 		$this->viewFactory = $viewFactory;
-		$this->view = 'l4-backoffice::link';
+		$this->view = 'l4-backoffice::form';
 	}
 
+	/**
+	 * Get the evaluated contents of the object.
+	 *
+	 * @return string
+	 */
 	public function render()
 	{
-		return $this->viewFactory->make($this->view, [
+		$this->viewFactory->make($this->view(), [
 			'target'  => $this->target(),
 			'label'   => $this->label(),
 			'options' => $this->options()
