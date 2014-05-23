@@ -1,32 +1,18 @@
 <?php namespace Digbang\L4Backoffice\Filters;
 
+use Digbang\L4Backoffice\Controls\ControlTrait;
+
 /**
- * Class FilterTrait
+ * Trait FilterTrait
  * @package Digbang\L4Backoffice\Filters
  */
 trait FilterTrait
 {
+	use ControlTrait;
+
 	protected $name;
-	protected $label;
 	protected $value;
-	protected $options;
 	protected $defaultsTo;
-
-	/**
-	 * @param mixed $label
-	 */
-	public function setLabel($label)
-	{
-		$this->label = $label;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function label()
-	{
-		return $this->label;
-	}
 
 	/**
 	 * @param mixed $name
@@ -42,32 +28,6 @@ trait FilterTrait
 	public function name()
 	{
 		return $this->name;
-	}
-
-	/**
-	 * @param mixed $options
-	 */
-	public function setOptions($options)
-	{
-		if (!$options instanceof \Illuminate\Support\Collection)
-		{
-			$options = new \Illuminate\Support\Collection($options);
-		}
-
-		$this->options = $options;
-	}
-
-	/**
-	 * @return \Illuminate\Support\Collection
-	 */
-	public function options($name = null)
-	{
-		if (!$name)
-		{
-			return $this->options;
-		}
-
-		return $this->options[$name];
 	}
 
 	/**

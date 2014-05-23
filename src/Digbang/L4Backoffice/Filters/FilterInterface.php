@@ -1,8 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Filters;
 
-use Illuminate\Support\Contracts\RenderableInterface;
+use Digbang\L4Backoffice\Controls\ControlInterface;
 
-interface FilterInterface extends RenderableInterface
+interface FilterInterface extends ControlInterface
 {
 	/**
 	 * The filter name, as will be sent in the request.
@@ -11,22 +11,10 @@ interface FilterInterface extends RenderableInterface
 	public function name();
 
 	/**
-	 * A filter label, a text that indicates what it is.
-	 * @return string
-	 */
-	public function label();
-
-	/**
 	 * The filter value as received from the user.
 	 * @return string It may well be an integer, but everything is stringy from HTTP requests...
 	 */
 	public function value();
-
-	/**
-	 * The filter HTML options. May access a specific one through parameter, null should return all of them.
-	 * @return \Illuminate\Support\Collection
-	 */
-	public function options($name = null);
 
 	/**
 	 * The filter default value, used before the user interacts.
