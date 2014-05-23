@@ -2,7 +2,8 @@
     "name": "digbang/l4-backoffice",
     "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
     "require": {
-        "illuminate/support": "~4.1"
+        "illuminate/support": "~4.1",
+        "illuminate/view": "~4.1"
     },
     "require-dev": {
         "way/generators": "~2.0",
