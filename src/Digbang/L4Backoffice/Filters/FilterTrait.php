@@ -10,6 +10,7 @@ trait FilterTrait
 	protected $label;
 	protected $value;
 	protected $options;
+	protected $defaultsTo;
 
 	/**
 	 * @param mixed $label
@@ -73,5 +74,10 @@ trait FilterTrait
 	public function value()
 	{
 		return $this->value;
+	}
+
+	public function defaultsTo($value)
+	{
+		$this->defaultsTo = $value;
 	}
 }
