@@ -4,9 +4,15 @@ use Illuminate\Support\Collection as LaravelCollection;
 
 class Collection extends LaravelCollection
 {
+	protected $filterFactory;
+
+	public function __construct(Factory $filterFactory)
+	{
+		$this->filterFactory = $filterFactory;
+	}
     public function text($name, $label = null, $options = [])
     {
-	    $filter = new Text($name, $label, $options);
+	    $filter = $this->filterFactory->text($name, $label, $options);
 
 	    $this->push($filter);
 
@@ -15,7 +21,7 @@ class Collection extends LaravelCollection
 
     public function dropdown($name, $label = null, $data = [], $options = [])
     {
-	    $filter = new DropDown($name, $label, $data, $options);
+	    $filter = $this->filterFactory->dropdown($name, $label, $data, $options);
 
 	    $this->push($filter);
 

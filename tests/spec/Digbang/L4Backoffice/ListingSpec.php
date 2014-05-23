@@ -1,6 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
+use Digbang\L4Backoffice\Filters\Factory;
 use Illuminate\View\Environment;
 use Illuminate\View\View;
 use PhpSpec\ObjectBehavior;
@@ -18,7 +19,7 @@ class ListingSpec extends ObjectBehavior
 	{
 		$this->viewFactory = $viewFactory;
 
-		$this->beConstructedWith($this->viewFactory, new FilterCollection());
+		$this->beConstructedWith($this->viewFactory, new FilterCollection(new Factory()));
 	}
 
     function it_is_initializable()
