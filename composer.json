@@ -1,0 +1,23 @@
+{
+    "name": "digbang/l4-backoffice",
+    "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
+    "require": {
+        "illuminate/support": "~4.1"
+    },
+    "require-dev": {
+        "way/generators": "~2.0",
+        "phpspec/phpspec": "~2.0"
+    },
+    "license": "Proprietary",
+    "authors": [
+        {
+            "name": "gcontreras",
+            "email": "gcontreras@digbang.com"
+        }
+    ],
+	"autoload": {
+		"psr-0": {
+			"Digbang\\L4Backoffice\\": "src/"
+		}
+	}
+}
