@@ -50,9 +50,14 @@ class Listing extends Collection implements RenderableInterface
 		return $this->mergeInto($columnCollection);
 	}
 
-	public function filters()
+	public function filters($name = null)
 	{
+		if (!$name)
+		{
+			return $this->filters;
+		}
 
+		return $this->filters->find($name);
 	}
 
 	public function mergeInto($items)

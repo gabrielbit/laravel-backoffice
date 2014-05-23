@@ -1,6 +1,4 @@
-<?php
-
-namespace spec\Digbang\L4Backoffice;
+<?php namespace spec\Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Illuminate\View\Environment;
@@ -14,14 +12,13 @@ use Prophecy\Argument;
  */
 class ListingSpec extends ObjectBehavior
 {
-	private $message = 'I render thee';
 	private $viewFactory;
 
-	function let(Environment $viewFactory, FilterCollection $filterCollection)
+	function let(Environment $viewFactory)
 	{
 		$this->viewFactory = $viewFactory;
 
-		$this->beConstructedWith($this->viewFactory, $filterCollection);
+		$this->beConstructedWith($this->viewFactory, new FilterCollection());
 	}
 
     function it_is_initializable()
@@ -41,8 +38,20 @@ class ListingSpec extends ObjectBehavior
 		$this->viewFactory->make($this->getView(), $this->toArray())->willReturn($view);
 
 		// And mock the view render method
-		$view->render()->willReturn($this->message);
+		$view->render()->willReturn('I render thee');
 
-		$this->render()->shouldReturn($this->message);
+		$this->render()->shouldReturn('I render thee');
+	}
+
+	function it_should_have_a_filters_collection()
+	{
+		$this->filters()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Collection');
+	}
+
+	function it_should_give_me_a_specific_filter_by_name()
+	{
+		$this->filters()->text('some_filter');
+
+		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Text');
 	}
 }
