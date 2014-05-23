@@ -49,15 +49,25 @@ trait FilterTrait
 	 */
 	public function setOptions($options)
 	{
+		if (!$options instanceof \Illuminate\Support\Collection)
+		{
+			$options = new \Illuminate\Support\Collection($options);
+		}
+
 		$this->options = $options;
 	}
 
 	/**
-	 * @return mixed
+	 * @return \Illuminate\Support\Collection
 	 */
-	public function options()
+	public function options($name = null)
 	{
-		return $this->options;
+		if (!$name)
+		{
+			return $this->options;
+		}
+
+		return $this->options[$name];
 	}
 
 	/**

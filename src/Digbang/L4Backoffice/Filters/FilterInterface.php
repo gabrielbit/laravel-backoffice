@@ -23,10 +23,10 @@ interface FilterInterface extends RenderableInterface
 	public function value();
 
 	/**
-	 * The filter HTML options.
+	 * The filter HTML options. May access a specific one through parameter, null should return all of them.
 	 * @return \Illuminate\Support\Collection
 	 */
-	public function options();
+	public function options($name = null);
 
 	/**
 	 * The filter default value, used before the user interacts.
