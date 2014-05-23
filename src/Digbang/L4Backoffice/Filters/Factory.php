@@ -2,13 +2,26 @@
 
 class Factory
 {
-    public function text($name, $label = null, $options = [])
+	public function text($name, $label = null, $options = [])
     {
-        return new Text($name, $label, $options);
+        $text = new Text();
+
+	    $text->setName($name);
+	    $text->setLabel($label);
+	    $text->setOptions($options);
+
+	    return $text;
     }
 
 	public function dropdown($name, $label = null, $data = [], $options = [])
     {
-	    return new DropDown($name, $label, $data, $options);
+	    $dropdown = new DropDown();
+
+	    $dropdown->setName($name);
+	    $dropdown->setLabel($label);
+	    $dropdown->setData($data);
+	    $dropdown->setOptions($options);
+
+	    return $dropdown;
     }
 }

@@ -2,8 +2,6 @@
 
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Filters\Factory;
-use Illuminate\View\Environment;
-use Illuminate\View\View;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -13,13 +11,9 @@ use Prophecy\Argument;
  */
 class ListingSpec extends ObjectBehavior
 {
-	private $viewFactory;
-
-	function let(Environment $viewFactory)
+	function let()
 	{
-		$this->viewFactory = $viewFactory;
-
-		$this->beConstructedWith($this->viewFactory, new FilterCollection(new Factory()));
+		$this->beConstructedWith(new FilterCollection(new Factory()));
 	}
 
     function it_is_initializable()
@@ -31,17 +25,6 @@ class ListingSpec extends ObjectBehavior
 	function it_should_be_a_collection()
 	{
 		$this->shouldHaveType('Illuminate\\Support\\Collection');
-	}
-
-	function it_should_be_renderable(View $view)
-	{
-		// Mock the view factory's make method
-		$this->viewFactory->make($this->getView(), $this->toArray())->willReturn($view);
-
-		// And mock the view render method
-		$view->render()->willReturn('I render thee');
-
-		$this->render()->shouldReturn('I render thee');
 	}
 
 	function it_should_have_a_filters_collection()

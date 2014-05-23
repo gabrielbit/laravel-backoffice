@@ -4,13 +4,6 @@ class Text implements FilterInterface
 {
 	use FilterTrait;
 
-	function __construct($name, $label = '', $options = [])
-	{
-		$this->name = $name;
-		$this->label = $label;
-		$this->options = $options;
-	}
-
 	/**
 	 * Get the evaluated contents of the object.
 	 *
@@ -18,6 +11,11 @@ class Text implements FilterInterface
 	 */
 	public function render()
 	{
-		// TODO: Implement render() method.
+		return \View::make($this->view(), [
+			'name'    => $this->name(),
+			'label'   => $this->label(),
+			'value'   => $this->value(),
+			'options' => $this->options()
+		])->render();
 	}
 }

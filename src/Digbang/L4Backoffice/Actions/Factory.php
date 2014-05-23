@@ -4,16 +4,9 @@ use Illuminate\View\Environment as ViewFactory;
 
 class Factory
 {
-	protected $viewFactory;
-
-	public function __construct(ViewFactory $viewFactory)
-	{
-		$this->viewFactory = $viewFactory;
-	}
-
     public function link($target, $label = null, $options = [])
     {
-        $link = new Link($this->viewFactory);
+        $link = new Link();
 
 	    $link->setTarget($target);
 	    $link->setLabel($label ?: $target);
@@ -24,7 +17,7 @@ class Factory
 
     public function form($target, $label, $options = [])
     {
-	    $form = new Form($this->viewFactory);
+	    $form = new Form();
 
 	    $form->setTarget($target);
 	    $form->setLabel($label);

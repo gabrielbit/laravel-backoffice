@@ -10,15 +10,6 @@ class DropDown implements FilterInterface
 
 	protected $data;
 
-	function __construct($name, $label = '', $data = [], $options = [])
-	{
-		$this->name = $name;
-		$this->label = $label;
-		$this->data = $data;
-		$this->options = $options;
-	}
-
-
 	/**
 	 * @param mixed $data
 	 */
@@ -42,6 +33,12 @@ class DropDown implements FilterInterface
 	 */
 	public function render()
 	{
-		// TODO: Implement render() method.
+		return \View::make($this->view(), [
+			'name'    => $this->name(),
+			'label'   => $this->label(),
+			'data'    => $this->data(),
+			'value'   => $this->value(),
+			'options' => $this->options()
+		])->render();
 	}
 }

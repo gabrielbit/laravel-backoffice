@@ -6,22 +6,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
-use Illuminate\View\Environment as ViewFactory;
 
 class Listing extends Collection implements RenderableInterface
 {
 	protected $view = 'l4-backoffice::listing';
-
-	/**
-	 * @var \Illuminate\View\Environment
-	 */
-	protected $viewFactory;
-
 	protected $filters;
 
-	function __construct(ViewFactory $viewFactory, FilterCollection $filters)
+	function __construct(FilterCollection $filters)
 	{
-		$this->viewFactory = $viewFactory;
 		$this->filters = $filters;
 	}
 
@@ -78,6 +70,6 @@ class Listing extends Collection implements RenderableInterface
 
 	public function render()
 	{
-		return $this->viewFactory->make($this->view, $this->toArray())->render();
+		return \View::make($this->view, $this->toArray())->render();
 	}
 }

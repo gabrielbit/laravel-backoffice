@@ -16,6 +16,11 @@ class CollectionSpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\L4Backoffice\Filters\Collection');
     }
 
+	function it_should_be_a_collection()
+	{
+		$this->shouldHaveType('Illuminate\\Support\\Collection');
+	}
+
 	function it_should_append_text_filters_to_itself()
 	{
 		$this->text('some_name', 'Some Label', ['some' => 'options'])->shouldReturn($this);
