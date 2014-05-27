@@ -11,6 +11,8 @@ class ColumnCollection extends Collection
 		        $column->setHidden(true);
 	        }
         });
+
+	    return $this;
     }
 
     public function visible()
