@@ -1,16 +1,16 @@
-<?php
-
-namespace Digbang\L4Backoffice;
+<?php namespace Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\Support\Collection;
 use Illuminate\Support\Contracts\RenderableInterface;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
+use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 
 class Listing extends Collection implements RenderableInterface
 {
 	protected $view = 'l4-backoffice::listing';
 	protected $filters;
 	protected $columns;
+	protected $actions;
 
 	function __construct(FilterCollection $filters)
 	{
@@ -89,5 +89,15 @@ class Listing extends Collection implements RenderableInterface
 		}
 
 		return $row;
+	}
+
+	public function setActions(ActionCollection $actions)
+	{
+		$this->actions = $actions;
+	}
+
+	public function actions()
+	{
+		return $this->actions;
 	}
 }
