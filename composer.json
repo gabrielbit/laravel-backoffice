@@ -3,10 +3,10 @@
     "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
     "require": {
         "illuminate/support": "~4.1",
-        "illuminate/view": "~4.1"
+        "illuminate/view": "~4.1",
+	    "way/generators": "~2.0"
     },
     "require-dev": {
-        "way/generators": "~2.0",
         "phpspec/phpspec": "~2.0"
     },
     "license": "Proprietary",
