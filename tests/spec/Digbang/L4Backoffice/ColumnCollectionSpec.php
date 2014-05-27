@@ -20,7 +20,7 @@ class ColumnCollectionSpec extends ObjectBehavior
 
 	function it_should_be_a_collection()
 	{
-		$this->shouldHaveType('Illuminate\\Support\\Collection');
+		$this->shouldHaveType('Digbang\L4Backoffice\Support\Collection');
 	}
 
 	function it_should_hide_columns()
