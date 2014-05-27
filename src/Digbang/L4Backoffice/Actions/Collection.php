@@ -10,4 +10,18 @@ class Collection extends DigbangCollection
 	{
 		$this->factory = $factory;
 	}
+
+	public function link($target, $label = null, $options = [])
+	{
+		$this->push($this->factory->link($target, $label, $options));
+
+		return $this;
+	}
+
+	public function form($target, $label, $options = [])
+	{
+		$this->push($this->factory->link($target, $label, $options));
+
+		return $this;
+	}
 }
