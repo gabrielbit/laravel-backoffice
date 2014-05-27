@@ -1,6 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
-class Collection extends \Illuminate\Support\Collection
+use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+
+class Collection extends DigbangCollection
 {
 	protected $factory;
 
@@ -8,6 +10,4 @@ class Collection extends \Illuminate\Support\Collection
 	{
 		$this->factory = $factory;
 	}
-
-
 }

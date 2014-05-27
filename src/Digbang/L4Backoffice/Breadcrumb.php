@@ -2,7 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Controls\ControlTrait;
-use Illuminate\Support\Collection;
+use Digbang\L4Backoffice\Support\Collection;
 
 class Breadcrumb extends Collection implements ControlInterface
 {

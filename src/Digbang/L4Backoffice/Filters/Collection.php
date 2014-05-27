@@ -1,8 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Filters;
 
-use Illuminate\Support\Collection as LaravelCollection;
+use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
-class Collection extends LaravelCollection
+class Collection extends DigbangCollection
 {
 	protected $filterFactory;
 

@@ -1,8 +1,6 @@
-<?php
+<?php namespace Digbang\L4Backoffice;
 
-namespace Digbang\L4Backoffice;
-
-use Illuminate\Support\Collection;
+use Digbang\L4Backoffice\Support\Collection;
 
 class ColumnCollection extends Collection
 {
