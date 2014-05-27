@@ -1,8 +1,7 @@
-<?php namespace Digbang\L4Backoffice;
+<?php namespace Digbang\L4Backoffice\Support;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Controls\ControlTrait;
-use Digbang\L4Backoffice\Support\Collection;
 
 class Breadcrumb extends Collection implements ControlInterface
 {

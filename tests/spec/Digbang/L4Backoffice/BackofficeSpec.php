@@ -32,7 +32,7 @@ class BackofficeSpec extends ObjectBehavior
 			'Home' => 'http://the.url/',
 			'Category' => 'http://the.url/category',
 			'Category Item'
-		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Breadcrumb');
+		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Support\Breadcrumb');
 	}
 
 	function it_is_a_facade_for_the_columns_factory()

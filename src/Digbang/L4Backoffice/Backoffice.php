@@ -2,6 +2,7 @@
 
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Support\Breadcrumb;
 
 class Backoffice
 {
