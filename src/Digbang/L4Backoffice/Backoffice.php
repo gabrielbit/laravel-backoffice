@@ -1,12 +1,17 @@
 <?php namespace Digbang\L4Backoffice;
 
+use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
+use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+
 class Backoffice
 {
 	protected $listingFactory;
+	protected $actionFactory;
 
-	public function __construct(ListingFactory $listingFactory)
+	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory)
 	{
 		$this->listingFactory = $listingFactory;
+		$this->actionFactory = $actionFactory;
 	}
 
     public function listing()
@@ -31,5 +36,10 @@ class Backoffice
 	    }
 
 	    return $columns;
+    }
+
+    public function actions()
+    {
+        return new ActionCollection($this->actionFactory);
     }
 }

@@ -1,6 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\ListingFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -9,7 +10,10 @@ class BackofficeSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$this->beConstructedWith(new ListingFactory(new FilterFactory()));
+		$this->beConstructedWith(
+			new ListingFactory(new FilterFactory()),
+			new ActionFactory()
+		);
 	}
 
     function it_is_initializable()
@@ -37,5 +41,10 @@ class BackofficeSpec extends ObjectBehavior
 			'name' => 'Name',
 			'some' => 'Stuff'
 		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\ColumnCollection');
+	}
+
+	function it_is_a_facade_for_the_actions_factory()
+	{
+		$this->actions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
 	}
 }
