@@ -1,7 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
-use Illuminate\View\Environment as ViewFactory;
-
 class Factory
 {
     public function link($target, $label = null, $options = [])
