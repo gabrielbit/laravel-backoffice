@@ -20,4 +20,16 @@ class Backoffice
 
 	    return $breadcrumb->mergeInto($data);
     }
+
+    public function columns($data = [])
+    {
+        $columns = new ColumnCollection();
+
+	    foreach ($data as $id => $label)
+	    {
+		    $columns->push(new Column($id, $label));
+	    }
+
+	    return $columns;
+    }
 }

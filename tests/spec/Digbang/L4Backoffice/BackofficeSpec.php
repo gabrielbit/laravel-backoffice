@@ -30,4 +30,12 @@ class BackofficeSpec extends ObjectBehavior
 			'Category Item'
 		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Breadcrumb');
 	}
+
+	function it_is_a_facade_for_the_columns_factory()
+	{
+		$this->columns([
+			'name' => 'Name',
+			'some' => 'Stuff'
+		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\ColumnCollection');
+	}
 }
