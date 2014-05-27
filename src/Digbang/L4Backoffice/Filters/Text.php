@@ -4,6 +4,11 @@ class Text implements FilterInterface
 {
 	use FilterTrait;
 
+	function __construct()
+	{
+		$this->view = 'l4-backoffice::filters.text';
+	}
+
 	/**
 	 * Get the evaluated contents of the object.
 	 *
