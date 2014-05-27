@@ -11,6 +11,7 @@ class Listing extends Collection implements RenderableInterface
 {
 	protected $view = 'l4-backoffice::listing';
 	protected $filters;
+	protected $columns;
 
 	function __construct(FilterCollection $filters)
 	{
@@ -39,7 +40,9 @@ class Listing extends Collection implements RenderableInterface
 	 */
 	public function columns(ColumnCollection $columnCollection)
 	{
-		return $this->mergeInto($columnCollection);
+		$this->columns = $columnCollection;
+
+		return $this;
 	}
 
 	public function filters($name = null)
@@ -71,5 +74,37 @@ class Listing extends Collection implements RenderableInterface
 	public function render()
 	{
 		return \View::make($this->view, $this->toArray())->render();
+	}
+
+    public function fill($elements)
+    {
+        foreach ($elements as $element)
+        {
+	        $this->push($this->makeRow($element));
+        }
+
+	    return $this;
+    }
+
+	/**
+	 * @param $element
+	 * @return array
+	 * @throws \InvalidArgumentException
+	 */
+	protected function makeRow($element)
+	{
+		$row = [];
+
+		foreach (array_keys($this->columns->toArray()) as $columnName)
+		{
+			if (!array_key_exists($columnName, $element))
+			{
+				throw new \InvalidArgumentException("Column $columnName not defined.");
+			}
+
+			$row[$columnName] = $element[$columnName];
+		}
+
+		return $row;
 	}
 }

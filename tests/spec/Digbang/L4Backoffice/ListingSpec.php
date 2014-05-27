@@ -1,5 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
+use Digbang\L4Backoffice\ColumnCollection;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Filters\Factory;
 use PhpSpec\ObjectBehavior;
@@ -14,6 +15,10 @@ class ListingSpec extends ObjectBehavior
 	function let()
 	{
 		$this->beConstructedWith(new FilterCollection(new Factory()));
+
+		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
+
+		$this->columns($columns);
 	}
 
     function it_is_initializable()
@@ -37,5 +42,55 @@ class ListingSpec extends ObjectBehavior
 		$this->filters()->text('some_filter');
 
 		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Text');
+	}
+
+	function it_should_let_me_fill_it_with_a_well_formed_array()
+	{
+		$this->count()->shouldBe(0);
+
+		$this->fill([
+			['name' => 'Some name', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'Other name', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'More names', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'etc.', 'address' => 'Some Address', 'zip_code' => '12345']
+		]);
+
+		$this->count()->shouldBe(4);
+	}
+
+	function it_should_throw_an_error_when_filling_with_a_malformed_array()
+	{
+		$this->shouldThrow('\InvalidArgumentException')
+			->duringFill([
+			['name' => 'Some name', 'address' => 'Some Address', 'value' => 'not important'],
+			['name' => 'Other name', 'zip_code' => '12345', 'value' => 'not important'],
+			['address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'etc.', 'address' => 'Some Address', 'zip_code' => '12345']
+		]);
+	}
+
+	function it_should_let_me_fill_it_with_a_collection_element()
+	{
+		$this->count()->shouldBe(0);
+
+		$this->fill(new \Illuminate\Support\Collection([
+			['name' => 'Some name', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'Other name', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'More names', 'address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+			['name' => 'etc.', 'address' => 'Some Address', 'zip_code' => '12345']
+		]));
+
+		$this->count()->shouldBe(4);
+	}
+
+	function it_should_also_fail_when_filling_with_a_malformed_collection_element()
+	{
+		$this->shouldThrow('\InvalidArgumentException')
+			->duringFill(new \Illuminate\Support\Collection([
+				['name' => 'Some name', 'address' => 'Some Address', 'value' => 'not important'],
+				['name' => 'Other name', 'zip_code' => '12345', 'value' => 'not important'],
+				['address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
+				['name' => 'etc.', 'address' => 'Some Address', 'zip_code' => '12345']
+			]));
 	}
 }
