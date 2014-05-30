@@ -7,6 +7,13 @@ class Breadcrumb extends Collection implements ControlInterface
 {
 	use ControlTrait;
 
+	public function __construct(array $items = array())
+	{
+		parent::__construct($items);
+
+		$this->view = 'l4-backoffice::breadcrumb';
+	}
+
 	/**
 	 * Get the evaluated contents of the object.
 	 *
