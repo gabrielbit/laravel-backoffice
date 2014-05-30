@@ -6,15 +6,7 @@ class ColumnCollection extends Collection
 {
 	public function __construct(array $items = array())
 	{
-		foreach ($items as $id => $label)
-		{
-			if (!is_string($id))
-			{
-				$id = $label;
-			}
-
-			$this->push(new Column($id, $label));
-		}
+		$this->parseItems($items);
 	}
 
 	public function hide($id)
@@ -41,4 +33,27 @@ class ColumnCollection extends Collection
 	        return $column->isHidden() === true;
         });
     }
+
+	/**
+	 * @param array $items
+	 */
+	protected function parseItems(array $items)
+	{
+		foreach ($items as $id => $label)
+		{
+			$column = $label;
+
+			if (!$column instanceof Column)
+			{
+				if (!is_string($id))
+				{
+					$id = $label;
+				}
+
+				$column = new Column($id, $label);
+			}
+
+			$this->push($column);
+		}
+	}
 }
