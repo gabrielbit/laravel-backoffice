@@ -8,11 +8,11 @@
 <div class="leftpanel">
 	@section('body.logo')
 	<div class="logopanel">
-		<h1><span>[</span> {{ $company }} <span>]</span></h1>
+		<h1><span>[</span> @yield('body.title', Lang::get('l4-backoffice::default.backoffice')) <span>]</span></h1>
 	</div>
 	@show
 	<div class="leftpanelinner">
-		<h5 class="sidebartitle">{{ Lang::get('default.navigation') }}</h5>
+		<h5 class="sidebartitle">{{ Lang::get('l4-backoffice::default.navigation') }}</h5>
 		@yield('body.navigation')
 	</div>
 </div>
