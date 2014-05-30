@@ -4,7 +4,20 @@ use Digbang\L4Backoffice\Support\Collection;
 
 class ColumnCollection extends Collection
 {
-    public function hide($id)
+	public function __construct(array $items = array())
+	{
+		foreach ($items as $id => $label)
+		{
+			if (!is_string($id))
+			{
+				$id = $label;
+			}
+
+			$this->push(new Column($id, $label));
+		}
+	}
+
+	public function hide($id)
     {
         $this->each(function(Column $column) use ($id) {
 	        if ($column->getId() == $id) {
