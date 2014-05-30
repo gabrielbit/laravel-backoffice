@@ -33,7 +33,7 @@ class Backoffice
 
 	    foreach ($data as $id => $label)
 	    {
-		    $columns->push(new Column($id, $label));
+		    $columns->push(new Column(is_string($id) ? $id : $label, $label));
 	    }
 
 	    return $columns;
