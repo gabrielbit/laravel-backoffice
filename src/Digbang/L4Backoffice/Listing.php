@@ -56,7 +56,10 @@ class Listing extends Collection implements RenderableInterface
 
 	public function render()
 	{
-		return \View::make($this->view, $this->toArray())->render();
+		return \View::make($this->view, [
+			'columns' => $this->columns->visible(),
+			'items' => $this->toArray()
+		])->render();
 	}
 
     public function fill($elements)
@@ -78,14 +81,15 @@ class Listing extends Collection implements RenderableInterface
 	{
 		$row = [];
 
-		foreach (array_keys($this->columns->toArray()) as $columnName)
+		foreach ($this->columns->visible() as $column)
 		{
-			if (!array_key_exists($columnName, $element))
+			/* @var $column \Digbang\L4Backoffice\Column */
+			if (!array_key_exists($column->getId(), $element))
 			{
-				throw new \InvalidArgumentException("Column $columnName not defined.");
+				throw new \InvalidArgumentException("Column {$column->getId()} not defined.");
 			}
 
-			$row[$columnName] = $element[$columnName];
+			$row[$column->getId()] = $element[$column->getId()];
 		}
 
 		return $row;
