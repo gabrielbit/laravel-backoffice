@@ -6,7 +6,7 @@
 		@if(is_string($label))
 			<li><a href="{{ $route }}">{{ $label }}</a></li>
 		@else
-			<li class="active">{{ $label }}</li>
+			<li class="active">{{ $route }}</li>
 		@endif
 	@endforeach
 </ol>
