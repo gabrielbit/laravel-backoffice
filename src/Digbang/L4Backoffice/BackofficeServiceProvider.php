@@ -11,6 +11,8 @@ class BackofficeServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		$this->package('digbang/l4-backoffice');
+
+		require_once 'composers.php';
 	}
 
 	/**
@@ -20,7 +22,8 @@ class BackofficeServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		// TODO: Implement register() method.
-	}
+		$this->app->singleton('menuFactory', 'Digbang\L4Backoffice\MenuFactory');
 
+		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
+	}
 } 

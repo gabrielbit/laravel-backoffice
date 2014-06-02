@@ -2,9 +2,10 @@
     "name": "digbang/l4-backoffice",
     "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
     "require": {
-        "illuminate/support": "~4.1",
-        "illuminate/view": "~4.1",
-	    "way/generators": "~2.0"
+        "illuminate/support": "4.1.*",
+        "illuminate/view": "4.1.*",
+	    "way/generators": "~2.0",
+	    "digbang/font-awesome": "dev-master"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.0"
@@ -20,5 +21,11 @@
 		"psr-0": {
 			"Digbang\\L4Backoffice\\": "src/"
 		}
-	}
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "http://git.digbang.com/digbang/font-awesome.git"
+		}
+	]
 }
