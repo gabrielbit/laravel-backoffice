@@ -10,6 +10,11 @@ class DropDown implements FilterInterface
 
 	protected $data;
 
+	function __construct()
+	{
+		$this->view = 'l4-backoffice::filters.dropdown';
+	}
+
 	/**
 	 * @param mixed $data
 	 */
@@ -38,7 +43,7 @@ class DropDown implements FilterInterface
 			'label'   => $this->label(),
 			'data'    => $this->data(),
 			'value'   => $this->value(),
-			'options' => $this->options()
+			'options' => $this->options()->toArray()
 		])->render();
 	}
 }
