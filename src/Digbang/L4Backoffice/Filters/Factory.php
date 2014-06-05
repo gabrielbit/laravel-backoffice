@@ -18,16 +18,24 @@ class Factory
 	public function text($name, $label = null, $options = [])
     {
 	    return new Filter(
-		    $this->controlFactory->make('l4-backoffice::filters.text', $label, $options),
-		    $name
+		    $this->controlFactory->make(
+			    'l4-backoffice::filters.text',
+			    null,
+		        $this->buildOptions($options, $label)),
+		    $name,
+		    \Input::get($name)
 	    );
     }
 
 	public function dropdown($name, $label = null, $data = [], $options = [])
     {
 	    return new DropDown(
-		    $this->controlFactory->make('l4-backoffice::filters.dropdown', $label, $options),
+		    $this->controlFactory->make(
+			    'l4-backoffice::filters.dropdown',
+			    null,
+			    $this->buildOptions($options, $label)),
 		    $name,
+		    \Input::get($name),
 		    $data
 	    );
     }
@@ -35,5 +43,15 @@ class Factory
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());
+	}
+
+	protected function buildOptions($options, $label)
+	{
+		if (!$label)
+		{
+			return $options;
+		}
+
+		return array_add($options, 'placeholder', $label);
 	}
 }
