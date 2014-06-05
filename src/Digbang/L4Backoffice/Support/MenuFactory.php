@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice;
+<?php namespace Digbang\L4Backoffice\Support;
 
 /**
  * Class MenuFactory
