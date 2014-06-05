@@ -16,11 +16,11 @@ class ListingSpec extends ObjectBehavior
 {
 	function let()
 	{
+		$filterFactory = new FilterFactory(new ControlFactory());
+
 		$this->beConstructedWith(
-			new FilterCollection(
-				new FilterFactory(new ControlFactory()),
-				new DigbangCollection()
-			)
+			new DigbangCollection(),
+			$filterFactory->collection()
 		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
@@ -32,12 +32,8 @@ class ListingSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Digbang\L4Backoffice\Listings\Listing');
 	    $this->shouldHaveType('Illuminate\Support\Contracts\RenderableInterface');
+	    $this->shouldHaveType('\Countable');
     }
-
-	function it_should_be_a_collection()
-	{
-		$this->shouldHaveType('Digbang\L4Backoffice\Support\Collection');
-	}
 
 	function it_should_have_a_filters_collection()
 	{

@@ -1,8 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
-use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
-use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
 class ListingFactory
@@ -17,12 +15,8 @@ class ListingFactory
     public function make()
     {
         return new Listing(
-	        new FilterCollection(
-		        new FilterFactory(
-			        new ControlFactory()
-		        ),
-		        new DigbangCollection()
-	        )
+	        new DigbangCollection(),
+	        $this->filterFactory->collection()
         );
     }
 }

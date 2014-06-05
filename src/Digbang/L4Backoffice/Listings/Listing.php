@@ -4,16 +4,35 @@ use Digbang\L4Backoffice\Support\Collection;
 use Illuminate\Support\Contracts\RenderableInterface;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
+use Countable;
 
-class Listing extends Collection implements RenderableInterface
+class Listing implements RenderableInterface, Countable
 {
 	protected $view = 'l4-backoffice::listing';
+
+	/**
+	 * @var \Digbang\L4Backoffice\Filters\Collection
+	 */
 	protected $filters;
+
+	/**
+	 * @var ColumnCollection
+	 */
 	protected $columns;
+
+	/**
+	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 */
 	protected $actions;
 
-	function __construct(FilterCollection $filters)
+	/**
+	 * @var \Digbang\L4Backoffice\Support\Collection
+	 */
+	protected $collection;
+
+	function __construct(Collection $collection, FilterCollection $filters)
 	{
+		$this->collection = $collection;
 		$this->filters = $filters;
 	}
 
@@ -58,8 +77,9 @@ class Listing extends Collection implements RenderableInterface
 	{
 		return \View::make($this->view, [
 			'columns' => $this->columns->visible(),
-			'items'   => $this->toArray(),
-			'filters' => $this->filters->all()
+			'items'   => $this->collection,
+			'filters' => $this->filters->all(),
+			'actions' => $this->actions()
 		])->render();
 	}
 
@@ -67,7 +87,7 @@ class Listing extends Collection implements RenderableInterface
     {
         foreach ($elements as $element)
         {
-	        $this->push($this->makeRow($element));
+	        $this->collection->push($this->makeRow($element));
         }
 
 	    return $this;
@@ -84,13 +104,15 @@ class Listing extends Collection implements RenderableInterface
 
 		foreach ($this->columns->visible() as $column)
 		{
-			/* @var $column \Digbang\L4Backoffice\Column */
-			if (!array_key_exists($column->getId(), $element))
+			/* @var $column \Digbang\L4Backoffice\Listings\Column */
+			$id = $column->getId();
+
+			if (!array_key_exists($id, $element))
 			{
-				throw new \InvalidArgumentException("Column {$column->getId()} not defined.");
+				throw new \InvalidArgumentException("Column $id not defined.");
 			}
 
-			$row[$column->getId()] = $element[$column->getId()];
+			$row[$id] = $element[$id];
 		}
 
 		return $row;
@@ -104,5 +126,16 @@ class Listing extends Collection implements RenderableInterface
 	public function actions()
 	{
 		return $this->actions;
+	}
+
+	/**
+	 * Count elements of an object
+	 * @link http://php.net/manual/en/countable.count.php
+	 * @return int The custom count as an integer.
+	 * The return value is cast to an integer.
+	 */
+	public function count()
+	{
+		return $this->collection->count();
 	}
 }

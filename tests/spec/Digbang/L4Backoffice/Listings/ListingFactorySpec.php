@@ -1,14 +1,15 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
+use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ListingFactorySpec extends ObjectBehavior
 {
-	function let(Factory $factory)
+	function let()
 	{
-		$this->beConstructedWith($factory);
+		$this->beConstructedWith(new Factory(new ControlFactory()));
 	}
 
     function it_is_initializable()
