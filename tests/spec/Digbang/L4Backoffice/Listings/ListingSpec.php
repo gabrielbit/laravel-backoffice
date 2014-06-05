@@ -1,7 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;

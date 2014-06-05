@@ -80,7 +80,7 @@ class Listing implements RenderableInterface, Countable
 			'items'   => $this->collection,
 			'filters' => $this->filters->all(),
 			'actions' => $this->actions()
-		])->render();
+		]);
 	}
 
     public function fill($elements)

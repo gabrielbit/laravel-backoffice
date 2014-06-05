@@ -13,11 +13,18 @@ class Factory
 
 	public function link($target, $label = null, $options = [])
     {
-        return new Action($this->controlFactory->make('l4-backoffice::link', $label, $options), $target);
+        return new Action($this->controlFactory->make('l4-backoffice::actions.link', $label, $options), $target);
     }
 
     public function form($target, $label, $options = [])
     {
-	    return new Action($this->controlFactory->make('l4-backoffice::form', $label, $options), $target);
+	    $options['class'] = $this->uniqueClasses(array_get($options, 'class', ''), ['btn-action']);
+
+	    return new Action($this->controlFactory->make('l4-backoffice::actions.form', $label, $options), $target);
     }
+
+	protected function uniqueClasses($current, array $newClasses)
+	{
+		return implode(' ', array_unique(array_merge(explode(' ', $current), $newClasses)));
+	}
 }

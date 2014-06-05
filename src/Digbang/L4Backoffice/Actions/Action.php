@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Illuminate\Support\Collection as LaravelCollection;
 
 class Action implements ActionInterface
 {
@@ -61,6 +62,25 @@ class Action implements ActionInterface
 	 */
 	public function render()
 	{
-		return $this->control->render();
+		return $this->renderTarget($this->target());
+	}
+
+	public function renderWith($row)
+	{
+		$target = $this->target();
+
+		if ($target instanceof \Closure)
+		{
+			$target = $target(new LaravelCollection($row));
+		}
+
+		return $this->renderTarget($target);
+	}
+
+	protected function renderTarget($target)
+	{
+		return $this->control->render()->with([
+			'target' => $target
+		]);
 	}
 }

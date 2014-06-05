@@ -10,6 +10,7 @@
 							@foreach($columns as $column)
 								<th>{{ $column->getLabel() }}</th>
 							@endforeach
+								<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -18,6 +19,11 @@
 							@foreach($columns as $column)
 								<td>{{ $row[$column->getId()] }}</td>
 							@endforeach
+								<td>
+									@foreach($actions as $action)
+										{{ $action->renderWith($row) }}
+									@endforeach
+								</td>
 							</tr>
 						@endforeach
 						</tbody>

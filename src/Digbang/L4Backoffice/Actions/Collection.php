@@ -20,7 +20,7 @@ class Collection extends DigbangCollection
 
 	public function form($target, $label, $options = [])
 	{
-		$this->push($this->factory->link($target, $label, $options));
+		$this->push($this->factory->form($target, $label, $options));
 
 		return $this;
 	}
