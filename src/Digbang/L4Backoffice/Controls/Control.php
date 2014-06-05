@@ -1,6 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Support;
-
-use Digbang\L4Backoffice\Controls\ControlInterface;
+<?php namespace Digbang\L4Backoffice\Controls;
 
 class Control implements ControlInterface
 {
