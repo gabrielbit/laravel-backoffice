@@ -2,7 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 
 class Factory
 {
