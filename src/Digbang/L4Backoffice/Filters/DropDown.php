@@ -40,12 +40,8 @@ class DropDown extends Filter implements FilterInterface
 	 */
 	public function render()
 	{
-		return \View::make($this->view(), [
-			'name'    => $this->name(),
-			'label'   => $this->label(),
-			'data'    => $this->data(),
-			'value'   => $this->value(),
-			'options' => $this->options()->toArray()
+		return parent::render()->with([
+			'data' => $this->data()
 		]);
 	}
 }
