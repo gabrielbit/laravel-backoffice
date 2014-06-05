@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice;
+<?php namespace Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Support\Collection;
 

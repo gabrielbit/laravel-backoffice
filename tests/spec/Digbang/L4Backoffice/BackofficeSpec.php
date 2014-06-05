@@ -3,7 +3,7 @@
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
-use Digbang\L4Backoffice\ListingFactory;
+use Digbang\L4Backoffice\Listings\ListingFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -26,7 +26,7 @@ class BackofficeSpec extends ObjectBehavior
 
 	function it_is_a_facade_for_the_listing_factory()
 	{
-		$this->listing()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listing');
+		$this->listing()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\Listing');
 	}
 
 	function it_is_a_facade_for_the_breadcrumb_factory()
@@ -43,7 +43,7 @@ class BackofficeSpec extends ObjectBehavior
 		$this->columns([
 			'name' => 'Name',
 			'some' => 'Stuff'
-		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\ColumnCollection');
+		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\ColumnCollection');
 	}
 
 	function it_is_a_facade_for_the_actions_factory()

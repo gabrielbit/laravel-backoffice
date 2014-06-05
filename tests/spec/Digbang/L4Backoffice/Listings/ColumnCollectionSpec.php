@@ -1,21 +1,19 @@
-<?php
+<?php namespace spec\Digbang\L4Backoffice\Listings;
 
-namespace spec\Digbang\L4Backoffice;
-
-use Digbang\L4Backoffice\Column;
+use Digbang\L4Backoffice\Listings\Column;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
  * Class ColumnCollectionSpec
- * @mixin \Digbang\L4Backoffice\ColumnCollection
+ * @mixin \Digbang\L4Backoffice\Listings\ColumnCollection
  * @package spec\Digbang\L4Backoffice
  */
 class ColumnCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\ColumnCollection');
+        $this->shouldHaveType('Digbang\L4Backoffice\Listings\ColumnCollection');
     }
 
 	function it_should_be_a_collection()

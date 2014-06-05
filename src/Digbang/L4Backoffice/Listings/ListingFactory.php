@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice;
+<?php namespace Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;

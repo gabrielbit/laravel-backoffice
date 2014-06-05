@@ -1,13 +1,11 @@
-<?php
-
-namespace spec\Digbang\L4Backoffice;
+<?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
  * Class ColumnSpec
- * @mixin \Digbang\L4Backoffice\Column
+ * @mixin \Digbang\L4Backoffice\Listings\Column
  * @package spec\Digbang\L4Backoffice
  */
 class ColumnSpec extends ObjectBehavior
@@ -19,6 +17,6 @@ class ColumnSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Column');
+        $this->shouldHaveType('Digbang\L4Backoffice\Listings\Column');
     }
 }
