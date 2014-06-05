@@ -2,6 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+use Symfony\Component\HttpFoundation\Request;
 
 class Factory
 {
@@ -9,10 +10,12 @@ class Factory
 	 * @var \Digbang\L4Backoffice\Controls\ControlFactory
 	 */
 	protected $controlFactory;
+	protected $request;
 
-	function __construct(ControlFactory $controlFactory)
+	function __construct(ControlFactory $controlFactory, Request $request = null)
 	{
 		$this->controlFactory = $controlFactory;
+		$this->request = $request;
 	}
 
 	public function text($name, $label = null, $options = [])
@@ -23,7 +26,7 @@ class Factory
 			    null,
 		        $this->buildOptions($options, $label)),
 		    $name,
-		    \Input::get($name)
+		    $this->request ? $this->request->get($name) : null
 	    );
     }
 
@@ -35,7 +38,7 @@ class Factory
 			    null,
 			    $this->buildOptions($options, $label)),
 		    $name,
-		    \Input::get($name),
+		    $this->request ? $this->request->get($name) : null,
 		    $data
 	    );
     }
