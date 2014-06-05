@@ -179,6 +179,12 @@ jQuery(document).ready(function() {
 		$obj.text(new_text);
 		$obj.data('text', old_text);
 	});
+
+	$('.select2').each(function(){
+		$(this).select2({
+			closeOnSelect: $(this).attr('multiple')
+		});
+	});
 });
 
 function Export()
