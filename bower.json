@@ -1,0 +1,20 @@
+{
+	"name": "l4-backoffice",
+	"version": "0.1.0",
+	"license": "proprietary",
+	"homepage": "www.digbang.com",
+	"private": true,
+	"ignore": [
+		"**/.*",
+		"node_modules",
+		"bower_components",
+		"test",
+		"tests"
+	],
+	"dependencies": {
+		"jquery-form": "~3.46.0",
+		"bootbox": "~4.2.0",
+		"multiselect": "~0.9.11",
+		"quicksearch": "~2.0.3"
+	}
+}

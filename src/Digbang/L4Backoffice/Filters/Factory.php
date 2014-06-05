@@ -1,27 +1,33 @@
 <?php namespace Digbang\L4Backoffice\Filters;
 
+use Digbang\L4Backoffice\Controls\ControlFactory;
+
 class Factory
 {
+	/**
+	 * @var \Digbang\L4Backoffice\Controls\ControlFactory
+	 */
+	protected $controlFactory;
+
+	function __construct(ControlFactory $controlFactory)
+	{
+		$this->controlFactory = $controlFactory;
+	}
+
 	public function text($name, $label = null, $options = [])
     {
-        $text = new Text();
-
-	    $text->setName($name);
-	    $text->setLabel($label);
-	    $text->setOptions($options);
-
-	    return $text;
+	    return new Filter(
+		    $this->controlFactory->make('l4-backoffice::filters.text', $label, $options),
+		    $name
+	    );
     }
 
 	public function dropdown($name, $label = null, $data = [], $options = [])
     {
-	    $dropdown = new DropDown();
-
-	    $dropdown->setName($name);
-	    $dropdown->setLabel($label);
-	    $dropdown->setData($data);
-	    $dropdown->setOptions($options);
-
-	    return $dropdown;
+	    return new DropDown(
+		    $this->controlFactory->make('l4-backoffice::filters.dropdown', $label, $options),
+		    $name,
+		    $data
+	    );
     }
 }

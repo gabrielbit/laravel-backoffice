@@ -1,0 +1,77 @@
+body {
+  // The template would put this styling after hiding the loader
+  // As we wont use the loader, we'll just hard code it here
+  overflow: visible;
+}
+
+.fm-title a {
+  // Ellipsis for long titles on media-manager pages
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.form-padding-fix {
+	padding-top: 7px;
+}
+
+.ms-container {
+	width: auto;
+
+	.ms-selectable, .ms-selection {
+		width: 47%;
+
+		.ms-list {
+			height: 350px;
+		}
+	}
+}
+
+.wysihtml5-sandbox{padding: 0px !important;}
+.pageheader h2{display: inline;margin-right: 10px;}
+.filter-advance{display: none;}
+.show-more-link{line-height: 40px;padding: 6px;}
+.form-filter .chosen-container-single .chosen-single{height: 40px;line-height: 40px;}
+.form-filter .input-group{width: 49%;float: left;margin-right: 7px;}
+.form-filter .input-group:last-child{margin-right: 0px;}
+.results-list .btn-group .fa{margin-right: 4px;}
+.form-filter .form-group:last-child{margin-bottom: 15px;}
+.pagination{float: right;}
+.pagination-override .export{float: right;margin-left: 10px;margin-bottom: 10px;}
+.pagination-override .showing{
+	float: left;
+	line-height: 34px;
+	margin-right: 10px;
+}
+
+
+.filemanager{
+	.fm-title a{
+		color: #000;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		font-size: 16px;
+		font-weight: bold;
+		text-align: center;
+	}
+	.thmb{
+		.thumb-type{
+			background: #da3115;
+			padding: 0px 6px;
+			font-size: 15px;
+			color: #ffffff;
+			line-height: 26px;
+			overflow: hidden;
+			span{
+				display: inline-block;
+				font-size: 11px;
+			}
+			i{
+				line-height: 26px;
+			}
+		}
+	}
+}

@@ -58,8 +58,8 @@ class Listing extends Collection implements RenderableInterface
 	{
 		return \View::make($this->view, [
 			'columns' => $this->columns->visible(),
-			'items' => $this->toArray(),
-			'filters' => $this->filters
+			'items'   => $this->toArray(),
+			'filters' => $this->filters->all()
 		])->render();
 	}
 

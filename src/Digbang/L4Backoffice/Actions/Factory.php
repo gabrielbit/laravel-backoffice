@@ -1,26 +1,23 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
+use Digbang\L4Backoffice\Controls\ControlFactory;
+
 class Factory
 {
-    public function link($target, $label = null, $options = [])
+	protected $controlFactory;
+
+	function __construct(ControlFactory $controlFactory)
+	{
+		$this->controlFactory = $controlFactory;
+	}
+
+	public function link($target, $label = null, $options = [])
     {
-        $link = new Link();
-
-	    $link->setTarget($target);
-	    $link->setLabel($label ?: $target);
-	    $link->setOptions($options);
-
-	    return $link;
+        return new Action($this->controlFactory->make('l4-backoffice::link', $label, $options), $target);
     }
 
     public function form($target, $label, $options = [])
     {
-	    $form = new Form();
-
-	    $form->setTarget($target);
-	    $form->setLabel($label);
-	    $form->setOptions($options);
-
-	    return $form;
+	    return new Action($this->controlFactory->make('l4-backoffice::form', $label, $options), $target);
     }
 }

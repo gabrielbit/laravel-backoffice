@@ -1,8 +1,9 @@
 <?php
 return [
-	'backoffice'      => 'Backoffice',
-	'navigation'      => 'Navigation',
-	'search'          => 'Search',
-	'reset'           => 'Reset',
-	'advanced_search' => 'Advanced'
+	'backoffice'       => 'Backoffice',
+	'navigation'       => 'Navigation',
+	'search'           => 'Search',
+	'reset'            => 'Reset',
+	'simple_filters'   => 'Simple',
+	'advanced_filters' => 'Advanced'
 ];

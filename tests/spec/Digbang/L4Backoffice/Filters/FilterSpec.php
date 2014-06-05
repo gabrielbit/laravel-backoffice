@@ -4,7 +4,12 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class DropDownSpec extends ObjectBehavior
+/**
+ * Class FilterSpec
+ * @mixin \Digbang\L4Backoffice\Filters\Filter
+ * @package spec\Digbang\L4Backoffice\Filters
+ */
+class FilterSpec extends ObjectBehavior
 {
 	function let()
 	{
@@ -14,7 +19,12 @@ class DropDownSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Filters\DropDown');
+        $this->shouldHaveType('Digbang\L4Backoffice\Filters\Filter');
 	    $this->shouldHaveType('Illuminate\Support\Contracts\RenderableInterface');
     }
+
+	function it_should_let_me_get_a_specific_option()
+	{
+		$this->options('some')->shouldNotBe(null);
+	}
 }

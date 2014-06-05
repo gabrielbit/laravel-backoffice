@@ -1,5 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
+use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\ListingFactory;
@@ -10,9 +11,11 @@ class BackofficeSpec extends ObjectBehavior
 {
 	function let()
 	{
+		$controlFactory = new ControlFactory();
 		$this->beConstructedWith(
-			new ListingFactory(new FilterFactory()),
-			new ActionFactory()
+			new ListingFactory(new FilterFactory($controlFactory)),
+			new ActionFactory($controlFactory),
+			$controlFactory
 		);
 	}
 

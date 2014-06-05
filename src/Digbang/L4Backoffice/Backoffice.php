@@ -2,17 +2,21 @@
 
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Breadcrumb;
+use Illuminate\Support\Facades\Lang;
 
 class Backoffice
 {
 	protected $listingFactory;
 	protected $actionFactory;
+	protected $controlFactory;
 
-	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory)
+	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory, ControlFactory $controlFactory)
 	{
 		$this->listingFactory = $listingFactory;
-		$this->actionFactory = $actionFactory;
+		$this->actionFactory  = $actionFactory;
+		$this->controlFactory = $controlFactory;
 	}
 
     public function listing()
@@ -20,11 +24,12 @@ class Backoffice
         return $this->listingFactory->make();
     }
 
-    public function breadcrumb($data = [])
+    public function breadcrumb($data = [], $label = '', $options = [])
     {
-        $breadcrumb = new Breadcrumb();
-
-	    return $breadcrumb->mergeInto($data);
+        return new Breadcrumb(
+	        $this->controlFactory->make('l4-backoffice::breadcrumb', $label, $options),
+	        new \Illuminate\Support\Collection($data)
+        );
     }
 
     public function columns($data = [])

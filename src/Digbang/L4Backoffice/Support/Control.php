@@ -1,10 +1,8 @@
-<?php namespace Digbang\L4Backoffice\Controls;
+<?php namespace Digbang\L4Backoffice\Support;
 
-/**
- * Trait ControlTrait
- * @package Digbang\L4Backoffice\Controls
- */
-trait ControlTrait
+use Digbang\L4Backoffice\Controls\ControlInterface;
+
+class Control implements ControlInterface
 {
 	protected $options;
 	protected $label;
@@ -61,4 +59,17 @@ trait ControlTrait
 	{
 		return $this->view;
 	}
-} 
+
+	/**
+	 * Get the evaluated contents of the object.
+	 *
+	 * @return \Illuminate\View\View
+	 */
+	public function render()
+	{
+		return \View::make($this->view(), [
+			'options' => $this->options()->toArray(),
+			'label'   => $this->label(),
+		]);
+	}
+}

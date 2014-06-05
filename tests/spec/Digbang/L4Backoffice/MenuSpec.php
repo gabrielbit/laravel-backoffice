@@ -5,8 +5,11 @@ use Prophecy\Argument;
 
 class MenuSpec extends ObjectBehavior
 {
+	/*
     function it_is_initializable()
     {
         $this->shouldHaveType('Digbang\L4Backoffice\Menu');
     }
+
+	*/
 }

@@ -1,8 +1,10 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\ColumnCollection;
+use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
-use Digbang\L4Backoffice\Filters\Factory;
+use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -14,7 +16,12 @@ class ListingSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$this->beConstructedWith(new FilterCollection(new Factory()));
+		$this->beConstructedWith(
+			new FilterCollection(
+				new FilterFactory(new ControlFactory()),
+				new DigbangCollection()
+			)
+		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
 
@@ -41,7 +48,7 @@ class ListingSpec extends ObjectBehavior
 	{
 		$this->filters()->text('some_filter');
 
-		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Text');
+		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Filter');
 	}
 
 	function it_should_let_me_fill_it_with_a_well_formed_array()

@@ -1,20 +1,29 @@
-<?php namespace Digbang\L4Backoffice\Support;
+<?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
-use Illuminate\Support\Collection as LaravelCollection;
 
-class Breadcrumb implements ControlInterface
+class Action implements ActionInterface
 {
+	/**
+	 * @var ControlInterface
+	 */
 	protected $control;
-	protected $collection;
+	protected $target;
 
-	public function __construct(ControlInterface $control, LaravelCollection $collection = null)
+	function __construct(ControlInterface $control, $target)
 	{
 		$this->control = $control;
-		if ($collection)
-		{
-			$this->collection = $collection;
-		}
+		$this->target  = $target;
+	}
+
+	public function setTarget($target)
+	{
+		$this->target = $target;
+	}
+
+	public function target()
+	{
+		return $this->target;
 	}
 
 	/**
@@ -52,8 +61,6 @@ class Breadcrumb implements ControlInterface
 	 */
 	public function render()
 	{
-		return $this->control->render()->with([
-			'items' => $this->collection
-		]);
+		return $this->control->render();
 	}
 }

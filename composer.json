@@ -8,6 +8,7 @@
 	    "digbang/font-awesome": "dev-master"
     },
     "require-dev": {
+	    "digbang/backoffice-template": "dev-master",
         "phpspec/phpspec": "~2.0"
     },
     "license": "Proprietary",
@@ -26,6 +27,10 @@
 		{
 			"type": "vcs",
 			"url": "http://git.digbang.com/digbang/font-awesome.git"
+		},
+		{
+			"type": "vcs",
+			"url": "http://git.digbang.com/digbang/backoffice-template.git"
 		}
 	]
 }

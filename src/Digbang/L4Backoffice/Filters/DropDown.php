@@ -1,19 +1,21 @@
 <?php namespace Digbang\L4Backoffice\Filters;
+use Digbang\L4Backoffice\Controls\ControlInterface;
 
 /**
  * Class DropDown
  * @package Digbang\L4Backoffice\Filters
  */
-class DropDown implements FilterInterface
+class DropDown extends Filter implements FilterInterface
 {
-	use FilterTrait;
-
 	protected $data;
 
-	function __construct()
+	function __construct(ControlInterface $control, $name, $value = null, $data = [])
 	{
-		$this->view = 'l4-backoffice::filters.dropdown';
+		parent::__construct($control, $name, $value);
+
+		$this->setData($data);
 	}
+
 
 	/**
 	 * @param mixed $data
@@ -44,6 +46,6 @@ class DropDown implements FilterInterface
 			'data'    => $this->data(),
 			'value'   => $this->value(),
 			'options' => $this->options()->toArray()
-		])->render();
+		]);
 	}
 }

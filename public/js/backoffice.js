@@ -4381,10 +4381,10 @@ function log() {
 			
 			doRedraw = (typeof doRedraw === "undefined") ? true : doRedraw;
 			
-			jq_results = options.noResults ? $(target).not(options.noResults) : $(target);
+			jq_results = $(target).not(options.noResults);
 			
-			var t = (typeof options.selector === "string") ? jq_results.find(options.selector) : $(target).not(options.noResults);
-						
+			var t = (typeof options.selector === "string") ? jq_results.find(options.selector) : jq_results;
+			
 			cache = t.map(function () {
 				var temp = self.strip_html(this.innerHTML);
 				return options.removeDiacritics ? self.removeDiacritics(temp) : temp;
@@ -5141,6 +5141,18 @@ function log() {
 			this.qs1.cache();
 			this.qs2.cache();
 		}
+	});
+
+	$(document).on('click', '#show-more-link', function(ev) {
+		$obj = $(this);
+
+		$('.filter-advance').toggle();
+
+		var new_text = $obj.data('text'),
+			old_text = $obj.text();
+
+		$obj.text(new_text);
+		$obj.data('text', old_text);
 	});
 });
 
