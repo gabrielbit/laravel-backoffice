@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Filters;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
 class Factory
 {
@@ -30,4 +31,9 @@ class Factory
 		    $data
 	    );
     }
+
+	public function collection()
+	{
+		return new Collection($this, new DigbangCollection());
+	}
 }
