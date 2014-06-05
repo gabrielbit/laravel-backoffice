@@ -102,7 +102,7 @@ class Listing implements RenderableInterface, Countable
 	{
 		$row = [];
 
-		foreach ($this->columns->visible() as $column)
+		foreach ($this->columns as $column)
 		{
 			/* @var $column \Digbang\L4Backoffice\Listings\Column */
 			$id = $column->getId();

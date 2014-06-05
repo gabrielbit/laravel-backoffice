@@ -17,7 +17,7 @@
 						@foreach($items as $row)
 							<tr>
 							@foreach($columns as $column)
-								<td>{{ $row[$column->getId()] }}</td>
+								<td>{{ array_get($row, $column->getId(), '-') }}</td>
 							@endforeach
 								<td>
 									@foreach($actions as $action)

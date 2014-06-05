@@ -9,13 +9,16 @@ class ColumnCollection extends Collection
 		$this->parseItems($items);
 	}
 
-	public function hide($id)
+	public function hide($ids)
     {
-        $this->each(function(Column $column) use ($id) {
-	        if ($column->getId() == $id) {
-		        $column->setHidden(true);
-	        }
-        });
+	    foreach ((array) $ids as $id)
+	    {
+		    $this->each(function(Column &$column) use ($id) {
+			    if ($column->getId() == $id) {
+				    $column->setHidden(true);
+			    }
+		    });
+	    }
 
 	    return $this;
     }
