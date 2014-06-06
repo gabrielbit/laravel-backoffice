@@ -1,5 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
+use Digbang\FontAwesome\Facade as FontAwesome;
+use Digbang\L4Backoffice\Listings\Column;
 use Illuminate\Http\Request;
 
 class LinkMaker
@@ -19,11 +21,31 @@ class LinkMaker
 		$this->request = $request;
 	}
 
-	public function sort($column, $sense = self::SORT_SENSE_ASC)
+	public function sort(Column $column)
+	{
+		$parameters = $this->getParameters();
+		$by         = $column->getId();
+		$sense      = self::SORT_SENSE_ASC;
+
+		if ($isSortedBy = (array_get($parameters, self::SORT_BY) == $by) && array_get($parameters, self::SORT_SENSE) == $sense)
+		{
+			$sense = self::SORT_SENSE_DESC;
+		}
+
+		return
+			'<a href="' . $this->to($by, $sense) . '" class="sort-link">' .
+				$column->getLabel() .
+				FontAwesome::icon(
+					$isSortedBy ? "sort-$sense" : 'sort') .
+			'</a>';
+
+	}
+
+	protected function to($column, $sense = self::SORT_SENSE_ASC)
 	{
 		return $this->request->url() . '?' .
 			http_build_query(array_merge(
-				$this->request->all(),
+				$this->request->except(['page']),
 				[
 					self::SORT_BY    => $column,
 					self::SORT_SENSE => $this->parseSortSense($sense)
@@ -38,5 +60,15 @@ class LinkMaker
 			self::SORT_SENSE_DESC :
 			// its not desc, return asc.
 			self::SORT_SENSE_ASC;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getParameters()
+	{
+		return $this->request->only([
+			self::SORT_BY, self::SORT_SENSE
+		]);
 	}
 }
