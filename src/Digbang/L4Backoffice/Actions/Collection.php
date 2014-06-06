@@ -18,9 +18,9 @@ class Collection extends DigbangCollection
 		return $this;
 	}
 
-	public function form($target, $label, $options = [])
+	public function form($target, $label, $method = 'POST', $options = [])
 	{
-		$this->push($this->factory->form($target, $label, $options));
+		$this->push($this->factory->form($target, $label, $method, $options));
 
 		return $this;
 	}

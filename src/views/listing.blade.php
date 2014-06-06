@@ -8,15 +8,15 @@
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-								@foreach($columns as $column)
-									<th>
-										@if($column->sortable())
-											@include('l4-backoffice::actions.sort', ['column' => $column])
-										@else
-											{{ $column->getLabel() }}
-										@endif
-									</th>
-								@endforeach
+									@foreach($columns as $column)
+										<th>
+											@if($column->sortable())
+												@include('l4-backoffice::actions.sort', ['column' => $column])
+											@else
+												{{ $column->getLabel() }}
+											@endif
+										</th>
+									@endforeach
 									<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
 								</tr>
 							</thead>
@@ -35,11 +35,13 @@
 							@endforeach
 							</tbody>
 						</table>
-					</div><!-- results-list -->
-				</div><!-- panel-body -->
-			</div><!-- panel -->
-		</div><!-- col-sm-8 -->
-	</div><!-- row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 @else
-	<div class="alert alert-danger">{{ Lang::get('l4-backoffice::default.empty_listing') }}</div>
+	<div class="alert alert-danger">
+		{{ Lang::get('l4-backoffice::default.empty_listing') }}
+	</div>
 @endif

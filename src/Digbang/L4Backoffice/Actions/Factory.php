@@ -16,11 +16,14 @@ class Factory
         return new Action($this->controlFactory->make('l4-backoffice::actions.link', $label, $options), $target);
     }
 
-    public function form($target, $label, $options = [])
+    public function form($target, $label, $method = 'POST', $options = [])
     {
 	    $options['class'] = $this->uniqueClasses(array_get($options, 'class', ''), ['btn-action']);
 
-	    return new Action($this->controlFactory->make('l4-backoffice::actions.form', $label, $options), $target);
+	    return new Form(
+		    $this->controlFactory->make('l4-backoffice::actions.form', $label, $options),
+		    $target,
+		    $method);
     }
 
 	protected function uniqueClasses($current, array $newClasses)
