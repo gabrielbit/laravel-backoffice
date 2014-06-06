@@ -23,6 +23,17 @@ class ColumnCollection extends Collection
 	    return $this;
     }
 
+	public function sortable($ids)
+	{
+		$ids = (array) $ids;
+
+		$this->each(function(Column &$column) use ($ids) {
+			$column->setSortable(in_array($column->getId(), $ids));
+		});
+
+		return $this;
+	}
+
     public function visible()
     {
         return $this->filter(function(Column $column){
