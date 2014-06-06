@@ -6,5 +6,6 @@ return [
 	'reset'            => 'Reset',
 	'simple_filters'   => 'Simple',
 	'advanced_filters' => 'Advanced',
-	'actions'          => 'Actions'
+	'actions'          => 'Actions',
+	'empty_listing'    => 'There are no items.'
 ];
