@@ -8,7 +8,12 @@
 						<thead>
 							<tr>
 							@foreach($columns as $column)
-								<th>{{ $column->getLabel() }}</th>
+								<th>
+									{{ $column->getLabel() }}
+									@if($column->sortable())
+										@include('l4-backoffice::actions.sort', ['column' => $column])
+									@endif
+								</th>
 							@endforeach
 								<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
 							</tr>

@@ -23,6 +23,7 @@ class BackofficeServiceProvider extends ServiceProvider
 	public function register()
 	{
 		$this->app->singleton('menuFactory', 'Digbang\L4Backoffice\Support\MenuFactory');
+		$this->app->bind('linkMaker', 'Digbang\L4Backoffice\Support\LinkMaker');
 
 		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
 	}

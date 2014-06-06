@@ -5,12 +5,14 @@ class Column
 	protected $id;
 	protected $label;
 	protected $hidden = false;
+	protected $sortable = true;
 
-	function __construct($id, $label = '', $hidden = false)
+	function __construct($id, $label = '', $hidden = false, $sortable = true)
 	{
-		$this->id = $id;
-		$this->label = $label;
-		$this->hidden = $hidden;
+		$this->id       = $id;
+		$this->label    = $label;
+		$this->hidden   = $hidden;
+		$this->sortable = $sortable;
 	}
 
 	/**
@@ -60,4 +62,14 @@ class Column
 	{
 		return $this->label;
 	}
+
+    public function setSortable($sortable)
+    {
+        $this->sortable = $sortable;
+    }
+
+    public function sortable()
+    {
+        return $this->sortable;
+    }
 }

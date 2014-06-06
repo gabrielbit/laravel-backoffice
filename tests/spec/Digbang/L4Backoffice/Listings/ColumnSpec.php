@@ -19,4 +19,11 @@ class ColumnSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Digbang\L4Backoffice\Listings\Column');
     }
+
+	function it_can_be_sortable()
+	{
+		$this->setSortable(true);
+
+		$this->sortable()->shouldReturn(true);
+	}
 }
