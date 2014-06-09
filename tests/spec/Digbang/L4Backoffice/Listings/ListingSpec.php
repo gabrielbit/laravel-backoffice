@@ -2,6 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use PhpSpec\ObjectBehavior;
@@ -15,11 +16,14 @@ class ListingSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$filterFactory = new FilterFactory(new ControlFactory());
+		$controlFactory = new ControlFactory();
+		$filterFactory = new FilterFactory($controlFactory);
+		$actionFactory = new ActionFactory($controlFactory);
 
 		$this->beConstructedWith(
 			new DigbangCollection(),
-			$filterFactory->collection()
+			$filterFactory->collection(),
+			$actionFactory->collection()
 		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
@@ -94,5 +98,10 @@ class ListingSpec extends ObjectBehavior
 				['address' => 'Some Address', 'zip_code' => '12345', 'value' => 'not important'],
 				['name' => 'etc.', 'address' => 'Some Address', 'zip_code' => '12345']
 			]));
+	}
+
+	function it_should_hold_bulk_actions_that_apply_to_selected_items()
+	{
+		$this->bulkActions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
 	}
 }

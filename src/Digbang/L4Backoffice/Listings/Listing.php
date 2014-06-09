@@ -26,14 +26,20 @@ class Listing implements RenderableInterface, Countable
 	protected $actions;
 
 	/**
+	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 */
+	protected $bulkActions;
+
+	/**
 	 * @var \Digbang\L4Backoffice\Support\Collection
 	 */
 	protected $collection;
 
-	function __construct(Collection $collection, FilterCollection $filters)
+	function __construct(Collection $collection, FilterCollection $filters, ActionCollection $actionCollection)
 	{
 		$this->collection = $collection;
 		$this->filters = $filters;
+		$this->bulkActions = $actionCollection;
 	}
 
 	/**
@@ -126,6 +132,16 @@ class Listing implements RenderableInterface, Countable
 	public function actions()
 	{
 		return $this->actions;
+	}
+
+	public function setBulkActions(ActionCollection $actions)
+	{
+		$this->bulkActions = $actions;
+	}
+
+	public function bulkActions()
+	{
+		return $this->bulkActions;
 	}
 
 	/**

@@ -12,9 +12,12 @@ class BackofficeSpec extends ObjectBehavior
 	function let()
 	{
 		$controlFactory = new ControlFactory();
+		$filterFactory = new FilterFactory($controlFactory);
+		$actionFactory = new ActionFactory($controlFactory);
+
 		$this->beConstructedWith(
-			new ListingFactory(new FilterFactory($controlFactory)),
-			new ActionFactory($controlFactory),
+			new ListingFactory($filterFactory, $actionFactory),
+			$actionFactory,
 			$controlFactory
 		);
 	}
