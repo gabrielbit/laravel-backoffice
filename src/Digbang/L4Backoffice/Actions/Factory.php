@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
 class Factory
 {
@@ -25,6 +26,11 @@ class Factory
 		    $target,
 		    $method);
     }
+
+	public function collection()
+	{
+		return new Collection($this, new DigbangCollection());
+	}
 
 	protected function uniqueClasses($current, array $newClasses)
 	{

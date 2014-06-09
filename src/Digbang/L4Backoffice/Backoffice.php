@@ -49,6 +49,6 @@ class Backoffice
 
     public function actions()
     {
-        return new ActionCollection($this->actionFactory);
+        return $this->actionFactory->collection();
     }
 }

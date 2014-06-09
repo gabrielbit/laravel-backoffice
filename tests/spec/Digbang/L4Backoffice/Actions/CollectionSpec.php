@@ -1,16 +1,16 @@
 <?php namespace spec\Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Actions\Factory;
-use Digbang\L4Backoffice\Actions\Form;
-use Illuminate\View\Environment;
+use Digbang\L4Backoffice\Controls\ControlFactory;
+use Illuminate\Support\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class CollectionSpec extends ObjectBehavior
 {
-	function let(Factory $factory)
+	function let()
 	{
-		$this->beConstructedWith($factory);
+		$this->beConstructedWith(new Factory(new ControlFactory()), new Collection());
 	}
 
     function it_is_initializable()
@@ -18,10 +18,8 @@ class CollectionSpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\L4Backoffice\Actions\Collection');
     }
 
-	function it_should_be_a_collection()
+	function it_should_be_traversable()
 	{
-		$this->shouldHaveType('Digbang\L4Backoffice\Support\Collection');
+		$this->shouldHaveType('Traversable');
 	}
-
-
 }
