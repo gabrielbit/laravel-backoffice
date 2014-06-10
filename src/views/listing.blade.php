@@ -4,10 +4,23 @@
 	    <div class="col-sm-12 col-md-12">
 			<div class="panel panel-default">
 				<div class="panel-body">
+					<div class="header-list">
+						@if(count($bulkActions))
+							@include('l4-backoffice::lists.bulk-actions', ['actions' => $bulkActions])
+						@endif
+						@if($paginator)
+							@include('l4-backoffice::lists.pagination', ['paginator' => $paginator])
+						@endif
+					</div>
 					<div class="results-list">
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
+									@if(count($bulkActions))
+										<th class="selectors">
+											{{ Form::checkbox('all', 'all', null, ['class' => 'chk-all']) }}
+										</th>
+									@endif
 									@foreach($columns as $column)
 										<th>
 											@if($column->sortable())
@@ -23,6 +36,11 @@
 							<tbody>
 							@foreach($items as $row)
 								<tr>
+								@if(count($bulkActions))
+									<td>
+										{{ Form::checkbox('row', array_get($row, 'id'), null, ['class' => 'chk-bulk']) }}
+									</td>
+								@endif
 								@foreach($columns as $column)
 									<td>{{ array_get($row, $column->getId(), '-') }}</td>
 								@endforeach

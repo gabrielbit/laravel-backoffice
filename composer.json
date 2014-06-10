@@ -5,7 +5,8 @@
         "illuminate/support": "4.1.*",
         "illuminate/view": "4.1.*",
 	    "way/generators": "~2.0",
-	    "digbang/font-awesome": "dev-master"
+	    "digbang/font-awesome": "dev-master",
+        "illuminate/pagination": "4.1.*"
     },
     "require-dev": {
 	    "digbang/backoffice-template": "dev-master",

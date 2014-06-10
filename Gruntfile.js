@@ -9,9 +9,7 @@ module.exports = function(grunt) {
 					compress: true  //minifying the result
 				},
 				files: {
-					//compiling frontend.less into frontend.css
-					"./public/css/backoffice.css":"./src/assets/less/backoffice.less",
-					"./public/css/custom.css":"./src/assets/less/custom.less"
+					"./public/css/backoffice.css":"./src/assets/less/backoffice.less"
 				}
 			}
 		},

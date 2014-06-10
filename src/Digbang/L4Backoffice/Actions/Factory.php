@@ -32,6 +32,15 @@ class Factory
 		return new Collection($this, new DigbangCollection());
 	}
 
+	public function dropdown($label, $options = [])
+	{
+		return new DropDown(
+			$this->controlFactory->make('l4-backoffice::actions.dropdown', $label, $options),
+			$this,
+			new DigbangCollection()
+		);
+	}
+
 	protected function uniqueClasses($current, array $newClasses)
 	{
 		return implode(' ', array_unique(array_merge(explode(' ', $current), $newClasses)));

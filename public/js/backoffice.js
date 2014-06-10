@@ -5178,8 +5178,31 @@ permissions and limitations under the Apache License and the GPL License.
 
 	$('.select2').each(function(){
 		$(this).select2({
-			closeOnSelect: false //$(this).hasAttribute('multiple')
+			closeOnSelect: $(this).attr('multiple')
 		});
+	});
+
+	$(document).on('change', 'input.chk-all', function(){
+		$('input.chk-bulk').attr('checked', $(this).is(':checked'));
+	});
+
+	$(document).on('change', 'input.chk-bulk', function(){
+		var $bulkInputs = $('input.chk-bulk');
+
+		var total   = $bulkInputs.length,
+			checked = $bulkInputs.filter(':checked').length,
+			$all    = $('input.chk-all');
+
+		$all.get(0).indeterminate = (checked > 0 && checked != total);
+
+		if (checked == total)
+		{
+			$all.attr('checked', 'checked');
+		}
+		else
+		{
+			$all.attr('checked', null);
+		}
 	});
 });
 

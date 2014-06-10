@@ -1,6 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Support\Collection;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
 use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
@@ -34,6 +36,8 @@ class Listing implements RenderableInterface, Countable
 	 * @var \Digbang\L4Backoffice\Support\Collection
 	 */
 	protected $collection;
+
+	protected $paginator;
 
 	function __construct(Collection $collection, FilterCollection $filters, ActionCollection $actionCollection)
 	{
@@ -82,22 +86,34 @@ class Listing implements RenderableInterface, Countable
 	public function render()
 	{
 		return \View::make($this->view, [
-			'columns' => $this->columns->visible(),
-			'items'   => $this->collection,
-			'filters' => $this->filters->all(),
-			'actions' => $this->actions()
+			'columns'     => $this->columns->visible(),
+			'items'       => $this->collection,
+			'filters'     => $this->filters->all(),
+			'actions'     => $this->actions(),
+			'bulkActions' => $this->bulkActions(),
+			'paginator'   => $this->paginator
 		]);
 	}
 
     public function fill($elements)
     {
-        foreach ($elements as $element)
-        {
-	        $this->collection->push($this->makeRow($element));
-        }
+        $this->addElements($elements);
+
+	    if ($elements instanceof Paginator)
+	    {
+		    $this->paginator = $elements;
+	    }
 
 	    return $this;
     }
+
+	protected function addElements($elements)
+	{
+		foreach ($elements as $element)
+		{
+			$this->collection->push($this->makeRow($element));
+		}
+	}
 
 	/**
 	 * @param $element
@@ -111,17 +127,22 @@ class Listing implements RenderableInterface, Countable
 		foreach ($this->columns as $column)
 		{
 			/* @var $column \Digbang\L4Backoffice\Listings\Column */
-			$id = $column->getId();
-
-			if (!array_key_exists($id, $element))
-			{
-				throw new \InvalidArgumentException("Column $id not defined.");
-			}
-
-			$row[$id] = $element[$id];
+			$row[$column->getId()] = $this->extractValue($element, $column->getId());
 		}
 
 		return $row;
+	}
+
+	protected function extractValue($element, $id)
+	{
+		$element = $this->toArray($element);
+
+		if (!array_key_exists($id, $element))
+		{
+			throw new \InvalidArgumentException("Column $id not defined.");
+		}
+
+		return $element[$id];
 	}
 
 	public function setActions(ActionCollection $actions)
@@ -153,5 +174,26 @@ class Listing implements RenderableInterface, Countable
 	public function count()
 	{
 		return $this->collection->count();
+	}
+
+	/**
+	 * @param $element
+	 * @return array
+	 */
+	protected function toArray($element)
+	{
+		if (!is_array($element))
+		{
+			if ($element instanceof ArrayableInterface)
+			{
+				$element = $element->toArray();
+			}
+			else
+			{
+				$element = (array) $element;
+			}
+		}
+
+		return $element;
 	}
 }
