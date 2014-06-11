@@ -88,10 +88,16 @@ module.exports = function(grunt) {
 		 },*/
 		watch: {
 			less: {
-				files: ['./app/assets/less/*.less'],  //watched files
-				tasks: ['less'],                          //tasks to run
+				files: ['./app/assets/less/*.less'],  // watched files
+				tasks: ['less'],                      // tasks to run
 				options: {
-					livereload: true                        //reloads the browser
+					livereload: true                  // reloads the browser
+				}
+			},
+			configFiles: {
+				files: ['Gruntfile.js'],
+				options: {
+					reload: true
 				}
 			}
 		}
