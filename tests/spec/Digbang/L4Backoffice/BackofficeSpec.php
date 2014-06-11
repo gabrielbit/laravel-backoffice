@@ -1,8 +1,9 @@
 <?php namespace spec\Digbang\L4Backoffice;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
+use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Forms\Factory as FormFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -12,13 +13,15 @@ class BackofficeSpec extends ObjectBehavior
 	function let()
 	{
 		$controlFactory = new ControlFactory();
-		$filterFactory = new FilterFactory($controlFactory);
-		$actionFactory = new ActionFactory($controlFactory);
+		$inputFactory  = new InputFactory($controlFactory);
+		$actionFactory  = new ActionFactory($controlFactory);
+		$formFactory    = new FormFactory($inputFactory);
 
 		$this->beConstructedWith(
-			new ListingFactory($filterFactory, $actionFactory),
+			new ListingFactory($inputFactory, $actionFactory),
 			$actionFactory,
-			$controlFactory
+			$controlFactory,
+			$formFactory
 		);
 	}
 
@@ -52,5 +55,10 @@ class BackofficeSpec extends ObjectBehavior
 	function it_is_a_facade_for_the_actions_factory()
 	{
 		$this->actions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
+	}
+
+	function it_is_a_facade_for_the_form_element()
+	{
+		$this->form()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
 	}
 }

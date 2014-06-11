@@ -1,25 +1,26 @@
 <?php namespace Digbang\L4Backoffice;
 
-use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Forms\Factory as FormFactory;
 use Digbang\L4Backoffice\Listings\Column;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use Digbang\L4Backoffice\Support\Breadcrumb;
-use Illuminate\Support\Facades\Lang;
 
 class Backoffice
 {
 	protected $listingFactory;
 	protected $actionFactory;
 	protected $controlFactory;
+	protected $formFactory;
 
-	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory, ControlFactory $controlFactory)
+	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory, ControlFactory $controlFactory, FormFactory $formFactory)
 	{
 		$this->listingFactory = $listingFactory;
 		$this->actionFactory  = $actionFactory;
 		$this->controlFactory = $controlFactory;
+		$this->formFactory = $formFactory;
 	}
 
     public function listing()
@@ -50,5 +51,10 @@ class Backoffice
     public function actions()
     {
         return $this->actionFactory->collection();
+    }
+
+    public function form()
+    {
+	    return $this->formFactory->make();
     }
 }
