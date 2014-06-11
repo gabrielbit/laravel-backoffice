@@ -1,8 +1,8 @@
-<?php namespace Digbang\L4Backoffice\Filters;
+<?php namespace Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
 
-interface FilterInterface extends ControlInterface
+interface InputInterface extends ControlInterface
 {
 	/**
 	 * The filter name, as will be sent in the request.

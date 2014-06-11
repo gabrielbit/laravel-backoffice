@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Filters;
+<?php namespace Digbang\L4Backoffice\Inputs;
 
 class Collection implements \IteratorAggregate
 {
@@ -23,12 +23,12 @@ class Collection implements \IteratorAggregate
 
 	public function find($name)
 	{
-		return $this->collection->first(function($key, FilterInterface $filter) use ($name){
+		return $this->collection->first(function($key, InputInterface $filter) use ($name){
 			return $filter->name() == $name;
 		});
 	}
 
-	public function add(FilterInterface $filter)
+	public function add(InputInterface $filter)
 	{
 		$this->collection->push($filter);
 

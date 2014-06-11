@@ -1,11 +1,11 @@
-<?php namespace Digbang\L4Backoffice\Filters;
+<?php namespace Digbang\L4Backoffice\Inputs;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 
 /**
  * Class DropDown
- * @package Digbang\L4Backoffice\Filters
+ * @package Digbang\L4Backoffice\Inputs
  */
-class DropDown extends Filter implements FilterInterface
+class DropDown extends Input implements InputInterface
 {
 	protected $data;
 

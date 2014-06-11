@@ -1,15 +1,15 @@
-<?php namespace spec\Digbang\L4Backoffice\Filters;
+<?php namespace spec\Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Filters\Factory;
+use Digbang\L4Backoffice\Inputs\Factory;
 use Digbang\L4Backoffice\Support\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
  * Class CollectionSpec
- * @mixin \Digbang\L4Backoffice\Filters\Collection
- * @package spec\Digbang\L4Backoffice\Filters
+ * @mixin \Digbang\L4Backoffice\Inputs\Collection
+ * @package spec\Digbang\L4Backoffice\Inputs
  */
 class CollectionSpec extends ObjectBehavior
 {
@@ -20,7 +20,7 @@ class CollectionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Filters\Collection');
+        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\Collection');
     }
 
 	function it_should_find_a_filter_by_its_name()
@@ -29,7 +29,7 @@ class CollectionSpec extends ObjectBehavior
 
 		$this->text('someName');
 
-		$this->find('someName')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\FilterInterface');
+		$this->find('someName')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\FilterInterface');
 	}
 
 	function it_should_give_me_a_collection_of_filters()

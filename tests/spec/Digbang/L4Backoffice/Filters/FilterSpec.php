@@ -1,4 +1,4 @@
-<?php namespace spec\Digbang\L4Backoffice\Filters;
+<?php namespace spec\Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use PhpSpec\ObjectBehavior;
@@ -6,8 +6,8 @@ use Prophecy\Argument;
 
 /**
  * Class FilterSpec
- * @mixin \Digbang\L4Backoffice\Filters\Filter
- * @package spec\Digbang\L4Backoffice\Filters
+ * @mixin \Digbang\L4Backoffice\Inputs\Input
+ * @package spec\Digbang\L4Backoffice\Inputs
  */
 class FilterSpec extends ObjectBehavior
 {
@@ -19,7 +19,7 @@ class FilterSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Filters\Filter');
+        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\Filter');
 	    $this->shouldHaveType('Illuminate\Support\Contracts\RenderableInterface');
     }
 

@@ -1,17 +1,17 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
-use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
 class ListingFactory
 {
-	protected $filterFactory;
+	protected $InputFactory;
 	protected $actionFactory;
 
-	public function __construct(FilterFactory $filterFactory, ActionFactory $actionFactory)
+	public function __construct(InputFactory $InputFactory, ActionFactory $actionFactory)
 	{
-		$this->filterFactory = $filterFactory;
+		$this->InputFactory = $InputFactory;
 		$this->actionFactory = $actionFactory;
 	}
 
@@ -19,7 +19,7 @@ class ListingFactory
     {
         return new Listing(
 	        new DigbangCollection(),
-	        $this->filterFactory->collection(),
+	        $this->InputFactory->collection(),
 	        $this->actionFactory->collection()
         );
     }

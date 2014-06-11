@@ -4,7 +4,7 @@ use Digbang\L4Backoffice\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
-use Digbang\L4Backoffice\Filters\Collection as FilterCollection;
+use Digbang\L4Backoffice\Inputs\Collection as FilterCollection;
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Countable;
 
@@ -13,7 +13,7 @@ class Listing implements RenderableInterface, Countable
 	protected $view = 'l4-backoffice::listing';
 
 	/**
-	 * @var \Digbang\L4Backoffice\Filters\Collection
+	 * @var \Digbang\L4Backoffice\Inputs\Collection
 	 */
 	protected $filters;
 

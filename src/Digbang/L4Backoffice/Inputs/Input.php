@@ -1,11 +1,11 @@
-<?php namespace Digbang\L4Backoffice\Filters;
+<?php namespace Digbang\L4Backoffice\Inputs;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 
 /**
- * Class Filter
- * @package Digbang\L4Backoffice\Filters
+ * Class Input
+ * @package Digbang\L4Backoffice\Inputs
  */
-class Filter implements FilterInterface
+class Input implements InputInterface
 {
 	/**
 	 * @var ControlInterface

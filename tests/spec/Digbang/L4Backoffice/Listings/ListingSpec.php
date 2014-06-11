@@ -1,7 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
@@ -40,14 +40,14 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_have_a_filters_collection()
 	{
-		$this->filters()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Collection');
+		$this->filters()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Collection');
 	}
 
 	function it_should_give_me_a_specific_filter_by_name()
 	{
 		$this->filters()->text('some_filter');
 
-		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Filters\Filter');
+		$this->filters('some_filter')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Input');
 	}
 
 	function it_should_let_me_fill_it_with_a_well_formed_array()

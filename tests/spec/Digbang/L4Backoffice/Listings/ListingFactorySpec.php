@@ -1,7 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Filters\Factory as FilterFactory;
+use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Filters;
+<?php namespace Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
@@ -20,9 +20,9 @@ class Factory
 
 	public function text($name, $label = null, $options = [])
     {
-	    return new Filter(
+	    return new Input(
 		    $this->controlFactory->make(
-			    'l4-backoffice::filters.text',
+			    'l4-backoffice::inputs.text',
 			    null,
 		        $this->buildOptions($options, $label)),
 		    $name,
@@ -34,7 +34,7 @@ class Factory
     {
 	    return new DropDown(
 		    $this->controlFactory->make(
-			    'l4-backoffice::filters.dropdown',
+			    'l4-backoffice::inputs.dropdown',
 			    null,
 			    $this->buildOptions($options, $label)),
 		    $name,
