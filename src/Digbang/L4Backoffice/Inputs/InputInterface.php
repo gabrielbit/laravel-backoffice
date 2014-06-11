@@ -5,19 +5,19 @@ use Digbang\L4Backoffice\Controls\ControlInterface;
 interface InputInterface extends ControlInterface
 {
 	/**
-	 * The filter name, as will be sent in the request.
+	 * The input name, as will be sent in the request.
 	 * @return string
 	 */
 	public function name();
 
 	/**
-	 * The filter value as received from the user.
+	 * The input value as received from the user.
 	 * @return string It may well be an integer, but everything is stringy from HTTP requests...
 	 */
 	public function value();
 
 	/**
-	 * The filter default value, used before the user interacts.
+	 * The input default value, used before the user interacts.
 	 * @param $value
 	 */
 	public function defaultsTo($value);
