@@ -8,11 +8,6 @@
 	@section('titlebar.breadcrumb', $breadcrumb)
 @endif
 
-@if(isset($actions))
-	@section('titlebar.actions')
-	@stop
-@endif
-
 @section('panel.content')
 	{{ $list }}
 @stop

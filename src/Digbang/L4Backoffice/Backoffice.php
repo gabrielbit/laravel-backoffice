@@ -53,8 +53,8 @@ class Backoffice
         return $this->actionFactory->collection();
     }
 
-    public function form()
+    public function form($label, $options = [])
     {
-	    return $this->formFactory->make();
+	    return $this->formFactory->make($label, $options);
     }
 }

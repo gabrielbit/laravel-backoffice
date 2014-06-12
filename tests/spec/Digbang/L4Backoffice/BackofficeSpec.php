@@ -15,7 +15,7 @@ class BackofficeSpec extends ObjectBehavior
 		$controlFactory = new ControlFactory();
 		$inputFactory  = new InputFactory($controlFactory);
 		$actionFactory  = new ActionFactory($controlFactory);
-		$formFactory    = new FormFactory($inputFactory);
+		$formFactory    = new FormFactory($inputFactory, $controlFactory);
 
 		$this->beConstructedWith(
 			new ListingFactory($inputFactory, $actionFactory),
@@ -59,6 +59,7 @@ class BackofficeSpec extends ObjectBehavior
 
 	function it_is_a_facade_for_the_form_element()
 	{
-		$this->form()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->form('Some label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->form('Some label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
 	}
 }

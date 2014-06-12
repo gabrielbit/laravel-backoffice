@@ -9,9 +9,10 @@ class FactorySpec extends ObjectBehavior
 {
 	function let()
 	{
-		$inputFactory = new InputFactory(new ControlFactory());
+		$controlFactory = new ControlFactory();
+		$inputFactory = new InputFactory($controlFactory);
 
-		$this->beConstructedWith($inputFactory);
+		$this->beConstructedWith($inputFactory, $controlFactory);
 	}
     function it_is_initializable()
     {
@@ -20,6 +21,7 @@ class FactorySpec extends ObjectBehavior
 
 	function it_should_create_forms()
 	{
-		$this->make()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->make('Some Label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->make('Some Label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
 	}
 }

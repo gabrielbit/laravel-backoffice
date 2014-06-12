@@ -9,9 +9,13 @@ class FormSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$factory = new Factory(new ControlFactory());
+		$controlFactory = new ControlFactory();
+		$factory = new Factory($controlFactory);
 
-		$this->beConstructedWith($factory->collection());
+		$this->beConstructedWith(
+			$controlFactory->make('some-view', 'Some Label', ['some' => 'options']),
+			$factory->collection()
+		);
 	}
 
     function it_is_initializable()
