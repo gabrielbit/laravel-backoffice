@@ -10,5 +10,7 @@ return [
 	'empty_listing'    => 'There are no items.',
 	'select-all'       => 'Select all',
 	'select-none'      => 'Select none',
-	'new'              => 'New :model'
+	'new'              => 'New :model',
+	'edit'             => 'Edit',
+	'back'             => 'Back'
 ];
