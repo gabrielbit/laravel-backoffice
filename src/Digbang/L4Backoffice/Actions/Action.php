@@ -55,11 +55,6 @@ class Action implements ActionInterface
 		return $this->control->view();
 	}
 
-	/**
-	 * Get the evaluated contents of the object.
-	 *
-	 * @return string
-	 */
 	public function render()
 	{
 		return $this->renderTarget($this->target());

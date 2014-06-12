@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use Illuminate\Http\Request;
 
@@ -20,13 +21,11 @@ class Factory
 
 	public function text($name, $label = null, $options = [])
     {
-	    return new Input(
-		    $this->controlFactory->make(
-			    'l4-backoffice::inputs.text',
-			    null,
-		        $this->buildOptions($options, $label)),
-		    $name,
-		    $this->request ? $this->request->get($name) : null
+	    return $this->make(
+		    'l4-backoffice::inputs.text',
+		    $label,
+		    $this->buildOptions($options, $label),
+		    $name
 	    );
     }
 
@@ -43,13 +42,38 @@ class Factory
 	    );
     }
 
+	public function button($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.button',
+			$label,
+			$options,
+			$name
+		);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());
 	}
 
+	protected function make($view, $label, $options, $name)
+	{
+		return new Input(
+			$this->controlFactory->make(
+				$view,
+				$label,
+				$options
+			),
+			$name,
+			$this->request ? $this->request->get($name) : null
+		);
+	}
+
 	protected function buildOptions($options, $label)
 	{
+		$options = array_add($options, 'class', 'form-control');
+
 		if (!$label)
 		{
 			return $options;

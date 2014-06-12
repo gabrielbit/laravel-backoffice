@@ -1,21 +1,20 @@
 <div class="panel panel-default">
-	{{ Form::open(['route' => $routes['store'], 'files' => $hasFile, 'class' => 'form-horizontal form-bordered']) }}
+	{{ Form::open($formOptions) }}
 	<div class="panel-heading">
-		<h4 class="panel-title">New {{ $title }}</h4>
-		<div class="mt10">
-			<a href="{{ $redirectCancel }}"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;{{ $redirectCancelMessage }}</a>
-		</div>
+		<h4 class="panel-title">{{ $label }}</h4>
 	</div>
 	<div class="panel-body panel-body-nopadding">
-		@foreach($renderer->getAttributeRenderers() as $attributeRenderer)
-		<div class="form-group{{ $errors->has($attributeRenderer->getName()) ? ' has-error' : '' }}">
-			{{ $attributeRenderer->getLabel('col-sm-3 control-label') }}
+		@foreach($inputs as $input)
+		<div class="form-group{{ $errors->has($input->name()) ? ' has-error' : '' }}">
+			<label for="{{ $input->name() }}" class="col-sm-3 control-label">
+				{{ $input->label() }}
+			</label>
 			<div class="col-sm-6">
-				{{ $attributeRenderer->render() }}
-				@if($errors->has($attributeRenderer->getName()))
-				@foreach($errors->get($attributeRenderer->getName()) as $error)
-				<label for="{{ $attributeRenderer->getName() }}" class="error">{{ $error }}</label>
-				@endforeach
+				{{ $input->render() }}
+				@if($errors->has($input->name()))
+					@foreach($errors->get($input->name()) as $error)
+						<label for="{{ $input->name() }}" class="error">{{ $error }}</label>
+					@endforeach
 				@endif
 			</div>
 		</div>
@@ -25,7 +24,7 @@
 		<div class="row">
 			<div class="col-sm-6 col-sm-offset-3">
 				{{ Form::submit('Create', ['class' => 'btn btn-primary']) }}
-				<a href="{{ $redirectCancel }}" class="btn btn-default">Cancel</a>
+				<a href="{{ $cancelAction }}" class="btn btn-default">Cancel</a>
 			</div>
 		</div>
 	</div>

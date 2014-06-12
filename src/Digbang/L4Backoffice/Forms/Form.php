@@ -1,18 +1,29 @@
 <?php namespace Digbang\L4Backoffice\Forms;
 
-use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Inputs\Collection;
+use Digbang\L4Backoffice\Inputs\File;
+use Illuminate\Session\Store;
 use Illuminate\Support\Contracts\RenderableInterface;
+use Illuminate\Support\MessageBag;
+use Digbang\L4Backoffice\Actions\Form as FormAction;
 
 class Form implements RenderableInterface
 {
+	protected $view;
+	protected $session;
 	protected $collection;
-	protected $control;
+	protected $form;
+	protected $cancelAction;
+	protected $options;
 
-	function __construct(ControlInterface $control, Collection $collection)
+	function __construct($view, FormAction $form, Collection $collection, Store $session, $cancelAction, $options = [])
 	{
-		$this->control = $control;
+		$this->view = $view;
+		$this->form = $form;
 		$this->collection = $collection;
+		$this->cancelAction = $cancelAction ?: array_get($_SERVER, 'HTTP_REFERER');
+		$this->session = $session;
+		$this->options = $options;
 	}
 
 	public function inputs()
@@ -27,8 +38,34 @@ class Form implements RenderableInterface
 	 */
 	public function render()
 	{
-		return $this->control->render()->with([
-			'inputs' => $this->collection
+		return \View::make($this->view, [
+			'label'        => $this->form->label(),
+			'formOptions'  => $this->buildOptions($this->form->target(), $this->form->method(), $this->options),
+			'inputs'       => $this->collection,
+			'cancelAction' => $this->cancelAction,
+			'errors'       => $this->session->get('errors') ?: new MessageBag()
 		]);
+	}
+
+	public function hasFile()
+	{
+		foreach ($this->collection as $input)
+		{
+			if ($input instanceof File)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected function buildOptions($action, $method, $options = [])
+	{
+		$options['url'] = $action;
+		$options['method'] = $method;
+		$options['files'] = $this->hasFile();
+
+		return array_add($options, 'class', 'form-horizontal form-bordered');
 	}
 }

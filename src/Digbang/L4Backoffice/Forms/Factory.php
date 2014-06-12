@@ -1,24 +1,31 @@
 <?php namespace Digbang\L4Backoffice\Forms;
 
-use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
+use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Illuminate\Session\Store;
 
 class Factory
 {
 	protected $inputFactory;
-	protected $controlFactory;
+	protected $actionFactory;
+	protected $session;
 
-	function __construct(InputFactory $inputFactory, ControlFactory $controlFactory)
+	function __construct(InputFactory $inputFactory, ActionFactory $actionFactory, Store $session)
 	{
 		$this->inputFactory = $inputFactory;
-		$this->controlFactory = $controlFactory;
+		$this->actionFactory = $actionFactory;
+		$this->session = $session;
 	}
 
-	public function make($label, $options = [])
+	public function make($target, $label, $method = 'POST',  $cancelAction = '', $options = [])
     {
         return new Form(
-	        $this->controlFactory->make('l4-backoffice::form', $label, $options),
-	        $this->inputFactory->collection()
+	        'l4-backoffice::form',
+	        $this->actionFactory->form($target, $label, $method, []),
+	        $this->inputFactory->collection(),
+	        $this->session,
+	        $cancelAction,
+	        $options
         );
     }
 }

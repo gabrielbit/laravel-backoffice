@@ -19,7 +19,7 @@ interface ControlInterface extends RenderableInterface
 
 	/**
 	 * The view that will be rendered. Controls always render a view of some sort.
-	 * @return \Illuminate\View\View
+	 * @return string
 	 */
 	public function view();
 }

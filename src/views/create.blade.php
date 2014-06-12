@@ -10,5 +10,5 @@
 @endif
 
 @section('panel.content')
-	{{ $list }}
+	{{ $form->render() }}
 @stop

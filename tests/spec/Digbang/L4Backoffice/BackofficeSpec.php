@@ -5,17 +5,19 @@ use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Forms\Factory as FormFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
+use Illuminate\Session\Store;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class BackofficeSpec extends ObjectBehavior
 {
-	function let()
+	function let(Store $session)
 	{
+		/* @var $session \PhpSpec\Wrapper\Collaborator */
 		$controlFactory = new ControlFactory();
 		$inputFactory  = new InputFactory($controlFactory);
 		$actionFactory  = new ActionFactory($controlFactory);
-		$formFactory    = new FormFactory($inputFactory, $controlFactory);
+		$formFactory    = new FormFactory($inputFactory, $actionFactory, $session->getWrappedObject());
 
 		$this->beConstructedWith(
 			new ListingFactory($inputFactory, $actionFactory),
@@ -59,7 +61,7 @@ class BackofficeSpec extends ObjectBehavior
 
 	function it_is_a_facade_for_the_form_element()
 	{
-		$this->form('Some label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
-		$this->form('Some label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->form('http://some.url/', 'Some label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
+		$this->form('http://some.url/', 'Some label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Forms\Form');
 	}
 }
