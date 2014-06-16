@@ -7,6 +7,11 @@ use Illuminate\Session\Store;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * Class FormSpec
+ * @mixin \Digbang\L4Backoffice\Forms\Form
+ * @package spec\Digbang\L4Backoffice\Forms
+ */
 class FormSpec extends ObjectBehavior
 {
 	function let(Store $session)
@@ -39,5 +44,36 @@ class FormSpec extends ObjectBehavior
 	function it_should_let_me_know_if_it_has_a_file_input()
 	{
 		$this->hasFile()->shouldReturn(false);
+	}
+
+	function it_should_let_me_access_values()
+	{
+		$inputs = $this->inputs();
+
+		$inputs->text('aName', 'A Label');
+
+		/* @var $aName \Digbang\L4Backoffice\Inputs\Input */
+		$aName = $inputs->find('aName');
+		$aName->setValue($value = uniqid());
+
+		$this->value('aName')->shouldReturn($value);
+	}
+
+	function it_should_let_me_fill_the_inputs_with_values()
+	{
+		$this->inputs()
+			->text('aName', 'A Label')
+			->text('aName2', 'A Label')
+			->text('aName3', 'A Label');
+
+		$this->fill([
+			'aName' => 'aValue',
+			'aName2' => 'another Value',
+			'aName3' => 34
+		]);
+
+		$this->value('aName')->shouldBe('aValue');
+		$this->value('aName2')->shouldBe('another Value');
+		$this->value('aName3')->shouldBe(34);
 	}
 }

@@ -68,4 +68,23 @@ class Form implements RenderableInterface
 
 		return array_add($options, 'class', 'form-horizontal form-bordered');
 	}
+
+    public function value($name)
+    {
+	    if ($input = $this->collection->find($name))
+	    {
+		    return $input->value();
+	    }
+    }
+
+    public function fill(array $values)
+    {
+        foreach ($values as $name => $value)
+        {
+	        if ($input = $this->collection->find($name))
+	        {
+		        $input->setValue($value);
+	        }
+        }
+    }
 }
