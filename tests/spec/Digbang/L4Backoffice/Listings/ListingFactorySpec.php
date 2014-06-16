@@ -3,6 +3,8 @@
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Listings\ColumnCollection;
+use Digbang\L4Backoffice\Listings\ColumnFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -24,6 +26,7 @@ class ListingFactorySpec extends ObjectBehavior
 
 	function it_should_make_listings()
 	{
-		$this->make()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\Listing');
+		$columnsFactory = new ColumnFactory();
+		$this->make($columnsFactory->make(['some', 'columns']))->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\Listing');
 	}
 }

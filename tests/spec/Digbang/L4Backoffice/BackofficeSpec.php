@@ -4,6 +4,7 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Forms\Factory as FormFactory;
+use Digbang\L4Backoffice\Listings\ColumnFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use Illuminate\Session\Store;
 use PhpSpec\ObjectBehavior;
@@ -18,12 +19,14 @@ class BackofficeSpec extends ObjectBehavior
 		$inputFactory  = new InputFactory($controlFactory);
 		$actionFactory  = new ActionFactory($controlFactory);
 		$formFactory    = new FormFactory($inputFactory, $actionFactory, $session->getWrappedObject());
+		$columnFactory  = new ColumnFactory();
 
 		$this->beConstructedWith(
 			new ListingFactory($inputFactory, $actionFactory),
 			$actionFactory,
 			$controlFactory,
-			$formFactory
+			$formFactory,
+			$columnFactory
 		);
 	}
 
@@ -34,7 +37,9 @@ class BackofficeSpec extends ObjectBehavior
 
 	function it_is_a_facade_for_the_listing_factory()
 	{
-		$this->listing()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\Listing');
+		$this->listing(
+			['column' => 'A', 'Some', 'stuff' => 'asd']
+		)->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\Listing');
 	}
 
 	function it_is_a_facade_for_the_breadcrumb_factory()
@@ -44,14 +49,6 @@ class BackofficeSpec extends ObjectBehavior
 			'Category' => 'http://the.url/category',
 			'Category Item'
 		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Support\Breadcrumb');
-	}
-
-	function it_is_a_facade_for_the_columns_factory()
-	{
-		$this->columns([
-			'name' => 'Name',
-			'some' => 'Stuff'
-		])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Listings\ColumnCollection');
 	}
 
 	function it_is_a_facade_for_the_actions_factory()

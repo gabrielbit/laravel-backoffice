@@ -3,8 +3,7 @@
 use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Forms\Factory as FormFactory;
-use Digbang\L4Backoffice\Listings\Column;
-use Digbang\L4Backoffice\Listings\ColumnCollection;
+use Digbang\L4Backoffice\Listings\ColumnFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use Digbang\L4Backoffice\Support\Breadcrumb;
 
@@ -14,18 +13,22 @@ class Backoffice
 	protected $actionFactory;
 	protected $controlFactory;
 	protected $formFactory;
+	protected $columnFactory;
 
-	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory, ControlFactory $controlFactory, FormFactory $formFactory)
+	public function __construct(ListingFactory $listingFactory, ActionFactory $actionFactory, ControlFactory $controlFactory, FormFactory $formFactory, ColumnFactory $columnFactory)
 	{
 		$this->listingFactory = $listingFactory;
 		$this->actionFactory  = $actionFactory;
 		$this->controlFactory = $controlFactory;
-		$this->formFactory = $formFactory;
+		$this->formFactory    = $formFactory;
+		$this->columnFactory  = $columnFactory;
 	}
 
-    public function listing()
+    public function listing($columns = [])
     {
-        return $this->listingFactory->make();
+        return $this->listingFactory->make(
+	        $this->columnFactory->make($columns)
+        );
     }
 
     public function breadcrumb($data = [], $label = '', $options = [])
@@ -34,18 +37,6 @@ class Backoffice
 	        $this->controlFactory->make('l4-backoffice::breadcrumb', $label, $options),
 	        new \Illuminate\Support\Collection($data)
         );
-    }
-
-    public function columns($data = [])
-    {
-        $columns = new ColumnCollection();
-
-	    foreach ($data as $id => $label)
-	    {
-		    $columns->push(new Column(is_string($id) ? $id : $label, $label));
-	    }
-
-	    return $columns;
     }
 
     public function actions()

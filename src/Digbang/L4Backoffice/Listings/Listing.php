@@ -66,11 +66,14 @@ class Listing implements RenderableInterface, Countable
 	 * @param ColumnCollection $columnCollection
 	 * @return Listing $this
 	 */
-	public function columns(ColumnCollection $columnCollection)
+	public function columns(ColumnCollection $columnCollection = null)
 	{
-		$this->columns = $columnCollection;
+		if ($columnCollection)
+		{
+			$this->columns = $columnCollection;
+		}
 
-		return $this;
+		return $this->columns;
 	}
 
 	public function filters($name = null)

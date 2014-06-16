@@ -15,12 +15,16 @@ class ListingFactory
 		$this->actionFactory = $actionFactory;
 	}
 
-    public function make()
+    public function make(ColumnCollection $columns)
     {
-        return new Listing(
+        $listing = new Listing(
 	        new DigbangCollection(),
 	        $this->InputFactory->collection(),
 	        $this->actionFactory->collection()
         );
+
+	    $listing->columns($columns);
+
+	    return $listing;
     }
 }
