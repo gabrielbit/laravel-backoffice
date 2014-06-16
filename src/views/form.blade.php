@@ -23,7 +23,7 @@
 	<div class="panel-footer">
 		<div class="row">
 			<div class="col-sm-6 col-sm-offset-3">
-				{{ Form::submit('Create', ['class' => 'btn btn-primary']) }}
+				{{ Form::submit($label, ['class' => 'btn btn-primary']) }}
 				<a href="{{ $cancelAction }}" class="btn btn-default">Cancel</a>
 			</div>
 		</div>
