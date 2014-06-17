@@ -30,20 +30,24 @@ class Listing implements RenderableInterface, Countable
 	/**
 	 * @var \Digbang\L4Backoffice\Actions\Collection
 	 */
+	protected $rowActions;
+
+	/**
+	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 */
 	protected $bulkActions;
 
 	/**
 	 * @var \Digbang\L4Backoffice\Support\Collection
 	 */
-	protected $collection;
+	protected $rows;
 
 	protected $paginator;
 
-	function __construct(Collection $collection, FilterCollection $filters, ActionCollection $actionCollection)
+	function __construct(Collection $rows, FilterCollection $filters)
 	{
-		$this->collection = $collection;
-		$this->filters = $filters;
-		$this->bulkActions = $actionCollection;
+		$this->rows        = $rows;
+		$this->filters     = $filters;
 	}
 
 	/**
@@ -90,9 +94,10 @@ class Listing implements RenderableInterface, Countable
 	{
 		return \View::make($this->view, [
 			'columns'     => $this->columns->visible(),
-			'items'       => $this->collection,
+			'items'       => $this->rows,
 			'filters'     => $this->filters->all(),
 			'actions'     => $this->actions(),
+			'rowActions' => $this->rowActions(),
 			'bulkActions' => $this->bulkActions(),
 			'paginator'   => $this->paginator
 		]);
@@ -114,7 +119,7 @@ class Listing implements RenderableInterface, Countable
 	{
 		foreach ($elements as $element)
 		{
-			$this->collection->push($this->makeRow($element));
+			$this->rows->push($this->makeRow($element));
 		}
 	}
 
@@ -158,6 +163,16 @@ class Listing implements RenderableInterface, Countable
 		return $this->actions;
 	}
 
+	public function setRowActions(ActionCollection $rowActions)
+	{
+		$this->rowActions = $rowActions;
+	}
+
+	public function rowActions()
+	{
+		return $this->rowActions;
+	}
+
 	public function setBulkActions(ActionCollection $actions)
 	{
 		$this->bulkActions = $actions;
@@ -176,7 +191,7 @@ class Listing implements RenderableInterface, Countable
 	 */
 	public function count()
 	{
-		return $this->collection->count();
+		return $this->rows->count();
 	}
 
 	/**

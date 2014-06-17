@@ -5,8 +5,8 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div class="header-list">
-						@if(count($bulkActions))
-							@include('l4-backoffice::lists.bulk-actions', ['actions' => $bulkActions])
+						@if($actions || $bulkActions)
+							@include('l4-backoffice::lists.actions', ['actions' => $actions, 'bulkActions' => $bulkActions])
 						@endif
 						@if($paginator)
 							@include('l4-backoffice::lists.pagination', ['paginator' => $paginator])
@@ -45,9 +45,11 @@
 									<td>{{ array_get($row, $column->getId(), '-') }}</td>
 								@endforeach
 									<td>
-										@foreach($actions as $action)
-											{{ $action->renderWith($row) }}
-										@endforeach
+										@if($rowActions)
+											@foreach($rowActions as $action)
+												{{ $action->renderWith($row) }}
+											@endforeach
+										@endif
 									</td>
 								</tr>
 							@endforeach

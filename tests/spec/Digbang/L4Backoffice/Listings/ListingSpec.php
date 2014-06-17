@@ -2,7 +2,6 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
-use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use PhpSpec\ObjectBehavior;
@@ -17,13 +16,11 @@ class ListingSpec extends ObjectBehavior
 	function let()
 	{
 		$controlFactory = new ControlFactory();
-		$filterFactory = new FilterFactory($controlFactory);
-		$actionFactory = new ActionFactory($controlFactory);
+		$filterFactory  = new FilterFactory($controlFactory);
 
 		$this->beConstructedWith(
 			new DigbangCollection(),
-			$filterFactory->collection(),
-			$actionFactory->collection()
+			$filterFactory->collection()
 		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
@@ -100,8 +97,30 @@ class ListingSpec extends ObjectBehavior
 			]));
 	}
 
+	function it_should_hold_actions_that_may_apply_to_the_listing_or_just_link_somewhere_related()
+	{
+		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+
+		$this->setActions($actionFactory->collection());
+
+		$this->actions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
+	}
+
+	function it_should_hold_row_actions_for_each_element_in_the_listing()
+	{
+		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+
+		$this->setRowActions($actionFactory->collection());
+
+		$this->rowActions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
+	}
+
 	function it_should_hold_bulk_actions_that_apply_to_selected_items()
 	{
+		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+
+		$this->setBulkActions($actionFactory->collection());
+
 		$this->bulkActions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
 	}
 }
