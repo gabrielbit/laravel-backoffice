@@ -52,6 +52,11 @@ class Factory
 		);
 	}
 
+	public function checkbox($name, $label, $options = [])
+	{
+		return $this->make('l4-backoffice::inputs.checkbox', $label, $options, $name);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());

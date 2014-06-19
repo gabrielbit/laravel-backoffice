@@ -21,6 +21,11 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->dropdown($name, $label, $data, $options));
 	}
 
+	public function checkbox($name, $label, $options = [])
+	{
+		return $this->add($this->factory->checkbox($name, $label, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){

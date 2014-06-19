@@ -45,7 +45,7 @@ class Control implements ControlInterface
 			return $this->options;
 		}
 
-		return $this->options[$name];
+		return array_get($this->options, $name, null);
 	}
 
 	public function setView($view)
