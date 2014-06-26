@@ -10,7 +10,8 @@
     },
     "require-dev": {
 	    "digbang/backoffice-template": "dev-master",
-        "phpspec/phpspec": "~2.0"
+        "phpspec/phpspec": "~2.0",
+	    "illuminate/database": "4.1.*"
     },
     "license": "Proprietary",
     "authors": [

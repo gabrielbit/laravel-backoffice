@@ -12,6 +12,8 @@ class BackofficeServiceProvider extends ServiceProvider
 	{
 		$this->package('digbang/l4-backoffice');
 
+		$this->stringMacros();
+
 		require_once 'composers.php';
 	}
 
@@ -26,5 +28,14 @@ class BackofficeServiceProvider extends ServiceProvider
 		$this->app->bind('linkMaker', 'Digbang\L4Backoffice\Support\LinkMaker');
 
 		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
+	}
+
+	protected function stringMacros()
+	{
+		\Str::macro('titleFromSlug', function($slug){
+			return \Str::title(str_replace(array('-', '_'), ' ', $slug));
+		});
+
+		
 	}
 } 

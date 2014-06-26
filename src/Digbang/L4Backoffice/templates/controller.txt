@@ -1,0 +1,238 @@
+<?php namespace $namespace$;
+
+use Digbang\L4Backoffice\Backoffice;
+use Digbang\L4Backoffice\Listings\Listing;
+use Digbang\L4Backoffice\Exceptions\ValidationException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Redirect;
+
+class $classname$Controller extends BaseController
+{
+	protected $backoffice;
+
+	function __construct(Backoffice $backoffice)
+	{
+		$this->backoffice = $backoffice;
+	}
+
+	public function index()
+	{
+		$list = $this->getListing();
+
+		$this->buildFilters($list);
+
+		$this->buildListActions($list);
+
+		$list->fill(
+			$this->getData(\Input::all())
+		);
+
+		$breadcrumb = $this->backoffice->breadcrumb(['Home' => route('backoffice.index'), '$classname$']);
+
+		return \View::make('l4-backoffice::index', [
+			'title'      => '$plural_classname$',
+			'list'       => $list,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+
+	public function create()
+	{
+		$label = \Lang::get('l4-backoffice::default.new', ['model' => '$classname$']);
+
+		$form = $this->buildForm(route('backoffice.$snake_classname$.store'), $label, 'POST', route('backoffice.$snake_classname$.index'));
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'$classname$' => route('backoffice.$snake_classname$.index'),
+			$label
+		]);
+
+		return \View::make('l4-backoffice::create', [
+			'title'      => '$plural_classname$',
+			'form'       => $form,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+
+	public function store()
+	{
+		try
+		{
+			$$camel_classname$ = $full_model$::create([
+				$inputs_into_columns$
+			]);
+
+			return \Redirect::to(route('backoffice.$snake_classname$.show', $$camel_classname$->getKey()));
+		}
+		catch (ValidationException $e)
+		{
+			return \Redirect::back()->withInput()->withErrors($e->getErrors());
+		}
+	}
+
+	public function show($id)
+	{
+		/* @var $entity $full_model$ */
+		$entity = $full_model$::find($id);
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home'    => route('backoffice.index'),
+			'$plural_classname$' => route('backoffice.$snake_classname$.index'),
+			$entity->$title_attribute_getter$
+		]);
+
+		return \View::make('l4-backoffice::show', [
+			'title'      => '$plural_classname$',
+			'breadcrumb' => $breadcrumb,
+			'label'      => $entity->$title_attribute_getter$,
+			'data'       => $entity->toArray(),
+			'editAction' => route('backoffice.$snake_classname$.edit', $id),
+			'backAction' => route('backoffice.$snake_classname$.index')
+		]);
+	}
+
+	public function edit($id)
+	{
+		$entity = $full_model$::find($id);
+
+		$label = \Lang::get('l4-backoffice::default.edit');
+
+		$form = $this->buildForm(
+			route('backoffice.$snake_classname$.update', $id),
+			$label,
+			'PUT',
+			route('backoffice.$snake_classname$.show', $id)
+		);
+
+		$form->fill([
+			$data_into_columns$
+		]);
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'$plural_classname$' => route('backoffice.$snake_classname$.index'),
+			$entity->$title_attribute_getter$ => route('backoffice.$snake_classname$.show', $id),
+			\Lang::get('l4-backoffice::default.edit')
+		]);
+
+		return \View::make('l4-backoffice::edit', [
+			'title'      => 'Edit $classname$',
+			'form'       => $form,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+
+	public function update($id)
+	{
+		// Get the entity
+		$entity = $full_model$::find($id);
+
+		// Fill it with the input
+		$entity->fill(\Input::only([
+			$columns$
+		]));
+
+		try
+		{
+			// Try to save it
+			$entity->save();
+
+			// Redirect to show
+			return \Redirect::route('backoffice.$snake_classname$.show', [$entity->getKey()]);
+		}
+		catch (ValidationException $e)
+		{
+			// Or redirect back with the errors
+			return \Redirect::back()->withInput()->withErrors($e->getErrors());
+		}
+	}
+
+	public function destroy($id)
+	{
+		try
+		{
+			// Try to destroy the entity
+			$full_model$::destroy($id);
+
+			// Redirect to the listing
+			return \Redirect::route('backoffice.$snake_classname$.index')->with(['success' => "$classname$ $id deleted"]);
+		}
+		catch (ValidationException $e)
+		{
+			return \Redirect::back()->withErrors($e->getErrors());
+		}
+	}
+
+	protected function buildForm($target, $label, $method = 'POST', $cancelAction = '', $options = [])
+	{
+		$form = $this->backoffice->form($target, $label, $method, $cancelAction, $options);
+
+		$form->inputs()
+			$form_inputs$;
+
+		return $form;
+	}
+
+	/**
+	 * @param $list
+	 */
+	protected function buildFilters(Listing $list)
+	{
+		$filters = $list->filters();
+			// Here we add filters to the list
+		$filters
+			$filters$;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	protected function getListing()
+	{
+		$listing = $this->backoffice->listing([
+			$columns_with_labels$
+		]);
+
+		$columns = $listing->columns();
+		$columns
+			->hide([$columns_hide$])
+			->sortable([$columns_sortable$]);
+
+		return $listing;
+	}
+
+	protected function buildListActions(Listing $list)
+	{
+		$list->setActions(
+			$this->backoffice->actions()
+				->link(route('backoffice.$snake_classname$.create'), 'New $classname$', ['class' => 'btn btn-primary'])
+		);
+
+		$list->setRowActions(
+			$this->backoffice->actions()
+				->link(function(Collection $row) {
+					return route('backoffice.$snake_classname$.show', $row['id']);
+				}, \Digbang\FontAwesome\Facade::icon('eye'))
+				->link(function(Collection $row){
+					return route('backoffice.$snake_classname$.edit', $row['id']);
+				}, $text = \Digbang\FontAwesome\Facade::icon('edit'))
+				->form(
+					function(Collection $row){
+						return route('backoffice.$snake_classname$.destroy', $row['id']);
+					},
+					\Digbang\FontAwesome\Facade::icon('times'),
+					'DELETE',
+					['class' => 'text-danger']
+				)
+		);
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getData()
+	{
+		return $full_model$::paginate(10);
+	}
+}
