@@ -197,7 +197,9 @@ class $classname$Controller extends BaseController
 		$columns = $listing->columns();
 		$columns
 			->hide([$columns_hide$])
-			->sortable([$columns_sortable$]);
+			->sortable([
+			$columns_sortable$
+		]);
 
 		return $listing;
 	}
@@ -231,8 +233,20 @@ class $classname$Controller extends BaseController
 	/**
 	 * @return array
 	 */
-	protected function getData()
+	protected function getData($filters)
 	{
-		return $full_model$::paginate(10);
+		if (empty($filters)) return $full_model$::paginate(10);
+
+		$model = new $full_model$();
+
+		foreach ($filters as $key => $value)
+		{
+			if ($value)
+			{
+				$model = $model->where($key, $value);
+			}
+		}
+
+		return $model->paginate(10);
 	}
 }

@@ -17,5 +17,13 @@
 			<li>{{ $table }}</li>
 			@endforeach
 		</ul>
+		Please add this routes to your routes.php:
+		<pre>Route::group(['prefix' => 'backoffice'], function(){
+	...
+@foreach($tables as $table)
+	Route::resource('{{ $table }}', "{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller");
+@endforeach
+	...
+});</pre>
 	</div>
 @stop

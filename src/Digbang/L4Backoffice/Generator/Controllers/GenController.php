@@ -57,7 +57,8 @@ class GenController extends \Controller
 			'POST'
 		);
 
-		$form->inputs()->text('namespace', 'Namespace');
+		$form->inputs()->text('backoffice_namespace', 'Backoffice Namespace');
+		$form->inputs()->text('entities_namespace', 'Entities Namespace');
 
 		// Return it
 		return \View::make('l4-backoffice::gen.customization', ['form' => $form]);
@@ -68,8 +69,8 @@ class GenController extends \Controller
 		// Iterate over each model
 		$tables = $this->session->get('backoffice.gen.tables');
 
-		$backofficeNamespace = 'InkIt\UserInterface\Backoffice\Controllers';
-		$entityNamespace = '\InkIt\Domain\Entities\\';
+		$backofficeNamespace = trim(\Input::get('backoffice_namespace'), ' \\');
+		$entityNamespace = '\\' . trim(\Input::get('entities_namespace'), ' \\') . '\\';
 
 		$fileDir = app_path() . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $backofficeNamespace);
 		$templatePath = realpath(
@@ -106,14 +107,17 @@ class GenController extends \Controller
 		}
 
 		// Return
-		return \View::make('l4-backoffice::gen.generation', ['tables' => array_keys($tables)]);
+		return \View::make('l4-backoffice::gen.generation', [
+			'tables' => array_keys($tables),
+			'backofficeNamespace' => str_replace('\\', '\\\\', $backofficeNamespace)
+		]);
 	}
 
 	protected function columnsInputs($columns)
 	{
 		return array_reduce($columns, function($carry, $column){
 			if ($carry)
-				$carry .= ',' . PHP_EOL . "\t\t\t";
+				$carry .= ',' . PHP_EOL . "\t\t\t\t";
 
 			$carry .= "'$column' => \\Input::get('$column')";
 

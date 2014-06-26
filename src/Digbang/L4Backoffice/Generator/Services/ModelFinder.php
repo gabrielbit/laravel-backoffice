@@ -21,7 +21,10 @@ class ModelFinder
     {
 	    return $this->db->table('information_schema.tables')
 	        ->where('table_schema', 'public')
-		    ->where('table_catalog', $catalogName)->get();
+		    ->where('table_catalog', $catalogName)
+	        ->where('table_name', '<>', 'migrations')
+	        ->orderBy('table_name', 'asc')
+		    ->get();
     }
 
 	public function columns($tableName)
