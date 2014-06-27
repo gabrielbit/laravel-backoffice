@@ -27,7 +27,7 @@ class GenController extends \Controller
 	public function modelSelection()
 	{
 		// Grab current database tables
-		$tables = $this->modelFinder->find('inkit');
+		$tables = $this->modelFinder->find();
 
 		// Build a form with checkboxes for each of them
 		$form = $this->backoffice->form(
@@ -38,11 +38,22 @@ class GenController extends \Controller
 
 		foreach ($tables as $table)
 		{
-			$form->inputs()->checkbox($table->table_name, \Str::titleFromSlug($table->table_name));
+			$form->inputs()->checkbox($table, \Str::titleFromSlug($table));
 		}
 
+		$title = 'Gen';
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'Gen'
+		]);
+
 		// Return it
-		return \View::make('l4-backoffice::gen.model-selection', ['form' => $form]);
+		return \View::make('l4-backoffice::gen.model-selection', [
+			'title' => $title,
+			'breadcrumb' => $breadcrumb,
+			'form' => $form
+		]);
 	}
 
 	public function customization()
@@ -60,8 +71,20 @@ class GenController extends \Controller
 		$form->inputs()->text('backoffice_namespace', 'Backoffice Namespace');
 		$form->inputs()->text('entities_namespace', 'Entities Namespace');
 
+		$title = 'Customize';
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			$title
+		]);
+
 		// Return it
-		return \View::make('l4-backoffice::gen.customization', ['form' => $form]);
+		return \View::make('l4-backoffice::gen.customization', [
+			'title' => $title,
+			'breadcrumb' => $breadcrumb,
+			'form' => $form
+		]);
 	}
 
 	public function generation()
@@ -106,8 +129,18 @@ class GenController extends \Controller
 			], $fileDir . DIRECTORY_SEPARATOR . $className . 'Controller.php');
 		}
 
+		$title = 'Gen complete';
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			$title
+		]);
+
 		// Return
 		return \View::make('l4-backoffice::gen.generation', [
+			'title' => $title,
+			'breadcrumb' => $breadcrumb,
 			'tables' => array_keys($tables),
 			'backofficeNamespace' => str_replace('\\', '\\\\', $backofficeNamespace)
 		]);
@@ -193,5 +226,23 @@ class GenController extends \Controller
 				$column != 'updated_at' &&
 				$column != 'deleted_at';
 		});
+	}
+
+	public function testGenerationPage()
+	{
+		$title = 'Gen complete';
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			'Home' => route('backoffice.index'),
+			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			$title
+		]);
+
+		return \View::make('l4-backoffice::gen.generation', [
+			'title' => $title,
+			'breadcrumb' => $breadcrumb,
+			'tables' => ['foo', 'bar', 'baz', 'a_really_long_table'],
+			'backofficeNamespace' => 'A\\\\Really\\\\Long\\\\Namespace'
+		]);
 	}
 }
