@@ -5,7 +5,7 @@ This project exposes various services and objects to create and maintain a typic
 
 ## Usage
 * Through the `Digbang\L4Backoffice\Backoffice` class
-* Through `php artisan backoffice:*` commands (pending)
+* Through the code generator pages
 
 ## Adding the service provider
 Add this line to your `app/config/app.php` providers array:
@@ -16,6 +16,15 @@ Add this line to your `app/config/app.php` providers array:
 	'Digbang\L4Backoffice\BackofficeServiceProvider'
 	...
 );
+```
+
+## Using the gen
+To use the code generator you need to also add some routes to your `routes.php` file:
+
+```php
+Route::get('gen',            'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection');
+Route::post('gen/customize', 'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@customization');
+Route::post('gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@generation');
 ```
 
 ## Contributing
