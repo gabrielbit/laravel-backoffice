@@ -1,5 +1,8 @@
 <?php namespace spec\Digbang\L4Backoffice\Generator\Services;
 
+use Illuminate\Config\Repository as Config;
+use Illuminate\Database\Connection;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use PhpSpec\ObjectBehavior;
@@ -14,16 +17,25 @@ class ModelFinderSpec extends ObjectBehavior
 {
 	protected $catalogName = 'some_catalog_name';
 
-	function let(DatabaseManager $databaseManager, Builder $queryBuilder)
+	function let(DatabaseManager $databaseManager, Builder $queryBuilder, Config $config, Connection $connection)
 	{
-		$databaseManager->table('information_schema.tables')->willReturn($queryBuilder);
+		$config->get(Argument::any())->willReturn(
+			[
+				[
+					'database' => $this->catalogName
+				]
+			]);
 
-		$queryBuilder->where('table_schema', 'public')->willReturn($queryBuilder);
-		$queryBuilder->where('table_catalog', $this->catalogName)->willReturn($queryBuilder);
+		$databaseManager->connection()->willReturn($connection);
+		$connection->table('information_schema.tables')->willReturn($queryBuilder);
+
+		$queryBuilder->where(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
+		$queryBuilder->orderBy(Argument::any(), Argument::any())->willReturn($queryBuilder);
 
 		$queryBuilder->get()->willReturn(new Collection());
+		$queryBuilder->lists(Argument::any())->willReturn(new Collection());
 
-		$this->beConstructedWith($databaseManager);
+		$this->beConstructedWith($databaseManager, $config);
 	}
 
     function it_is_initializable()
@@ -33,9 +45,9 @@ class ModelFinderSpec extends ObjectBehavior
 
 	function it_should_find_database_tables()
 	{
-		$this->find($this->catalogName)->shouldBeAnInstanceOf('Illuminate\Support\Collection');
+		$this->find()->shouldBeAnInstanceOf('Illuminate\Support\Collection');
 
-		$this->find($this->catalogName)->count()->shouldBeGreaterThanOrEqualTo(1);
+		$this->find()->count()->shouldBeGreaterThanOrEqualTo(1);
 	}
 
 	public function getMatchers()
@@ -54,13 +66,5 @@ class ModelFinderSpec extends ObjectBehavior
 				return $key <= $subject;
 			},
 		];
-	}
-}
-
-class DatabaseManager extends \Illuminate\Database\DatabaseManager
-{
-	public function table()
-	{
-
 	}
 }
