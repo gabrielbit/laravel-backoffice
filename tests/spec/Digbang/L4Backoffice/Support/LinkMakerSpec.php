@@ -23,7 +23,7 @@ class LinkMakerSpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\L4Backoffice\Support\LinkMaker');
     }
 
-	function it_should_make_a_default_asc_sort_link_given_the_proper_request(Request $request, FontAwesome $fontAwesome, Column $aColumn)
+	function it_should_make_a_default_asc_sort_link_given_an_empty_request(Request $request, FontAwesome $fontAwesome, Column $aColumn)
 	{
 		$this->buildExpectations($request, $fontAwesome, $aColumn);
 
@@ -39,9 +39,25 @@ class LinkMakerSpec extends ObjectBehavior
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_DESC);
 	}
 
+	function it_should_make_an_asc_sort_link_given_the_column_is_desc_sorted_already(Request $request, FontAwesome $fontAwesome, Column $aColumn)
+	{
+		$this->buildExpectations($request, $fontAwesome, $aColumn, $this->aColumnId, LinkMaker::SORT_SENSE_DESC);
+
+		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
+		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_ASC);
+	}
+
 	function it_should_make_an_asc_sort_link_given_another_column_is_sorted_already(Request $request, FontAwesome $fontAwesome, Column $aColumn)
 	{
 		$this->buildExpectations($request, $fontAwesome, $aColumn, 'another_column_id', LinkMaker::SORT_SENSE_ASC);
+
+		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
+		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_ASC);
+	}
+
+	function it_should_make_an_asc_sort_link_given_another_column_is_sorted_descendingly_already(Request $request, FontAwesome $fontAwesome, Column $aColumn)
+	{
+		$this->buildExpectations($request, $fontAwesome, $aColumn, 'another_column_id', LinkMaker::SORT_SENSE_DESC);
 
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_ASC);
