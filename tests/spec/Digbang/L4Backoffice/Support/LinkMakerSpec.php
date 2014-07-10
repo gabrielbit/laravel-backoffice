@@ -15,23 +15,17 @@ use Digbang\L4Backoffice\Support\LinkMaker;
 class LinkMakerSpec extends ObjectBehavior
 {
 	protected $aColumnId = 'an_id';
+
     function it_is_initializable(Request $request, FontAwesome $fontAwesome)
     {
 	    $this->beConstructedWith($request, $fontAwesome);
+
         $this->shouldHaveType('Digbang\L4Backoffice\Support\LinkMaker');
     }
 
 	function it_should_make_a_default_asc_sort_link_given_the_proper_request(Request $request, FontAwesome $fontAwesome, Column $aColumn)
 	{
-		$fontAwesome->icon(Argument::cetera())->willReturn('<i class="fa fa-icon"></i>');
-
-		$request->url()->willReturn('/foo/bar');
-
-		$this->mockRequestWith($request);
-
-		$this->beConstructedWith($request, $fontAwesome);
-
-		$this->mockColumn($aColumn);
+		$this->buildExpectations($request, $fontAwesome, $aColumn);
 
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_ASC);
@@ -39,15 +33,7 @@ class LinkMakerSpec extends ObjectBehavior
 
 	function it_should_make_a_desc_sort_link_given_the_column_is_sorted_already(Request $request, FontAwesome $fontAwesome, Column $aColumn)
 	{
-		$fontAwesome->icon(Argument::cetera())->willReturn('<i class="fa fa-icon"></i>');
-
-		$request->url()->willReturn('/foo/bar');
-
-		$this->mockRequestWith($request, $this->aColumnId, LinkMaker::SORT_SENSE_ASC);
-
-		$this->beConstructedWith($request, $fontAwesome);
-
-		$this->mockColumn($aColumn);
+		$this->buildExpectations($request, $fontAwesome, $aColumn, $this->aColumnId, LinkMaker::SORT_SENSE_ASC);
 
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_DESC);
@@ -55,15 +41,7 @@ class LinkMakerSpec extends ObjectBehavior
 
 	function it_should_make_an_asc_sort_link_given_another_column_is_sorted_already(Request $request, FontAwesome $fontAwesome, Column $aColumn)
 	{
-		$fontAwesome->icon(Argument::cetera())->willReturn('<i class="fa fa-icon"></i>');
-
-		$request->url()->willReturn('/foo/bar');
-
-		$this->mockRequestWith($request, 'another_column_id', LinkMaker::SORT_SENSE_ASC);
-
-		$this->beConstructedWith($request, $fontAwesome);
-
-		$this->mockColumn($aColumn);
+		$this->buildExpectations($request, $fontAwesome, $aColumn, 'another_column_id', LinkMaker::SORT_SENSE_ASC);
 
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_BY . '=' . $this->aColumnId);
 		$this->sort($aColumn)->shouldContain(LinkMaker::SORT_SENSE . '=' . LinkMaker::SORT_SENSE_ASC);
@@ -78,7 +56,20 @@ class LinkMakerSpec extends ObjectBehavior
 		];
 	}
 
-	protected function mockRequestWith(Request $request, $sortBy = null, $sortSense = null)
+	protected function buildExpectations(Request $request, FontAwesome $fontAwesome, Column $aColumn, $sortBy = null, $sortSense = null)
+	{
+		$fontAwesome->icon(Argument::cetera())->willReturn('<i class="fa fa-icon"></i>');
+
+		$request->url()->willReturn('/foo/bar');
+
+		$this->mockRequest($request, $sortBy, $sortSense);
+
+		$this->beConstructedWith($request, $fontAwesome);
+
+		$this->mockColumn($aColumn);
+	}
+
+	protected function mockRequest(Request $request, $sortBy = null, $sortSense = null)
 	{
 		$input = [];
 		if ($sortBy && $sortSense)
@@ -89,15 +80,13 @@ class LinkMakerSpec extends ObjectBehavior
 			];
 		}
 
-		$request->only([LinkMaker::SORT_BY, LinkMaker::SORT_SENSE])->willReturn($input);
-		$request->except(Argument::cetera())->willReturn($input);
+		$request->only([ LinkMaker::SORT_BY, LinkMaker::SORT_SENSE ])->willReturn($input);
+		$request->except(             Argument::cetera()            )->willReturn($input);
 	}
 
 	protected function mockColumn(Column $aColumn)
 	{
-		$aColumn->getId()->willReturn($this->aColumnId);
+		$aColumn->getId()   ->willReturn($this->aColumnId);
 		$aColumn->getLabel()->willReturn('A Label for a Column');
 	}
-
-
 }
