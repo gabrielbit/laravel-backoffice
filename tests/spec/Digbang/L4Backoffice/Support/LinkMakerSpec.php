@@ -1,7 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice\Support;
 
 use Digbang\FontAwesome\FontAwesome;
-use Digbang\L4Backoffice\Facades\Link;
 use Digbang\L4Backoffice\Listings\Column;
 use Illuminate\Http\Request;
 use PhpSpec\ObjectBehavior;
