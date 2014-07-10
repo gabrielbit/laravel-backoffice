@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
-use Digbang\FontAwesome\Facade as FontAwesome;
+use Digbang\FontAwesome\FontAwesome;
 use Digbang\L4Backoffice\Listings\Column;
 use Illuminate\Http\Request;
 
@@ -15,10 +15,12 @@ class LinkMaker
 	 * @var \Illuminate\Http\Request
 	 */
 	protected $request;
+	protected $fontAwesome;
 
-	function __construct(Request $request)
+	function __construct(Request $request, FontAwesome $fontAwesome)
 	{
 		$this->request = $request;
+		$this->fontAwesome = $fontAwesome;
 	}
 
 	public function sort(Column $column)
@@ -27,7 +29,7 @@ class LinkMaker
 		$by         = $column->getId();
 		$sense      = self::SORT_SENSE_ASC;
 
-		if ($isSortedBy = (array_get($parameters, self::SORT_BY) == $by) && array_get($parameters, self::SORT_SENSE) == $sense)
+		if ($isSortedBy = array_get($parameters, self::SORT_BY) == $by && array_get($parameters, self::SORT_SENSE) == $sense)
 		{
 			$sense = self::SORT_SENSE_DESC;
 		}
@@ -35,7 +37,7 @@ class LinkMaker
 		return
 			'<a href="' . $this->to($by, $sense) . '" class="sort-link">' .
 				$column->getLabel() .
-				FontAwesome::icon(
+				$this->fontAwesome->icon(
 					$isSortedBy ? "sort-$sense" : 'sort') .
 			'</a>';
 
