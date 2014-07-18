@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
-use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
+use Digbang\L4Backoffice\Inputs\InputFactory as InputFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
 class ListingFactory

@@ -5,7 +5,7 @@ class Collection implements \IteratorAggregate, \Countable
 	protected $factory;
 	protected $collection;
 
-	function __construct(Factory $factory, \Illuminate\Support\Collection $collection)
+	function __construct(ActionFactory $factory, \Illuminate\Support\Collection $collection)
 	{
 		$this->factory = $factory;
 		$this->collection = $collection;
@@ -28,13 +28,20 @@ class Collection implements \IteratorAggregate, \Countable
 	/**
 	 * @param $label
 	 * @param array $options
-	 * @return DropDown
+	 * @return Composite
 	 */
 	public function dropdown($label, $options = [])
 	{
 		$this->collection->push($dropdown = $this->factory->dropdown($label, $options));
 
 		return $dropdown;
+	}
+
+	public function add(ActionInterface $action)
+	{
+		$this->collection->push($action);
+
+		return $this;
 	}
 
 	/**

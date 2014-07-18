@@ -1,7 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Inputs\Factory;
+use Digbang\L4Backoffice\Inputs\InputFactory;
 use Digbang\L4Backoffice\Support\Collection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -15,7 +15,7 @@ class CollectionSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$this->beConstructedWith(new Factory(new ControlFactory()), new Collection());
+		$this->beConstructedWith(new InputFactory(new ControlFactory()), new Collection());
 	}
 
     function it_is_initializable()
@@ -29,7 +29,7 @@ class CollectionSpec extends ObjectBehavior
 
 		$this->text('someName');
 
-		$this->find('someName')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\FilterInterface');
+		$this->find('someName')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\InputInterface');
 	}
 
 	function it_should_give_me_a_collection_of_filters()

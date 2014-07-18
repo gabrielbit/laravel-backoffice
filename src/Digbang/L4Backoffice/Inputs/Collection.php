@@ -5,7 +5,7 @@ class Collection implements \IteratorAggregate
 	protected $collection;
 	protected $factory;
 
-	public function __construct(Factory $factory, \Illuminate\Support\Collection $collection)
+	public function __construct(InputFactory $factory, \Illuminate\Support\Collection $collection)
 	{
 		$this->factory = $factory;
 		$this->collection = $collection;

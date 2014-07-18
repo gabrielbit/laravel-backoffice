@@ -1,13 +1,13 @@
 <?php namespace spec\Digbang\L4Backoffice\Forms;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
-use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Inputs\InputFactory;
+use Digbang\L4Backoffice\Actions\ActionFactory;
 use Illuminate\Session\Store;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FactorySpec extends ObjectBehavior
+class FormFactorySpec extends ObjectBehavior
 {
 	function let(Store $session)
 	{
@@ -20,7 +20,7 @@ class FactorySpec extends ObjectBehavior
 	}
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Forms\Factory');
+        $this->shouldHaveType('Digbang\L4Backoffice\Forms\FormFactory');
     }
 
 	function it_should_create_forms()

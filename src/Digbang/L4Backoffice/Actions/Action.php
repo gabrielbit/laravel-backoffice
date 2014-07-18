@@ -3,7 +3,7 @@
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Illuminate\Support\Collection as LaravelCollection;
 
-class Action implements ActionInterface
+class Action implements ActionInterface, ControlInterface
 {
 	/**
 	 * @var ControlInterface

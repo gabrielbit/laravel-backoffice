@@ -1,7 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Inputs\Factory as FilterFactory;
+use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use PhpSpec\ObjectBehavior;
@@ -99,7 +99,7 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_hold_actions_that_may_apply_to_the_listing_or_just_link_somewhere_related()
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
 
 		$this->setActions($actionFactory->collection());
 
@@ -108,7 +108,7 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_hold_row_actions_for_each_element_in_the_listing()
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
 
 		$this->setRowActions($actionFactory->collection());
 
@@ -117,7 +117,7 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_hold_bulk_actions_that_apply_to_selected_items()
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\Factory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
 
 		$this->setBulkActions($actionFactory->collection());
 

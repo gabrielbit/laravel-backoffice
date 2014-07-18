@@ -5,7 +5,7 @@ use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use Illuminate\Http\Request;
 
-class Factory
+class InputFactory
 {
 	/**
 	 * @var \Digbang\L4Backoffice\Controls\ControlFactory

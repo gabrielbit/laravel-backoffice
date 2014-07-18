@@ -1,6 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice\Actions;
 
-use Digbang\L4Backoffice\Actions\Factory;
+use Digbang\L4Backoffice\Actions\ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Illuminate\Support\Collection;
 use PhpSpec\ObjectBehavior;
@@ -10,7 +10,7 @@ class CollectionSpec extends ObjectBehavior
 {
 	function let()
 	{
-		$this->beConstructedWith(new Factory(new ControlFactory()), new Collection());
+		$this->beConstructedWith(new ActionFactory(new ControlFactory()), new Collection());
 	}
 
     function it_is_initializable()

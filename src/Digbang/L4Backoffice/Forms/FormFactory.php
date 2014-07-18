@@ -1,10 +1,10 @@
 <?php namespace Digbang\L4Backoffice\Forms;
 
-use Digbang\L4Backoffice\Inputs\Factory as InputFactory;
-use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Inputs\InputFactory as InputFactory;
+use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Illuminate\Session\Store;
 
-class Factory
+class FormFactory
 {
 	protected $inputFactory;
 	protected $actionFactory;

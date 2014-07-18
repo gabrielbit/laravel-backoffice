@@ -4,7 +4,7 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FactorySpec extends ObjectBehavior
+class ActionFactorySpec extends ObjectBehavior
 {
 	function let()
 	{
@@ -13,7 +13,7 @@ class FactorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Actions\Factory');
+        $this->shouldHaveType('Digbang\L4Backoffice\Actions\ActionFactory');
     }
 
 	function it_should_create_link_actions()

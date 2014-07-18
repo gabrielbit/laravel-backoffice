@@ -5,11 +5,11 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * Class FilterSpec
+ * Class InputSpec
  * @mixin \Digbang\L4Backoffice\Inputs\Input
  * @package spec\Digbang\L4Backoffice\Inputs
  */
-class FilterSpec extends ObjectBehavior
+class InputSpec extends ObjectBehavior
 {
 	function let()
 	{
@@ -19,7 +19,7 @@ class FilterSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\Filter');
+        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\Input');
 	    $this->shouldHaveType('Illuminate\Support\Contracts\RenderableInterface');
     }
 

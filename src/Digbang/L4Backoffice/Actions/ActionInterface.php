@@ -1,8 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
-use Digbang\L4Backoffice\Controls\ControlInterface;
-
-interface ActionInterface extends ControlInterface
+interface ActionInterface
 {
 	/**
 	 * The target URL this action points to.

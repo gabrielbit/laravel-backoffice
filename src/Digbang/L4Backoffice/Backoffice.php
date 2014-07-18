@@ -1,8 +1,8 @@
 <?php namespace Digbang\L4Backoffice;
 
-use Digbang\L4Backoffice\Actions\Factory as ActionFactory;
+use Digbang\L4Backoffice\Actions\ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Forms\Factory as FormFactory;
+use Digbang\L4Backoffice\Forms\FormFactory;
 use Digbang\L4Backoffice\Listings\ColumnFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use Digbang\L4Backoffice\Support\Breadcrumb;

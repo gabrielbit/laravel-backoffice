@@ -3,7 +3,7 @@
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
-class Factory
+class ActionFactory
 {
 	protected $controlFactory;
 
@@ -34,7 +34,7 @@ class Factory
 
 	public function dropdown($label, $options = [])
 	{
-		return new DropDown(
+		return new Composite(
 			$this->controlFactory->make('l4-backoffice::actions.dropdown', $label, $options),
 			$this,
 			new DigbangCollection()

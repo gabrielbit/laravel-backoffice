@@ -6,7 +6,7 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FactorySpec extends ObjectBehavior
+class InputFactorySpec extends ObjectBehavior
 {
 	function let()
 	{
@@ -15,14 +15,14 @@ class FactorySpec extends ObjectBehavior
 
 	function it_is_initializable()
     {
-        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\Factory');
+        $this->shouldHaveType('Digbang\L4Backoffice\Inputs\InputFactory');
     }
 
 	function it_should_create_text_filters()
 	{
-		$this->text('some_name')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Filter');
-		$this->text('some_name', 'Some Label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Filter');
-		$this->text('some_name', 'Another label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Filter');
+		$this->text('some_name')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Input');
+		$this->text('some_name', 'Some Label')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Input');
+		$this->text('some_name', 'Another label', ['some' => 'options'])->shouldBeAnInstanceOf('Digbang\L4Backoffice\Inputs\Input');
 	}
 
 	function it_should_create_dropdown_filters()
