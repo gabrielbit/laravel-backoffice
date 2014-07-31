@@ -2,17 +2,19 @@
     "name": "digbang/l4-backoffice",
     "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
     "require": {
-        "illuminate/support": "4.1.*",
-        "illuminate/view": "4.1.*",
-	    "way/generators": "~2.0",
-	    "digbang/font-awesome": "dev-master",
-        "illuminate/pagination": "4.1.*"
+        "illuminate/support":     "~4.1",
+        "illuminate/view":        "~4.1",
+        "illuminate/pagination":  "~4.1",
+	    "illuminate/database":    "~4.1",
+	    "illuminate/config":      "~4.1",
+	    "illuminate/translation": "~4.1",
+	    "way/generators":         "~2.0",
+	    "digbang/font-awesome":   "~1.0",
+	    "digbang/security":       "dev-master"
     },
     "require-dev": {
 	    "digbang/backoffice-template": "dev-master",
-        "phpspec/phpspec": "~2.0",
-	    "illuminate/database": "~4.1",
-	    "illuminate/config": "~4.1"
+        "phpspec/phpspec": "~2.0"
     },
     "license": "Proprietary",
     "authors": [
@@ -29,11 +31,15 @@
 	"repositories": [
 		{
 			"type": "vcs",
-			"url": "http://git.digbang.com/digbang/font-awesome.git"
+			"url": "git@git.digbang.com:digbang/font-awesome.git"
 		},
 		{
 			"type": "vcs",
-			"url": "http://git.digbang.com/digbang/backoffice-template.git"
+			"url": "git@git.digbang.com:digbang/backoffice-template.git"
+		},
+		{
+			"type": "vcs",
+			"url": "git@git.digbang.com:digbang/security.git"
 		}
 	]
 }
