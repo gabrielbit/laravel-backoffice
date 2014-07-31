@@ -4,6 +4,7 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Digbang\L4Backoffice\Inputs\InputFactory as InputFactory;
 use Illuminate\Session\Store;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -14,10 +15,10 @@ use Prophecy\Argument;
  */
 class FormSpec extends ObjectBehavior
 {
-	function let(Store $session)
+	function let(Store $session, Factory $viewFactory)
 	{
 		/* @var $session \PhpSpec\Wrapper\Collaborator */
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$actionFactory = new ActionFactory($controlFactory);
 		$inputFactory = new InputFactory($controlFactory);
 

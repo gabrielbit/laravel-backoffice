@@ -1,9 +1,12 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+use Illuminate\View\Factory;
+use Illuminate\View\View;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -13,12 +16,13 @@ use Prophecy\Argument;
  */
 class ListingSpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory, ControlInterface $control)
 	{
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$filterFactory  = new FilterFactory($controlFactory);
 
 		$this->beConstructedWith(
+			$control,
 			new DigbangCollection(),
 			$filterFactory->collection()
 		);
@@ -97,27 +101,27 @@ class ListingSpec extends ObjectBehavior
 			]));
 	}
 
-	function it_should_hold_actions_that_may_apply_to_the_listing_or_just_link_somewhere_related()
+	function it_should_hold_actions_that_may_apply_to_the_listing_or_just_link_somewhere_related(Factory $viewFactory)
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory($viewFactory->getWrappedObject()));
 
 		$this->setActions($actionFactory->collection());
 
 		$this->actions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
 	}
 
-	function it_should_hold_row_actions_for_each_element_in_the_listing()
+	function it_should_hold_row_actions_for_each_element_in_the_listing(Factory $viewFactory)
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory($viewFactory->getWrappedObject()));
 
 		$this->setRowActions($actionFactory->collection());
 
 		$this->rowActions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
 	}
 
-	function it_should_hold_bulk_actions_that_apply_to_selected_items()
+	function it_should_hold_bulk_actions_that_apply_to_selected_items(Factory $viewFactory)
 	{
-		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory());
+		$actionFactory = new \Digbang\L4Backoffice\Actions\ActionFactory(new ControlFactory($viewFactory->getWrappedObject()));
 
 		$this->setBulkActions($actionFactory->collection());
 

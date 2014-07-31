@@ -3,14 +3,15 @@
 namespace spec\Digbang\L4Backoffice\Support;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class BreadcrumbSpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$this->beConstructedWith($controlFactory->make('someView', 'someLabel', ['some' => 'options']));
 	}
 

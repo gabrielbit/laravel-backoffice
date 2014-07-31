@@ -1,6 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Inputs;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -11,9 +12,9 @@ use Prophecy\Argument;
  */
 class InputSpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$this->beConstructedWith($controlFactory->make('someView', 'someLabel', ['some' => 'opts']), 'someName');
 	}
 

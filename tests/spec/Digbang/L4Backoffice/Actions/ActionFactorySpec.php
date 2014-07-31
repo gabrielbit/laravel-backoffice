@@ -1,14 +1,15 @@
 <?php namespace spec\Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ActionFactorySpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$this->beConstructedWith(new ControlFactory());
+		$this->beConstructedWith(new ControlFactory($viewFactory->getWrappedObject()));
 	}
 
     function it_is_initializable()

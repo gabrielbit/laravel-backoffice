@@ -1,10 +1,21 @@
 <?php namespace Digbang\L4Backoffice\Controls;
 
+use Illuminate\View\Factory;
+
 class Control implements ControlInterface
 {
 	protected $options;
 	protected $label;
 	protected $view;
+	/**
+	 * @var \Illuminate\View\Factory
+	 */
+	protected $viewFactory;
+
+	function __construct(Factory $viewFactory)
+	{
+		$this->viewFactory = $viewFactory;
+	}
 
 	/**
 	 * @param mixed $label
@@ -65,7 +76,7 @@ class Control implements ControlInterface
 	 */
 	public function render()
 	{
-		return \View::make($this->view(), [
+		return $this->viewFactory->make($this->view(), [
 			'options' => $this->options()->toArray(),
 			'label'   => $this->label(),
 		]);

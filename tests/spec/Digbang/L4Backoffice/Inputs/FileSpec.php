@@ -2,14 +2,15 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Uploads\FileUploadHandler;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class FileSpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 
 		$this->beConstructedWith(
 			new FileUploadHandler(),

@@ -1,5 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
+use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Contracts\ArrayableInterface;
@@ -42,28 +43,15 @@ class Listing implements RenderableInterface, Countable
 	 */
 	protected $rows;
 
+	protected $control;
+
 	protected $paginator;
 
-	function __construct(Collection $rows, FilterCollection $filters)
+	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters)
 	{
-		$this->rows        = $rows;
-		$this->filters     = $filters;
-	}
-
-	/**
-	 * @param string $view
-	 */
-	public function setView($view)
-	{
-		$this->view = $view;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getView()
-	{
-		return $this->view;
+		$this->control = $control;
+		$this->rows    = $rows;
+		$this->filters = $filters;
 	}
 
 	/**
@@ -92,7 +80,7 @@ class Listing implements RenderableInterface, Countable
 
 	public function render()
 	{
-		return \View::make($this->view, [
+		return $this->control->render()->with([
 			'columns'     => $this->columns->visible(),
 			'items'       => $this->rows,
 			'filters'     => $this->filters->all(),

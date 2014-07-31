@@ -3,14 +3,15 @@
 use Digbang\L4Backoffice\Actions\ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Illuminate\Support\Collection;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class CollectionSpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$this->beConstructedWith(new ActionFactory(new ControlFactory()), new Collection());
+		$this->beConstructedWith(new ActionFactory(new ControlFactory($viewFactory->getWrappedObject())), new Collection());
 	}
 
     function it_is_initializable()

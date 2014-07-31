@@ -3,20 +3,20 @@
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
-use Digbang\L4Backoffice\Listings\ColumnCollection;
+use Digbang\L4Backoffice\Inputs\InputFactory;
 use Digbang\L4Backoffice\Listings\ColumnFactory;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ListingFactorySpec extends ObjectBehavior
 {
-	function let()
+	function let(Factory $viewFactory)
 	{
-		$controlFactory = new ControlFactory();
-		$filterFactory = new FilterFactory($controlFactory);
-		$actionFactory = new ActionFactory($controlFactory);
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
+		$inputFactory = new InputFactory($controlFactory);
 
-		$this->beConstructedWith($filterFactory, $actionFactory);
+		$this->beConstructedWith($inputFactory, $controlFactory);
 	}
 
     function it_is_initializable()

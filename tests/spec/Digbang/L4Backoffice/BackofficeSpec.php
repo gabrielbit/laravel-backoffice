@@ -7,22 +7,23 @@ use Digbang\L4Backoffice\Forms\FormFactory;
 use Digbang\L4Backoffice\Listings\ColumnFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
 use Illuminate\Session\Store;
+use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class BackofficeSpec extends ObjectBehavior
 {
-	function let(Store $session)
+	function let(Store $session, Factory $viewFactory)
 	{
 		/* @var $session \PhpSpec\Wrapper\Collaborator */
-		$controlFactory = new ControlFactory();
+		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$inputFactory  = new InputFactory($controlFactory);
 		$actionFactory  = new ActionFactory($controlFactory);
 		$formFactory    = new FormFactory($inputFactory, $actionFactory, $session->getWrappedObject());
 		$columnFactory  = new ColumnFactory();
 
 		$this->beConstructedWith(
-			new ListingFactory($inputFactory, $actionFactory),
+			new ListingFactory($inputFactory, $controlFactory),
 			$actionFactory,
 			$controlFactory,
 			$formFactory,
