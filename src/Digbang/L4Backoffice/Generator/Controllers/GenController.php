@@ -109,23 +109,25 @@ class GenController extends \Controller
 				$this->modelFinder->columns($tableName)
 			);
 
+			$editableColumns = $this->editableColumns($columns, $tableName);
+
 			// Generate
 			$this->generator->make($templatePath, [
-				'namespace' => $backofficeNamespace,
-				'classname' => $className,
-				'snake_classname' => $tableName,
-				'plural_classname' => $pluralClassname,
-				'camel_classname' => \Str::camel($tableName),
-				'full_model' => $entityNamespace . $className,
+				'namespace'              => $backofficeNamespace,
+				'classname'              => $className,
+				'snake_classname'        => $tableName,
+				'plural_classname'       => $pluralClassname,
+				'camel_classname'        => \Str::camel($tableName),
+				'full_model'             => $entityNamespace . $className,
 				'title_attribute_getter' => array_first($columns, function($key, $value){ return $value != 'id'; }),
-				'inputs_into_columns' => $this->columnsInputs($columns),
-				'data_into_columns' => $this->columnsData($columns),
-				'columns' => $this->columns($columns),
-				'columns_with_labels' => $this->columnsLabel($columns),
-				'columns_hide' => in_array('id', $columns) ? "'id'" : '',
-				'columns_sortable' => $this->columns($columns),
-				'form_inputs' => $this->formInputs($columns),
-				'filters' => $this->filters($columns)
+				'inputs_into_columns'    => $this->columnsInputs($columns),
+				'data_into_columns'      => $this->columnsData($columns),
+				'columns'                => $this->columns($columns),
+				'columns_with_labels'    => $this->columnsLabel($columns),
+				'columns_hide'           => in_array('id', $columns) ? "'id'" : '',
+				'columns_sortable'       => $this->columns($columns),
+				'form_inputs'            => $this->formInputs($editableColumns),
+				'filters'                => $this->filters($columns)
 			], $fileDir . DIRECTORY_SEPARATOR . $className . 'Controller.php');
 		}
 
@@ -225,6 +227,17 @@ class GenController extends \Controller
 				$column != 'created_at' &&
 				$column != 'updated_at' &&
 				$column != 'deleted_at';
+		});
+	}
+
+	protected function editableColumns($columns, $tableName)
+	{
+		$singularId = \Str::singular($tableName) . '_id';
+
+		return array_filter($this->filterColumns($columns), function($column) use ($singularId) {
+			return
+				$column != 'id' &&
+				$column != $singularId;
 		});
 	}
 
