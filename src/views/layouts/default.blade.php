@@ -4,6 +4,10 @@
 	@include('l4-backoffice::menu')
 @stop
 
+@if(Cookie::get('leftpanel-collapsed'))
+	@section('body.class', 'leftpanel-collapsed')
+@endif
+
 @section('body.content')
 <div class="leftpanel">
 	@section('body.logo')

@@ -46,6 +46,7 @@ module.exports = function(grunt) {
 					"./bower_components/quicksearch/src/jquery.quicksearch.js",
 					"./bower_components/multiselect/js/jquery.multi-select.js",
 					"./bower_components/select2/select2.min.js",
+					"./bower_components/jquery-cookie/jquery.cookie.js",
 					"./src/assets/js/backoffice.js"
 				],
 				dest: './public/js/backoffice.js',

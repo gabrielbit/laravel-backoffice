@@ -1,11 +1,4 @@
 jQuery(document).ready(function() {
-	// Copied from tables.js
-	jQuery('#table1').dataTable();
-
-	jQuery('#table2').dataTable({
-		"sPaginationType": "full_numbers"
-	});
-
 	// Chosen Select
 	jQuery("select:not(.multiselect):not(.select2)").each(function(){
 		$(this).chosen({
@@ -208,14 +201,33 @@ jQuery(document).ready(function() {
 			$all.attr('checked', null);
 		}
 	});
-});
+	var menuState = new function(){
+		var collapsed = $.cookie('leftpanel-collapsed') != undefined,
+			collapse = function(){
+				if (!collapsed) {
+					$.cookie('leftpanel-collapsed', 'leftpanel-collapsed');
+					collapsed = !collapsed;
+				}
+			},
+			expand = function(){
+				if (collapsed) {
+					$.removeCookie('leftpanel-collapsed');
+					collapsed = !collapsed;
+				}
+			};
 
-function Export()
-{
-    var query = 'export=1';
-    if(window.location.search != '')
-    {
-        query = '&' + query;
-    }
-    window.location.search = window.location.search + query
-}
+		this.toggle = function(){
+			if (collapsed) {
+				console.log('removing cookie...');
+				expand();
+			} else {
+				console.log('creating cookie...');
+				collapse();
+			}
+		}
+	};
+
+	$(document).on('click', '.menutoggle', function(){
+		menuState.toggle();
+	});
+});
