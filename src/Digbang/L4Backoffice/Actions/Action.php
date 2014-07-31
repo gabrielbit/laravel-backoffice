@@ -10,11 +10,14 @@ class Action implements ActionInterface, ControlInterface
 	 */
 	protected $control;
 	protected $target;
+	protected $icon;
+	protected $isActive = false;
 
-	function __construct(ControlInterface $control, $target)
+	function __construct(ControlInterface $control, $target, $icon = null)
 	{
 		$this->control = $control;
 		$this->target  = $target;
+		$this->icon = $icon;
 	}
 
 	public function setTarget($target)
@@ -25,6 +28,35 @@ class Action implements ActionInterface, ControlInterface
 	public function target()
 	{
 		return $this->target;
+	}
+
+	/**
+	 * @param string $icon
+	 */
+	public function setIcon($icon)
+	{
+		$this->icon = $icon;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function icon()
+	{
+		return $this->icon;
+	}
+
+	public function setActive($isActive)
+	{
+		$this->isActive = $isActive;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isActive()
+	{
+		return $this->isActive;
 	}
 
 	/**
@@ -75,7 +107,9 @@ class Action implements ActionInterface, ControlInterface
 	protected function renderTarget($target)
 	{
 		return $this->control->render()->with([
-			'target' => $target
+			'target'   => $target,
+			'icon'     => $this->icon(),
+			'isActive' => $this->isActive()
 		]);
 	}
 }

@@ -11,9 +11,9 @@ class Collection implements \IteratorAggregate, \Countable
 		$this->collection = $collection;
 	}
 
-	public function link($target, $label = null, $options = [])
+	public function link($target, $label = null, $options = [], $view = 'l4-backoffice::actions.link', $icon = null)
 	{
-		$this->collection->push($this->factory->link($target, $label, $options));
+		$this->collection->push($this->factory->link($target, $label, $options, $view, $icon));
 
 		return $this;
 	}
@@ -26,13 +26,14 @@ class Collection implements \IteratorAggregate, \Countable
 	}
 
 	/**
-	 * @param $label
-	 * @param array $options
+	 * @param string $label
+	 * @param array  $options
+	 * @param string $view
 	 * @return Composite
 	 */
-	public function dropdown($label, $options = [])
+	public function dropdown($label, $options = [], $view = null, $icon = null)
 	{
-		$this->collection->push($dropdown = $this->factory->dropdown($label, $options));
+		$this->collection->push($dropdown = $this->factory->dropdown($label, $options, $view, $icon));
 
 		return $dropdown;
 	}
@@ -47,8 +48,7 @@ class Collection implements \IteratorAggregate, \Countable
 	/**
 	 * Retrieve an external iterator
 	 * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-	 * @return \Traversable An instance of an object implementing <b>Iterator</b> or
-	 * <b>Traversable</b>
+	 * @return \Traversable An instance of an object implementing <b>Iterator</b> or <b>Traversable</b>
 	 */
 	public function getIterator()
 	{

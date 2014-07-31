@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
-use Digbang\L4Backoffice\Actions\Composite;
+use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
 
@@ -9,16 +9,16 @@ class Menu implements RenderableInterface
 	protected $actionTree;
 	protected $control;
 
-	function __construct(ControlInterface $control, Composite $actionTree)
+	function __construct(ControlInterface $control, ActionCollection $actionTree)
 	{
 		$this->control = $control;
 		$this->actionTree = $actionTree;
 	}
 
 	/**
-	 * @param mixed $actionTree
+	 * @param \Digbang\L4Backoffice\Actions\Collection $actionTree
 	 */
-	public function setActionTree($actionTree)
+	public function setActionTree(ActionCollection $actionTree)
 	{
 		$this->actionTree = $actionTree;
 	}

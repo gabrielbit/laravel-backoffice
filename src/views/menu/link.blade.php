@@ -1,4 +1,4 @@
-<a href="{{ $url }}"{{ \HTML::attributes($options) }}>
+<a href="{{ $target }}"{{ \HTML::attributes($options) }}>
 	@if($icon) {{ Digbang\FontAwesome\Facade::icon($icon) }} @endif
-	<span>{{ $link }}</span>
+	<span>{{ $label }}</span>
 </a>

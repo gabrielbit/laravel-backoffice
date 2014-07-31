@@ -7,4 +7,10 @@ interface ActionInterface
 	 * @return string
 	 */
 	public function target();
+
+	/**
+	 * Is the action the current active URL?
+	 * @return bool
+	 */
+	public function isActive();
 }

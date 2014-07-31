@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
-use Digbang\L4Backoffice\Actions\Composite;
+use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Illuminate\Http\Request;
@@ -20,21 +20,14 @@ class MenuFactory
 	protected $config;
 	protected $translator;
 	protected $secureUrl;
-	protected $currentUrl;
 
-	function __construct(ActionFactory $actionFactory, ControlFactory $controlFactory, Config $config, Translator $translator, SecureUrl $secureUrl, Request $request = null)
+	function __construct(ActionFactory $actionFactory, ControlFactory $controlFactory, Config $config, Translator $translator, SecureUrl $secureUrl)
 	{
 		$this->actionFactory  = $actionFactory;
 		$this->controlFactory = $controlFactory;
 		$this->config         = $config;
 		$this->translator     = $translator;
 		$this->secureUrl      = $secureUrl;
-
-		if ($request)
-		{
-			$this->currentUrl = $request->url();
-		}
-
 	}
 
 	public function make()
@@ -43,19 +36,30 @@ class MenuFactory
 		{
 			$menu  = $this->config->get('l4-backoffice::menu');
 
-			$actionTree = $this->actionFactory->dropdown($this->translator->get('l4-backoffice::default.navigation'));
+			$actionTree = $this->actionFactory->collection();
+
 			foreach ($menu as $label => $config)
 			{
 				$this->buildActionTree($actionTree, $label, $config);
 			}
 
-			$this->menu = new Menu($this->controlFactory->make('l4-backoffice::menu', ''), $actionTree);
+			$this->menu = $this->buildMenu($actionTree);
 		}
 
 		return $this->menu;
 	}
 
-	protected function buildActionTree(Composite $root, $label, $config)
+	protected function buildMenu(ActionCollection $actionTree)
+	{
+		return new Menu(
+			$this->controlFactory->make(
+				'l4-backoffice::menu.main',
+				$this->translator->get('l4-backoffice::default.navigation'),
+				['class' => 'nav nav-pills nav-stacked nav-bracket']),
+			$actionTree);
+	}
+
+	protected function buildActionTree(ActionCollection $root, $label, $config)
 	{
 		if (!is_array($config))
 		{
@@ -64,7 +68,7 @@ class MenuFactory
 
 		if (array_key_exists('children', $config))
 		{
-			$this->iterateChildren($root, $label, $config['children']);
+			$this->iterateChildren($root, $label, $config['children'], array_get($config, 'icon'));
 		}
 		else
 		{
@@ -94,27 +98,20 @@ class MenuFactory
 		throw new \UnexpectedValueException('Invalid menu configuration.');
 	}
 
-	protected function addLink(Composite $root, $label, $config)
+	protected function addLink(ActionCollection $root, $label, $config)
 	{
-		$url = $this->getUrlFromConfig($config);
-		$options = [];
-
-		if ($url == $this->currentUrl)
-		{
-			$options['selected'] = true;
-		}
-
-		$root->link($url, $label, $options);
+		$root->link($this->getUrlFromConfig($config), $label, [], 'l4-backoffice::menu.link', array_get($config, 'icon'));
 	}
 
 	/**
-	 * @param Composite $root
-	 * @param           $label
-	 * @param array     $children
+	 * @param ActionCollection $root
+	 * @param                  $label
+	 * @param array            $children
+	 * @param string           $icon
 	 */
-	protected function iterateChildren(Composite $root, $label, $children)
+	protected function iterateChildren(ActionCollection $root, $label, $children, $icon = null)
 	{
-		$branch = $root->dropdown($label);
+		$branch = $root->dropdown($label, ['class' => 'nav-parent'], 'l4-backoffice::menu.dropdown', $icon);
 
 		foreach ($children as $leafLabel => $config)
 		{

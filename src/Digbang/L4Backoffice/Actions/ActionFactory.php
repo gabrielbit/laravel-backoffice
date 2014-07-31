@@ -2,19 +2,29 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+use Illuminate\Http\Request;
 
 class ActionFactory
 {
 	protected $controlFactory;
+	protected $request;
 
-	function __construct(ControlFactory $controlFactory)
+	function __construct(ControlFactory $controlFactory, Request $request = null)
 	{
 		$this->controlFactory = $controlFactory;
+		$this->request = $request;
 	}
 
-	public function link($target, $label = null, $options = [])
+	public function link($target, $label = null, $options = [], $view = 'l4-backoffice::actions.link', $icon = null)
     {
-        return new Action($this->controlFactory->make('l4-backoffice::actions.link', $label, $options), $target);
+        $action = new Action($this->controlFactory->make($view, $label, $options), $target, $icon);
+
+	    if ($this->request && ! $target instanceof \Closure)
+	    {
+		    $action->setActive($this->request->url() == $target);
+	    }
+
+	    return $action;
     }
 
     public function form($target, $label, $method = 'POST', $options = [])
@@ -32,13 +42,16 @@ class ActionFactory
 		return new Collection($this, new DigbangCollection());
 	}
 
-	public function dropdown($label, $options = [])
+	public function dropdown($label, $options = [], $view = 'l4-backoffice::actions.dropdown', $icon = null)
 	{
-		return new Composite(
-			$this->controlFactory->make('l4-backoffice::actions.dropdown', $label, $options),
+		$action = new Composite(
+			$this->controlFactory->make($view, $label, $options),
 			$this,
-			new DigbangCollection()
+			new DigbangCollection(),
+			$icon
 		);
+
+		return $action;
 	}
 
 	protected function uniqueClasses($current, array $newClasses)

@@ -9,12 +9,14 @@ class Composite extends Collection implements ActionInterface, RenderableInterfa
 	 * @var \Digbang\L4Backoffice\Controls\ControlInterface
 	 */
 	protected $control;
+	protected $icon;
 
-	function __construct(ControlInterface $control, ActionFactory $factory, \Illuminate\Support\Collection $collection)
+	function __construct(ControlInterface $control, ActionFactory $factory, \Illuminate\Support\Collection $collection, $icon = null)
 	{
 		parent::__construct($factory, $collection);
 
 		$this->control = $control;
+		$this->icon    = $icon;
 	}
 
 	/**
@@ -27,10 +29,43 @@ class Composite extends Collection implements ActionInterface, RenderableInterfa
 		return '#';
 	}
 
+	/**
+	 * @param string $icon
+	 */
+	public function setIcon($icon)
+	{
+		$this->icon = $icon;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function icon()
+	{
+		return $this->icon;
+	}
+
+	public function isActive()
+	{
+		foreach ($this->collection as $action)
+		{
+			/* @var $action ActionInterface */
+			if ($action->isActive())
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function render()
 	{
 		return $this->control->render()->with([
-			'actions' => $this->collection
+			'target'   => $this->target(),
+			'actions'  => $this->collection,
+			'icon'     => $this->icon(),
+			'isActive' => $this->isActive()
 		]);
 	}
 }

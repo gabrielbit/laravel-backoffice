@@ -1,11 +1,13 @@
 <ul {{ \HTML::attributes($options) }}>
-	@foreach($items as $item => $options)
-        @if (isset($options['children']))
-			@include('l4-backoffice::menu.dropdown', ['options' => $options, 'item' => $item])
-        @else
-            <li{{ isset($options['selected']) ? ' class="active"' : '' }}>
-                @include('l4-backoffice::menu.link', ['url' => array_get($options, 'url', '#'),'link' => $item,'icon' => array_get($options, 'icon'),'options' => []])
-            </li>
-        @endif
+	@foreach($actionTree as $action)
+		@if ($action instanceof Digbang\L4Backoffice\Actions\Composite)
+			<li class="nav-parent{{ $action->isActive() ? ' nav-active active' : '' }}">
+				{{ $action->render() }}
+			</li>
+		@else
+			<li class="{{ $action->isActive() ? 'active' : '' }}">
+				{{ $action->render() }}
+			</li>
+		@endif
 	@endforeach
 </ul>
