@@ -71,6 +71,9 @@ class GenController extends \Controller
 		$form->inputs()->text('backoffice_namespace', 'Backoffice Namespace');
 		$form->inputs()->text('entities_namespace', 'Entities Namespace');
 
+		$form->inputs()->find('backoffice_namespace')->defaultsTo(\Config::get('l4-backoffice::gen.backoffice.namespace'));
+		$form->inputs()->find('entities_namespace')->defaultsTo(  \Config::get('l4-backoffice::gen.entities.namespace'));
+
 		$title = 'Customize';
 
 		$breadcrumb = $this->backoffice->breadcrumb([

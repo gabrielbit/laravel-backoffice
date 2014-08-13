@@ -102,8 +102,7 @@ class Input implements InputInterface
 		return $this->control->render()
 			->with([
 				'name'    => $this->name(),
-				'value'   => $this->value(),
-				'default' => $this->defaultsTo
+				'value'   => $this->value() !== null ? $this->value() : $this->defaultsTo
 			]);
 	}
 }
