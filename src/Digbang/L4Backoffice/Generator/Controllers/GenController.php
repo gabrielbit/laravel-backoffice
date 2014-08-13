@@ -1,9 +1,9 @@
 <?php namespace Digbang\L4Backoffice\Generator\Controllers;
 
 use Digbang\L4Backoffice\Backoffice;
+use Digbang\L4Backoffice\Generator\Services\ControllerGenerator;
 use Digbang\L4Backoffice\Generator\Services\ModelFinder;
 use Illuminate\Session\Store;
-use Way\Generators\Generator;
 
 /**
  * Class GenController
@@ -16,7 +16,7 @@ class GenController extends \Controller
 	protected $session;
 	protected $generator;
 
-	function __construct(Backoffice $backoffice, ModelFinder $modelFinder, Generator $generator, Store $session)
+	function __construct(Backoffice $backoffice, ModelFinder $modelFinder, ControllerGenerator $generator, Store $session)
 	{
 		$this->backoffice = $backoffice;
 		$this->modelFinder = $modelFinder;
@@ -95,40 +95,14 @@ class GenController extends \Controller
 		$backofficeNamespace = trim(\Input::get('backoffice_namespace'), ' \\');
 		$entityNamespace = '\\' . trim(\Input::get('entities_namespace'), ' \\') . '\\';
 
-		$fileDir = app_path() . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $backofficeNamespace);
+		$controllersDirPath = app_path() . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $backofficeNamespace);
 		$templatePath = realpath(
-			dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'controller.txt'
+			dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'controller.mustache'
 		);
 
 		foreach ($tables as $tableName => $on)
 		{
-			$className = \Str::studly(\Str::singular($tableName));
-			$pluralClassname = \Str::plural($className);
-
-			$columns = $this->filterColumns(
-				$this->modelFinder->columns($tableName)
-			);
-
-			$editableColumns = $this->editableColumns($columns, $tableName);
-
-			// Generate
-			$this->generator->make($templatePath, [
-				'namespace'              => $backofficeNamespace,
-				'classname'              => $className,
-				'snake_classname'        => $tableName,
-				'plural_classname'       => $pluralClassname,
-				'camel_classname'        => \Str::camel($tableName),
-				'full_model'             => $entityNamespace . $className,
-				'title_attribute_getter' => array_first($columns, function($key, $value){ return $value != 'id'; }),
-				'inputs_into_columns'    => $this->columnsInputs($columns),
-				'data_into_columns'      => $this->columnsData($columns),
-				'columns'                => $this->columns($columns),
-				'columns_with_labels'    => $this->columnsLabel($columns),
-				'columns_hide'           => in_array('id', $columns) ? "'id'" : '',
-				'columns_sortable'       => $this->columns($columns),
-				'form_inputs'            => $this->formInputs($editableColumns),
-				'filters'                => $this->filters($columns)
-			], $fileDir . DIRECTORY_SEPARATOR . $className . 'Controller.php');
+			$this->generator->generate($tableName, $templatePath, $controllersDirPath, $backofficeNamespace, $entityNamespace);
 		}
 
 		$title = 'Gen complete';
@@ -146,99 +120,6 @@ class GenController extends \Controller
 			'tables' => array_keys($tables),
 			'backofficeNamespace' => str_replace('\\', '\\\\', $backofficeNamespace)
 		]);
-	}
-
-	protected function columnsInputs($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= ',' . PHP_EOL . "\t\t\t\t";
-
-			$carry .= "'$column' => \\Input::get('$column')";
-
-			return $carry;
-		});
-	}
-
-	protected function columnsData($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= ',' . PHP_EOL . "\t\t\t";
-
-			$carry .= "'$column' => \$entity->$column";
-
-			return $carry;
-		}, '');
-	}
-
-	protected function columnsLabel($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= ',' . PHP_EOL . "\t\t\t";
-
-			$carry .= "'$column' => '" . \Str::titleFromSlug($column) . "'";
-
-			return $carry;
-		}, '');
-	}
-
-	protected function columns($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= ',' . PHP_EOL . "\t\t\t";
-
-			$carry .= "'$column'";
-
-			return $carry;
-		}, '');
-	}
-
-	protected function formInputs($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= PHP_EOL . "\t\t\t";
-
-			$carry .= "->text('$column', '" . \Str::titleFromSlug($column) . "')";
-
-			return $carry;
-		}, '');
-	}
-
-	protected function filters($columns)
-	{
-		return array_reduce($columns, function($carry, $column){
-			if ($carry)
-				$carry .= PHP_EOL . "\t\t\t";
-
-			$carry .= "->text('$column', '" . \Str::titleFromSlug($column) . "', ['class' => 'form-control'])";
-
-			return $carry;
-		}, '');
-	}
-
-	protected function filterColumns($columns)
-	{
-		return array_filter($columns, function($column){
-			return
-				$column != 'created_at' &&
-				$column != 'updated_at' &&
-				$column != 'deleted_at';
-		});
-	}
-
-	protected function editableColumns($columns, $tableName)
-	{
-		$singularId = \Str::singular($tableName) . '_id';
-
-		return array_filter($this->filterColumns($columns), function($column) use ($singularId) {
-			return
-				$column != 'id' &&
-				$column != $singularId;
-		});
 	}
 
 	public function testGenerationPage()

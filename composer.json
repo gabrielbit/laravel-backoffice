@@ -10,6 +10,7 @@
 	    "illuminate/translation": "~4.2",
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
+	    "mustache/mustache":      "~2.6",
 	    "digbang/security":       "dev-master"
     },
     "require-dev": {
@@ -19,7 +20,7 @@
     "license": "Proprietary",
     "authors": [
         {
-            "name": "gcontreras",
+            "name": "Guido Contreras Woda",
             "email": "gcontreras@digbang.com"
         }
     ],
