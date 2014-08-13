@@ -11,34 +11,30 @@ class ModelFinder
 {
 	protected $db;
 	protected $config;
+	protected $schemaManager;
 
 	function __construct(DatabaseManager $databaseManager, Config $config)
 	{
 		$this->db = $databaseManager;
 		$this->config = $config;
+
+		$databases = array_fetch($this->config->get('database.connections'), 'database');
+
+		if (empty($databases)) throw new \InvalidArgumentException('No databases found. Configure your connection and try again');
+
+		$this->schemaManager = $this->db->connection()->getDoctrineSchemaManager();
 	}
 
 
 	public function find()
     {
-	    $databases = array_fetch($this->config->get('database.connections'), 'database');
-
-	    if (empty($databases)) throw new \InvalidArgumentException('No databases found. Configure your connection and try again');
-
-	    return $this->db->connection()
-		    ->table('information_schema.tables')
-		        ->where('table_schema', 'public')
-			    ->where('table_catalog', array_shift($databases))
-		        ->where('table_name', '<>', 'migrations')
-		        ->orderBy('table_name', 'asc')
-		    ->lists('table_name');
+	    return array_filter($this->schemaManager->listTableNames(), function($tableName){
+		    return $tableName != 'migrations';
+	    });
     }
 
 	public function columns($tableName)
 	{
-		return $this->db->connection()
-			->table('information_schema.columns')
-				->where('table_name', $tableName)
-			->lists('column_name');
+		return $this->schemaManager->listTableColumns($tableName);
 	}
 }

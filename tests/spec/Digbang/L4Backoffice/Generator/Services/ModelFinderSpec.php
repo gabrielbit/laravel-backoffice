@@ -1,10 +1,9 @@
 <?php namespace spec\Digbang\L4Backoffice\Generator\Services;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Database\Connection;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Builder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -15,25 +14,23 @@ use Prophecy\Argument;
  */
 class ModelFinderSpec extends ObjectBehavior
 {
-	protected $catalogName = 'some_catalog_name';
+	protected $tables = [
+		'one_table', 'two_tables', 'more_tables'
+	];
 
-	function let(DatabaseManager $databaseManager, Builder $queryBuilder, Config $config, Connection $connection)
+	function let(DatabaseManager $databaseManager, Config $config, Connection $connection, AbstractSchemaManager $schemaManager)
 	{
-		$config->get(Argument::any())->willReturn(
-			[
-				[
-					'database' => $this->catalogName
-				]
-			]);
+		$config->get('database.connections')->willReturn([['database' => 'some_catalog_name']]);
 
 		$databaseManager->connection()->willReturn($connection);
-		$connection->table('information_schema.tables')->willReturn($queryBuilder);
+		$connection->getDoctrineSchemaManager()->willReturn($schemaManager);
 
-		$queryBuilder->where(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
-		$queryBuilder->orderBy(Argument::any(), Argument::any())->willReturn($queryBuilder);
+		$tables = $this->tables + ['migrations'];
 
-		$queryBuilder->get()->willReturn(new Collection());
-		$queryBuilder->lists(Argument::any())->willReturn(new Collection());
+		$schemaManager->listTableNames()->willReturn($tables);
+		$schemaManager->listTableColumns('a_table_name')->willReturn([
+			'id', 'a_column_name', 'another_column'
+		]);
 
 		$this->beConstructedWith($databaseManager, $config);
 	}
@@ -45,26 +42,13 @@ class ModelFinderSpec extends ObjectBehavior
 
 	function it_should_find_database_tables()
 	{
-		$this->find()->shouldBeAnInstanceOf('Illuminate\Support\Collection');
-
-		$this->find()->count()->shouldBeGreaterThanOrEqualTo(1);
+		$this->find()->shouldReturn($this->tables);
 	}
 
-	public function getMatchers()
+	function it_should_find_table_columns()
 	{
-		return [
-			'beGreaterThan' => function($subject, $key){
-				return $key > $subject;
-			},
-			'beGreaterThanOrEqualTo' => function($subject, $key){
-				return $key >= $subject;
-			},
-			'beLessThan' => function($subject, $key){
-				return $key < $subject;
-			},
-			'beLessThanOrEqualTo' => function($subject, $key){
-				return $key <= $subject;
-			},
-		];
+		$this->columns('a_table_name')->shouldReturn([
+			'id', 'a_column_name', 'another_column'
+		]);
 	}
 }
