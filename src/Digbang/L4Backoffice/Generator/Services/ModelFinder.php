@@ -38,6 +38,7 @@ class ModelFinder
 	public function columns($tableName)
 	{
 		return array_map(function(Column $column){
+			// Decorate Doctrine Column with our decorator
 			return new ColumnDecorator($column);
 		}, $this->schemaManager->listTableColumns($tableName));
 	}

@@ -18,4 +18,9 @@ class ColumnDecorator
 	{
 		return (string) $this->column->getName();
 	}
+
+	public function getColumn()
+	{
+		return $this->column;
+	}
 }
