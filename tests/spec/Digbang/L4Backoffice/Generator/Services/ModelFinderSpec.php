@@ -18,37 +18,19 @@ class ModelFinderSpec extends ObjectBehavior
 		'one_table', 'two_tables', 'more_tables'
 	];
 
-	function let(DatabaseManager $databaseManager, Config $config, Connection $connection, AbstractSchemaManager $schemaManager)
+	function it_should_find_database_tables(DatabaseManager $databaseManager, Config $config, Connection $connection, AbstractSchemaManager $schemaManager)
 	{
-		$config->get('database.connections')->willReturn([['database' => 'some_catalog_name']]);
+		$config->get('database.connections')->shouldBeCalled()->willReturn([['database' => 'some_catalog_name']]);
 
-		$databaseManager->connection()->willReturn($connection);
-		$connection->getDoctrineSchemaManager()->willReturn($schemaManager);
+		$databaseManager->connection()->shouldBeCalled()->willReturn($connection);
+		$connection->getDoctrineSchemaManager()->shouldBeCalled()->willReturn($schemaManager);
 
 		$tables = $this->tables + ['migrations'];
 
-		$schemaManager->listTableNames()->willReturn($tables);
-		$schemaManager->listTableColumns('a_table_name')->willReturn([
-			'id', 'a_column_name', 'another_column'
-		]);
+		$schemaManager->listTableNames()->shouldBeCalled()->willReturn($tables);
 
 		$this->beConstructedWith($databaseManager, $config);
-	}
 
-    function it_is_initializable()
-    {
-        $this->shouldHaveType('Digbang\L4Backoffice\Generator\Services\ModelFinder');
-    }
-
-	function it_should_find_database_tables()
-	{
 		$this->find()->shouldReturn($this->tables);
-	}
-
-	function it_should_find_table_columns()
-	{
-		$this->columns('a_table_name')->shouldReturn([
-			'id', 'a_column_name', 'another_column'
-		]);
 	}
 }
