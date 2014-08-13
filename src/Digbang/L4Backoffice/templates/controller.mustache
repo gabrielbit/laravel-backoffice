@@ -1,12 +1,13 @@
 <?php namespace {{ getNamespace }};
 
+use Illuminate\Routing\Controller;
 use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 
-class {{ classData.name }}Controller extends BaseController
+class {{ classData.name }}Controller extends Controller
 {
 	protected $backoffice;
 
