@@ -1,5 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Generator\Services;
 
+use Digbang\L4Backoffice\Generator\Model\ColumnDecorator;
+use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Config\Repository as Config;
 
@@ -35,6 +37,8 @@ class ModelFinder
 
 	public function columns($tableName)
 	{
-		return $this->schemaManager->listTableColumns($tableName);
+		return array_map(function(Column $column){
+			return new ColumnDecorator($column);
+		}, $this->schemaManager->listTableColumns($tableName));
 	}
 }

@@ -112,11 +112,11 @@ class ControllerInput
 
 	protected function nameTitleColumns($columns)
 	{
-		return array_map(function ($column) {
+		return array_values(array_map(function ($column) {
 			return [
 				'name'  => $column,
 				'title' => \Str::titleFromSlug($column)
 			];
-		}, $columns);
+		}, $columns));
 	}
 }
