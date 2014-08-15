@@ -25,7 +25,7 @@
 	<div class="headerbar">
 		<a class="menutoggle"><i class="fa fa-bars"></i></a>
 		<div class="header-right">
-			@yield('header.buttons')
+			@include('l4-backoffice::auth.partials.menu')
 		</div>
 	</div>
 	@show
