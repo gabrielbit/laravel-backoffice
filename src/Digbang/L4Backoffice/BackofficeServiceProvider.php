@@ -14,6 +14,8 @@ class BackofficeServiceProvider extends ServiceProvider
 
 		$this->stringMacros();
 
+		$this->registerAuthRoutes();
+
 		if (\Config::get('app.debug'))
 		{
 			$this->registerGenRoutes();
@@ -58,6 +60,27 @@ class BackofficeServiceProvider extends ServiceProvider
 			$router->post('gen/customize', 'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@customization');
 			$router->post('gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@generation');
 			$router->get( 'gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@testGenerationPage');
+		});
+	}
+
+	protected function registerAuthRoutes()
+	{
+		/* @var $router \Illuminate\Routing\Router */
+		$router = $this->app['router'];
+
+		$router->group(['prefix' => 'backoffice/auth'], function() use ($router){
+			$authRoute      = 'backoffice.auth';
+			$authController = 'Digbang\\L4Backoffice\\Auth\\AuthController';
+
+			$router->get('login',                      ['as' => "$authRoute.login",                   'uses' => "$authController@login"]);
+			$router->get('password/forgot',            ['as' => "$authRoute.password.forgot",         'uses' => "$authController@forgotPassword"]);
+			$router->get('password/reset/{id}/{code}', ['as' => "$authRoute.password.reset",          'uses' => "$authController@resetPassword"]);
+			$router->get('logout',                     ['as' => "$authRoute.logout",                  'uses' => "$authController@logout"]);
+			$router->get('activate/{code}',            ['as' => "$authRoute.activate",                'uses' => "$authController@activate"]);
+
+			$router->post('login',                     ['as' => "$authRoute.authenticate",            'uses' => "$authController@authenticate"]);
+			$router->post('password/forgot',           ['as' => "$authRoute.password.forgot-request", 'uses' => "$authController@forgotPasswordRequest"]);
+			$router->post('password/reset/{code}',     ['as' => "$authRoute.password.reset-request",  'uses' => "$authController@resetPasswordRequest"]);
 		});
 	}
 } 
