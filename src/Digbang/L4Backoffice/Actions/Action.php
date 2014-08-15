@@ -99,6 +99,12 @@ class Action implements ActionInterface, ControlInterface
 		if ($target instanceof \Closure)
 		{
 			$target = $target(new LaravelCollection($row));
+
+			if ($target === false)
+			{
+				// If the callback returns false, we don't render!
+				return '';
+			}
 		}
 
 		return $this->renderTarget($target);
