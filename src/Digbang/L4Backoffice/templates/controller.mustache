@@ -6,6 +6,7 @@ use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
+use Digbang\FontAwesome\Facade as FontAwesome;
 
 class {{ classData.name }}Controller extends Controller
 {
@@ -238,15 +239,15 @@ class {{ classData.name }}Controller extends Controller
 			$this->backoffice->actions()
 				->link(function(Collection $row) {
 					return route('backoffice.{{ classData.snake }}.show', $row['id']);
-				}, \Digbang\FontAwesome\Facade::icon('eye'))
+				}, FontAwesome::icon('eye'))
 				->link(function(Collection $row){
 					return route('backoffice.{{ classData.snake }}.edit', $row['id']);
-				}, $text = \Digbang\FontAwesome\Facade::icon('edit'))
+				}, FontAwesome::icon('edit'))
 				->form(
 					function(Collection $row){
 						return route('backoffice.{{ classData.snake }}.destroy', $row['id']);
 					},
-					\Digbang\FontAwesome\Facade::icon('times'),
+					FontAwesome::icon('times'),
 					'DELETE',
 					['class' => 'text-danger']
 				)
