@@ -10,7 +10,7 @@
 	    "illuminate/translation": "~4.2",
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
-	    "mustache/mustache":      "~2.6",
+	    "mustache/mustache":      "~2.4",
 	    "digbang/security":       "dev-master"
     },
     "require-dev": {
