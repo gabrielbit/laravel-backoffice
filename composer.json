@@ -11,7 +11,7 @@
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
 	    "mustache/mustache":      "~2.4",
-	    "digbang/security":       "dev-master"
+	    "digbang/security":       "~1.0"
     },
     "require-dev": {
 	    "digbang/backoffice-template": "dev-master",
