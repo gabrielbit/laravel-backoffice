@@ -6,6 +6,7 @@ class Column
 	protected $label;
 	protected $hidden = false;
 	protected $sortable = true;
+	protected $accessor;
 
 	function __construct($id, $label = '', $hidden = false, $sortable = true)
 	{
@@ -13,6 +14,8 @@ class Column
 		$this->label    = $label;
 		$this->hidden   = $hidden;
 		$this->sortable = $sortable;
+
+		$this->accessor = $id;
 	}
 
 	/**
@@ -72,4 +75,24 @@ class Column
     {
         return $this->sortable;
     }
+
+	/**
+	 * @param mixed $accessor
+	 */
+	public function setAccessor($accessor)
+	{
+		$this->accessor = $accessor;
+	}
+
+	public function getValue(array $row)
+	{
+		if (is_callable($this->accessor))
+		{
+			$accessor = $this->accessor;
+
+			return $accessor($row);
+		}
+
+		return $row[$this->accessor];
+	}
 }

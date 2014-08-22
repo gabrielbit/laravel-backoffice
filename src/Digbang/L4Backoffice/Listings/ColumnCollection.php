@@ -70,4 +70,15 @@ class ColumnCollection extends Collection
 			$this->push($column);
 		}
 	}
+
+	public function setAccessor($id, $accessor)
+	{
+		$this->each(function(Column &$column) use ($id, $accessor) {
+			if ($column->getId() == $id){
+				$column->setAccessor($accessor);
+			}
+		});
+
+		return $this;
+	}
 }

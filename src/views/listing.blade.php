@@ -42,7 +42,7 @@
 									</td>
 								@endif
 								@foreach($columns as $column)
-									<td>{{ array_get($row, $column->getId(), '-') }}</td>
+									<td>{{ $column->getValue($row) ?: '-' }}</td>
 								@endforeach
 									<td>
 										@if($rowActions)
