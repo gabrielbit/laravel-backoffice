@@ -150,6 +150,9 @@ class {{ classData.name }}Controller extends Controller
 			{{# inputs }}
 			'{{ name }}' => $entity->{{ name }},
 			{{/ inputs }}
+			{{# dependencies }}
+			'{{ column }}' => $entity->{{ column }},
+			{{/ dependencies }}
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
