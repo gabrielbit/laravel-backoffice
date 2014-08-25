@@ -34,7 +34,7 @@ class InputFactory
 	    return new DropDown(
 		    $this->controlFactory->make(
 			    'l4-backoffice::inputs.dropdown',
-			    null,
+			    $label,
 			    $this->buildOptions($options, $label)),
 		    $name,
 		    $this->request ? $this->request->get($name) : null,
