@@ -1,9 +1,11 @@
 <?php namespace {{ getNamespace }};
 
-use Illuminate\Routing\Controller;
 use Digbang\L4Backoffice\Backoffice;
+use Digbang\L4Backoffice\Repositories\BackofficeRepository;
+use Digbang\L4Backoffice\Repositories\BackofficeRepositoryFactory;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Digbang\FontAwesome\Facade as FontAwesome;
@@ -11,10 +13,12 @@ use Digbang\FontAwesome\Facade as FontAwesome;
 class {{ classData.name }}Controller extends Controller
 {
 	protected $backoffice;
+	protected $repository;
 
-	function __construct(Backoffice $backoffice)
+	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory)
 	{
 		$this->backoffice = $backoffice;
+		$this->setRepository($repositoryFactory->makeForEloquentModel(new {{ model }}()));
 	}
 
 	public function index()
@@ -25,9 +29,7 @@ class {{ classData.name }}Controller extends Controller
 
 		$this->buildListActions($list);
 
-		$list->fill(
-			$this->getData(\Input::all())
-		);
+		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb(
 			['Home' => route('backoffice.index'), '{{ classData.name }}']
@@ -68,10 +70,10 @@ class {{ classData.name }}Controller extends Controller
 	{
 		try
 		{
-			${{ classData.camel }} = {{ model }}::create([
-				{{# columns }}
+			${{ classData.camel }} = $this->repository->create([
+				{{# inputs }}
 				'{{ name }}' => \Input::get('{{ name }}'),
-				{{/ columns }}
+				{{/ inputs }}
 			]);
 
 			return \Redirect::to(route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
@@ -85,7 +87,7 @@ class {{ classData.name }}Controller extends Controller
 	public function show($id)
 	{
 		/* @var $entity {{ model }} */
-		$entity = {{ model }}::find($id);
+		$entity = $this->repository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home'    => route('backoffice.index'),
@@ -105,7 +107,8 @@ class {{ classData.name }}Controller extends Controller
 
 	public function edit($id)
 	{
-		$entity = {{ model }}::find($id);
+		/* @var $entity {{ model }} */
+		$entity = $this->repository->findById($id);
 
 		$label = \Lang::get('l4-backoffice::default.edit');
 
@@ -117,9 +120,9 @@ class {{ classData.name }}Controller extends Controller
 		);
 
 		$form->fill([
-			{{# columns }}
+			{{# inputs }}
 			'{{ name }}' => $entity->{{ name }},
-			{{/ columns }}
+			{{/ inputs }}
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -138,14 +141,14 @@ class {{ classData.name }}Controller extends Controller
 
 	public function update($id)
 	{
-		// Get the entity
-		$entity = {{ model }}::find($id);
+		/* @var $entity {{ model }} */
+        $entity = $this->repository->findById($id);
 
 		// Fill it with the input
 		$entity->fill(\Input::only([
-			{{# columns }}
+			{{# inputs }}
 			'{{ name }}',
-			{{/ columns }}
+			{{/ inputs }}
 		]));
 
 		try
@@ -168,7 +171,7 @@ class {{ classData.name }}Controller extends Controller
 		try
 		{
 			// Try to destroy the entity
-			{{ model }}::destroy($id);
+			$this->repository->destroy($id);
 
 			// Redirect to the listing
 			return \Redirect::route('backoffice.{{ classData.snake }}.index')->with(['success' => "{{ classData.name }} $id deleted"]);
@@ -200,9 +203,9 @@ class {{ classData.name }}Controller extends Controller
 		$filters = $list->filters();
 
 		// Here we add filters to the list
-		{{# columns }}
+		{{# inputs }}
 		$filters->text('{{ name }}', '{{ title }}', ['class' => 'form-control']);
-		{{/ columns }}
+		{{/ inputs }}
 	}
 
 	/**
@@ -220,9 +223,9 @@ class {{ classData.name }}Controller extends Controller
 		$columns
 			->hide([{{ columns_hide }}])
 			->sortable([
-			{{# columns }}
+			{{# inputs }}
 				'{{ name }}',
-			{{/ columns }}
+			{{/ inputs }}
 		]);
 
 		return $listing;
@@ -257,20 +260,20 @@ class {{ classData.name }}Controller extends Controller
 	/**
 	 * @return array
 	 */
-	protected function getData($filters)
+	protected function getData()
 	{
-		if (empty($filters)) return {{ model }}::paginate(10);
-
-		$model = new {{ model }}();
-
-		foreach ($filters as $key => $value)
-		{
-			if ($value)
-			{
-				$model = $model->where($key, $value);
-			}
-		}
-
-		return $model->paginate(10);
+		return $this->repository->search(
+            \Input::except(['page', 'sort_by', 'sort_sense']),
+            \Input::get('sort_by'),
+            \Input::get('sort_sense'),
+            10,
+            \Input::get('page', 1),
+            []
+        );
 	}
+
+	protected function setRepository(BackofficeRepository $backofficeRepository)
+    {
+        $this->repository = $backofficeRepository;
+    }
 }
