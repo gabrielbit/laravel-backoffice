@@ -39,6 +39,11 @@ class ColumnDecorator implements \ArrayAccess
 		return $this->str->titleFromSlug($this->column->getName());
 	}
 
+	public function getType()
+	{
+		return $this->str->camel($this->column->getType()->getName());
+	}
+
 	public function isType($type)
 	{
 		return $this->column->getType()->getName() == $type;

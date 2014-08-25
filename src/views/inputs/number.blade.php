@@ -1,0 +1,1 @@
+{{ Form::input('number', $name, $value, $options) }}

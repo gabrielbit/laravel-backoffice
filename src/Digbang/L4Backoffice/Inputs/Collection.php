@@ -1,5 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Inputs;
 
+use Doctrine\DBAL\Types\Type;
+
 class Collection implements \IteratorAggregate
 {
 	protected $collection;
@@ -26,6 +28,16 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->checkbox($name, $label, $options));
 	}
 
+	public function integer($name, $label, $options = [])
+	{
+		return $this->add($this->factory->integer($name, $label, $options));
+	}
+
+	public function boolean($name, $label, $options = [])
+	{
+		return $this->add($this->factory->checkbox($name, $label, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){
@@ -42,6 +54,43 @@ class Collection implements \IteratorAggregate
 
 	public function __call($name, $args)
 	{
+		if (Type::hasType($name))
+		{
+			// Supported Doctrine type
+			switch ($name)
+			{
+				case Type::TARRAY:
+				case Type::SIMPLE_ARRAY:
+				case Type::JSON_ARRAY:
+					$func = 'dropdown';
+					break;
+				case Type::BIGINT:
+				case Type::SMALLINT:
+				case Type::FLOAT:
+				case Type::DECIMAL:
+					$func = 'integer';
+					break;
+				case Type::DATE:
+					$func = 'date';
+					break;
+				case Type::DATETIME:
+				case Type::DATETIMETZ:
+					$func = 'datetime';
+					break;
+				case Type::TIME:
+					$func = 'time';
+					break;
+				case Type::STRING:
+				case Type::OBJECT:
+				case Type::BLOB:
+				case Type::GUID:
+				default:
+					$func = 'text';
+			}
+
+			return $this->add(call_user_func_array([$this->factory, $func], $args));
+		}
+
 		if (method_exists($this->collection, $name))
 		{
 			return call_user_func_array([$this->collection, $name], $args);

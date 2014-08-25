@@ -42,7 +42,7 @@
 									</td>
 								@endif
 								@foreach($columns as $column)
-									<td>{{ $column->getValue($row) ?: '-' }}</td>
+									<td>{{ \Str::parse($column->getValue($row)) ?: '-' }}</td>
 								@endforeach
 									<td>
 										@if($rowActions)

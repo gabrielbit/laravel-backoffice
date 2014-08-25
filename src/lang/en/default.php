@@ -12,5 +12,7 @@ return [
 	'select-none'      => 'Select none',
 	'new'              => 'New :model',
 	'edit'             => 'Edit',
-	'back'             => 'Back'
+	'back'             => 'Back',
+	'yes'              => 'Yes',
+	'no'               => 'No'
 ];

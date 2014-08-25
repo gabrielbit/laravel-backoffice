@@ -75,13 +75,17 @@ class {{ classData.name }}Controller extends Controller
 
 	public function store()
 	{
+		$inputData = array_filter([
+            {{# inputs }}
+            '{{ name }}' => \Input::get('{{ name }}'),
+            {{/ inputs }}
+        ], function($input){
+            return !empty($input) && $input !== false;
+        });
+
 		try
 		{
-			${{ classData.camel }} = $this->repository->create([
-				{{# inputs }}
-				'{{ name }}' => \Input::get('{{ name }}'),
-				{{/ inputs }}
-			]);
+			${{ classData.camel }} = $this->repository->create($inputData);
 
 			return \Redirect::to(route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
 		}
@@ -151,12 +155,17 @@ class {{ classData.name }}Controller extends Controller
 		/* @var $entity {{ model }} */
         $entity = $this->repository->findById($id);
 
-		// Fill it with the input
-		$entity->fill(\Input::only([
+		// Get the input
+		$input = \Input::only([
 			{{# inputs }}
-			'{{ name }}',
-			{{/ inputs }}
-		]));
+            '{{ name }}',
+            {{/ inputs }}
+		]);
+
+		// Fill it with non-empty input
+		$entity->fill(array_filter($input, function($value){
+			return !empty($value) && $value !== false;
+		}));
 
 		try
 		{
@@ -196,7 +205,7 @@ class {{ classData.name }}Controller extends Controller
 		$inputs = $form->inputs();
 
 		{{# inputs }}
-		$inputs->text('{{ name }}', '{{ title }}');
+		$inputs->{{ type }}('{{ name }}', '{{ title }}');
 		{{/ inputs }}
 
 		return $form;

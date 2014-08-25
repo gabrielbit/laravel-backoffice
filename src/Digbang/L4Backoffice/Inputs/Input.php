@@ -18,8 +18,8 @@ class Input implements InputInterface
 	function __construct(ControlInterface $control, $name, $value = null)
 	{
 		$this->control = $control;
-		$this->name    = $name;
-		$this->value   = $value;
+		$this->setName($name);
+		$this->setValue($value);
 
 		if (! $control->options('id'))
 		{

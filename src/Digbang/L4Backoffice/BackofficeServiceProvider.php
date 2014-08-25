@@ -51,6 +51,7 @@ class BackofficeServiceProvider extends ServiceProvider
 		$myStr = $this->app->make('Digbang\L4Backoffice\Support\Str');
 
 		$str->macro('titleFromSlug', [$myStr, 'titleFromSlug']);
+		$str->macro('parse', [$myStr, 'parse']);
 	}
 
 	protected function registerGenRoutes()

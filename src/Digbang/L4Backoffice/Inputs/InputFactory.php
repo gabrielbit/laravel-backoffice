@@ -57,6 +57,50 @@ class InputFactory
 		return $this->make('l4-backoffice::inputs.checkbox', $label, $options, $name);
 	}
 
+	public function integer($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.number',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
+	public function date($name, $label, $options = [])
+	{
+		$class = array_get($options, 'class', '');
+
+		$options['class'] = trim("$class form-date");
+
+		return $this->make(
+			'l4-backoffice::inputs.text',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
+	public function datetime($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.datetime',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
+	public function time($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.time',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());

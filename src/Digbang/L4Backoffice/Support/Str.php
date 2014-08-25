@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
 use Illuminate\Support\Str as IlluminateStr;
+use Illuminate\Translation\Translator;
 
 /**
  * Class Str
@@ -9,14 +10,26 @@ use Illuminate\Support\Str as IlluminateStr;
 class Str
 {
 	protected $str;
+	protected $lang;
 
-	function __construct(IlluminateStr $str)
+	function __construct(IlluminateStr $str, Translator $lang)
 	{
 		$this->str = $str;
+		$this->lang = $lang;
 	}
 
 	public function titleFromSlug($slug)
 	{
 		return $this->str->title(str_replace(array('-', '_'), ' ', $slug));
+	}
+
+	public function parse($value)
+	{
+		if (is_bool($value))
+		{
+			return $value ? $this->lang->get('l4-backoffice::default.yes') : $this->lang->get('l4-backoffice::default.no');
+		}
+
+		return value($value);
 	}
 } 

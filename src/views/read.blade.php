@@ -11,7 +11,7 @@
 			@foreach($data as $label => $value)
 			<div class="form-group">
 				<label class="col-sm-3 control-label">{{ $label }}</label>
-				<div class="col-sm-6"><p class="form-control-static">{{ $value }}</p></div>
+				<div class="col-sm-6"><p class="form-control-static">{{ \Str::parse($value) }}</p></div>
 			</div>
 			@endforeach
 		</div>

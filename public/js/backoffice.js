@@ -5156,7 +5156,7 @@ permissions and limitations under the Apache License and the GPL License.
 		});
 	});
 
-	// Show aciton upon row hover
+	// Show action upon row hover
 	jQuery('.table-hidaction tbody tr').hover(function(){
 		jQuery(this).find('.table-action-hide a').animate({opacity: 1});
 	},function(){
@@ -5175,8 +5175,49 @@ permissions and limitations under the Apache License and the GPL License.
 
 	// Date Picker
 	if (jQuery('.form-date').length){
-		jQuery('.form-date').datepicker();
+		jQuery('.form-date').datepicker({
+			dateFormat: "yy-mm-dd",
+			onSelect: function(date){
+				jQuery(this).trigger('changeDate', date);
+			}
+		});
 	}
+
+	// Time Picker
+	if (jQuery('.form-time').length){
+		jQuery('.form-time').each(function(){
+			jQuery(this).timepicker({
+				defaultTime: false,
+				showMeridian: false,
+				showSeconds: true,
+				minuteStep: 5,
+				secondStep: 5,
+				disableFocus: true
+			});
+
+			jQuery(this).on('focus', function(){
+				return jQuery(this).timepicker('showWidget');
+			});
+		});
+	}
+
+	// Combined datetime picker
+	jQuery('.form-datetime').each(function(){
+		var
+			$date   = jQuery('.form-date', this),
+			$time   = jQuery('.form-time', this),
+			$hidden = jQuery('input[type=hidden]', this),
+			updateHidden = function(date, time){
+				$hidden.val(date + ' ' + time);
+			};
+
+		jQuery('.form-date', this).on('changeDate', function(event, date){
+			updateHidden(date, $time.val());
+		});
+		jQuery('.form-time', this).on('changeTime.timepicker', function(event){
+			updateHidden($date.val(), event.time.value);
+		});
+	});
 
 	// Copied from form-validation.js (edited as well)
 
