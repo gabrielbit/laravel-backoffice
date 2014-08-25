@@ -12,8 +12,15 @@ use Digbang\FontAwesome\Facade as FontAwesome;
 
 class {{ classData.name }}Controller extends Controller
 {
-	protected $backoffice;
-	protected $repository;
+	/**
+     * @var \Digbang\L4Backoffice\Backoffice
+     */
+    protected $backoffice;
+
+    /**
+     * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
+     */
+    protected $repository;
 
 	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory)
 	{

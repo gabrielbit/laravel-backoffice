@@ -1,4 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Generator\Model;
+use Digbang\L4Backoffice\Support\Collection;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * Class ControllerInput
@@ -9,6 +11,9 @@ class ControllerInput
 	protected $namespace;
 	protected $tableName;
 	protected $model;
+	/**
+	 * @var \Digbang\L4Backoffice\Support\Collection
+	 */
 	protected $columns;
 	protected $classData;
 	protected $inputs;
@@ -28,7 +33,7 @@ class ControllerInput
 	 */
 	public function columns()
 	{
-		return $this->columns;
+		return $this->columns->values();
 	}
 
 	public function inputs()
@@ -43,12 +48,12 @@ class ControllerInput
 	{
 		$singularId = \Str::singular($this->tableName) . '_id';
 
-		// Mustache doesn't like lists with missing numeric indexes, so remake them with array_values
-		return array_values(array_filter($this->columns, function($column) use ($singularId) {
+		// Mustache doesn't like lists with missing numeric indexes, so always return collection->values()
+		return $this->columns->filter(function($column) use ($singularId) {
 			return
 				$column['name'] != 'id' &&
 				$column['name'] != $singularId;
-		}));
+		})->values();
 	}
 
 	/**
@@ -80,15 +85,31 @@ class ControllerInput
 	 */
 	public function titleGetter()
 	{
-		return array_first($this->columns, function($key, $value){
-			return $value['name'] != 'id';
-		})['name'];
+		$firstString = $this->columns->first(function ($key, ColumnDecorator $columnDecorator) {
+			$column = $columnDecorator->getColumn();
+			return
+				$column->getName() != 'id' &&
+				$columnDecorator->hasAnyTypes([Type::STRING, Type::TEXT]);
+		});
+
+		if ($firstString)
+		{
+			return $firstString['name'];
+		}
+
+		$firstNonId = $this->columns->first(function ($key, ColumnDecorator $value) {
+			$column = $value->getColumn();
+			return $column->getName() != 'id';
+		});
+
+		return $firstNonId['name'];
 	}
 
 	public function columns_hide()
 	{
-		if (array_first($this->columns, function($key, $value){
-			return $value['name'] == 'id';
+		if ($this->columns->first(function($key, ColumnDecorator $value){
+			$column = $value->getColumn();
+			return $column->getName() == 'id';
 		}))
 		{
 			return "'id'";
@@ -102,21 +123,13 @@ class ControllerInput
 
 	protected function filterColumns($columns)
 	{
-		return $this->nameTitleColumns(array_filter($columns, function($column){
+		$columns = new Collection($columns);
+
+		return $columns->filter(function($column){
 			return
 				$column != 'created_at' &&
 				$column != 'updated_at' &&
 				$column != 'deleted_at';
-		}));
-	}
-
-	protected function nameTitleColumns($columns)
-	{
-		return array_values(array_map(function ($column) {
-			return [
-				'name'  => $column,
-				'title' => \Str::titleFromSlug($column)
-			];
-		}, $columns));
+		});
 	}
 }
