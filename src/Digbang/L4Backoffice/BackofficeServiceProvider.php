@@ -45,9 +45,11 @@ class BackofficeServiceProvider extends ServiceProvider
 
 	protected function stringMacros()
 	{
-		\Str::macro('titleFromSlug', function($slug){
-			return \Str::title(str_replace(array('-', '_'), ' ', $slug));
-		});
+		/* @var $str \Illuminate\Support\Str */
+		$str   = $this->app->make('Illuminate\Support\Str');
+		$myStr = $this->app->make('Digbang\L4Backoffice\Support\Str');
+
+		$str->macro('titleFromSlug', [$myStr, 'titleFromSlug']);
 	}
 
 	protected function registerGenRoutes()
