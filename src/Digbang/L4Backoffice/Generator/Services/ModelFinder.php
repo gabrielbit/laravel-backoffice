@@ -71,4 +71,9 @@ class ModelFinder
 			return new ColumnDecorator($column, $this->str);
 		}, $this->schemaManager->listTableColumns($tableName));
 	}
+
+	public function foreignKeys($tableName)
+	{
+		return new Collection($this->schemaManager->listTableForeignKeys($tableName));
+	}
 }

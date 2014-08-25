@@ -11,4 +11,6 @@ interface BackofficeRepository
 	public function destroy($id);
 
 	public function search($filters, $sortBy = null, $sortSense = null, $limit = 10, $offset = 0, $eagerLoad = []);
+
+	public function all($eagerLoad = []);
 } 

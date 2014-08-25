@@ -9,6 +9,10 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Digbang\FontAwesome\Facade as FontAwesome;
+use {{ entityNamespace}}\{{ model }};
+{{# uniqueDependencies }}
+use {{ entityNamespace }}\{{ studlyCase }};
+{{/ uniqueDependencies }}
 
 class {{ classData.name }}Controller extends Controller
 {
@@ -20,12 +24,24 @@ class {{ classData.name }}Controller extends Controller
     /**
      * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
      */
-    protected $repository;
+    protected ${{ classData.snake }}Repository;
+
+    {{# uniqueDependencies }}
+    /**
+     * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
+     */
+    protected ${{ camelCase }}Repository;
+    {{/ uniqueDependencies }}
 
 	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory)
 	{
 		$this->backoffice = $backoffice;
-		$this->setRepository($repositoryFactory->makeForEloquentModel(new {{ model }}()));
+		$this->{{ classData.snake }}Repository = $repositoryFactory->makeForEloquentModel(new {{ model }}());
+
+		// Dependencies
+		{{# uniqueDependencies }}
+		$this->{{ camelCase }}Repository = $repositoryFactory->makeForEloquentModel(new {{ studlyCase }}());
+		{{/ uniqueDependencies }}
 	}
 
 	public function index()
@@ -85,7 +101,7 @@ class {{ classData.name }}Controller extends Controller
 
 		try
 		{
-			${{ classData.camel }} = $this->repository->create($inputData);
+			${{ classData.camel }} = $this->{{ classData.snake }}Repository->create($inputData);
 
 			return \Redirect::to(route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
 		}
@@ -98,7 +114,7 @@ class {{ classData.name }}Controller extends Controller
 	public function show($id)
 	{
 		/* @var $entity {{ model }} */
-		$entity = $this->repository->findById($id);
+		$entity = $this->{{ classData.snake }}Repository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home'    => route('backoffice.index'),
@@ -119,7 +135,7 @@ class {{ classData.name }}Controller extends Controller
 	public function edit($id)
 	{
 		/* @var $entity {{ model }} */
-		$entity = $this->repository->findById($id);
+		$entity = $this->{{ classData.snake }}Repository->findById($id);
 
 		$label = \Lang::get('l4-backoffice::default.edit');
 
@@ -153,7 +169,7 @@ class {{ classData.name }}Controller extends Controller
 	public function update($id)
 	{
 		/* @var $entity {{ model }} */
-        $entity = $this->repository->findById($id);
+        $entity = $this->{{ classData.snake }}Repository->findById($id);
 
 		// Get the input
 		$input = \Input::only([
@@ -187,7 +203,7 @@ class {{ classData.name }}Controller extends Controller
 		try
 		{
 			// Try to destroy the entity
-			$this->repository->destroy($id);
+			$this->{{ classData.snake }}Repository->destroy($id);
 
 			// Redirect to the listing
 			return \Redirect::route('backoffice.{{ classData.snake }}.index')->with(['success' => "{{ classData.name }} $id deleted"]);
@@ -203,6 +219,18 @@ class {{ classData.name }}Controller extends Controller
 		$form = $this->backoffice->form($target, $label, $method, $cancelAction, $options);
 
 		$inputs = $form->inputs();
+
+
+		{{# dependencies }}
+		${{ camelCase }} = [''];
+	    foreach ($this->{{ camelCase }}Repository->all() as ${{ singular }})
+	    {
+	        ${{ camelCase }}[${{ singular }}->id] = ${{ singular }}->{{ titleGetter }};
+	    }
+
+		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }});
+
+		{{/ dependencies }}
 
 		{{# inputs }}
 		$inputs->{{ type }}('{{ name }}', '{{ title }}');
@@ -222,6 +250,18 @@ class {{ classData.name }}Controller extends Controller
 		{{# inputs }}
 		$filters->text('{{ name }}', '{{ title }}', ['class' => 'form-control']);
 		{{/ inputs }}
+
+		// And filter dependencies
+		{{# dependencies }}
+        ${{ camelCase }} = [''];
+        foreach ($this->{{ camelCase }}Repository->all() as ${{ singular }})
+        {
+            ${{ camelCase }}[${{ singular }}->id] = ${{ singular }}->{{ titleGetter  }};
+        }
+
+        $filters->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }});
+
+        {{/ dependencies }}
 	}
 
 	/**
@@ -278,7 +318,7 @@ class {{ classData.name }}Controller extends Controller
 	 */
 	protected function getData()
 	{
-		return $this->repository->search(
+		return $this->{{ classData.snake }}Repository->search(
             \Input::except(['page', 'sort_by', 'sort_sense']),
             \Input::get('sort_by'),
             \Input::get('sort_sense'),
@@ -290,6 +330,6 @@ class {{ classData.name }}Controller extends Controller
 
 	protected function setRepository(BackofficeRepository $backofficeRepository)
     {
-        $this->repository = $backofficeRepository;
+        $this->{{ classData.snake }}Repository = $backofficeRepository;
     }
 }

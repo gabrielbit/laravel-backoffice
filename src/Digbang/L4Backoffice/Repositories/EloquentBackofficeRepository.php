@@ -57,4 +57,11 @@ class EloquentBackofficeRepository implements BackofficeRepository
 
 		return $eloquent->paginate($limit);
 	}
+
+	public function all($eagerLoad = [])
+	{
+		$eloquent = $this->eloquent->with($eagerLoad);
+
+		return $eloquent->get();
+	}
 }

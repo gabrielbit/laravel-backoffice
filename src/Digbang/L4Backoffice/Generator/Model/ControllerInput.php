@@ -10,22 +10,29 @@ class ControllerInput
 {
 	protected $namespace;
 	protected $tableName;
+	protected $entityNamespace;
 	protected $model;
 	/**
 	 * @var \Digbang\L4Backoffice\Support\Collection
 	 */
 	protected $columns;
 	protected $classData;
+	/**
+	 * @var \Digbang\L4Backoffice\Support\Collection
+	 */
 	protected $inputs;
+	protected $dependencies;
 
-	function __construct($namespace, $tableName, $model, $columns)
+	function __construct($namespace, $tableName, $entityNamespace, $model, $columns, array $dependencies = [])
 	{
-		$this->namespace   = $namespace;
-		$this->tableName   = $tableName;
-		$this->model       = $model;
-		$this->columns     = $this->filterColumns($columns);
-		$this->classData = new ClassData($tableName);
-		$this->inputs = $this->makeInputs();
+		$this->namespace       = $namespace;
+		$this->tableName       = $tableName;
+		$this->entityNamespace = $entityNamespace;
+		$this->model           = $model;
+		$this->columns         = $this->filterColumns($columns);
+		$this->classData       = new ClassData($tableName);
+		$this->inputs          = $this->makeInputs();
+		$this->dependencies    = $dependencies;
 	}
 
 	/**
@@ -38,7 +45,60 @@ class ControllerInput
 
 	public function inputs()
 	{
-		return $this->inputs;
+		return $this->inputs->filter(function(ColumnDecorator $columnDecorator){
+			return !array_key_exists($columnDecorator->getColumn()->getName(), $this->dependencies);
+		})->values();
+	}
+
+	public function entityNamespace()
+	{
+		return $this->entityNamespace;
+	}
+
+	public function dependencies()
+	{
+		$dependencies = [];
+
+		foreach ($this->dependencies as $foreignKey => $data)
+		{
+			$table = $data['table'];
+
+			if ($table != $this->tableName)
+			{
+				$titleGetter = $this->bestTitleForColumns($data['columns']);
+
+				$dependencies[] = [
+					'studlyCase' => \Str::singular(\Str::studly($table)),
+					'title' => \Str::singular(\Str::titleFromSlug(str_replace('_id', '', $foreignKey))),
+					'camelCase' => \Str::camel($table),
+					'singular' => \Str::singular(\Str::camel($table)),
+					'titleGetter' => $titleGetter,
+					'column' => $foreignKey
+				];
+			}
+		}
+
+		return $dependencies;
+	}
+
+	public function uniqueDependencies()
+	{
+		$unique = [];
+
+		$dependencies = new Collection($this->dependencies());
+
+		$tables = $dependencies->map(function($value){
+			return $value['studlyCase'];
+		})->unique();
+
+		foreach ($tables as $table)
+		{
+			$unique[] = $dependencies->first(function($key, $value) use ($table){
+				return $value['studlyCase'] == $table;
+			});
+		}
+
+		return $unique;
 	}
 
 	/**
@@ -85,24 +145,7 @@ class ControllerInput
 	 */
 	public function titleGetter()
 	{
-		$firstString = $this->columns->first(function ($key, ColumnDecorator $columnDecorator) {
-			$column = $columnDecorator->getColumn();
-			return
-				$column->getName() != 'id' &&
-				$columnDecorator->hasAnyTypes([Type::STRING, Type::TEXT]);
-		});
-
-		if ($firstString)
-		{
-			return $firstString['name'];
-		}
-
-		$firstNonId = $this->columns->first(function ($key, ColumnDecorator $value) {
-			$column = $value->getColumn();
-			return $column->getName() != 'id';
-		});
-
-		return $firstNonId['name'];
+		return $this->bestTitleForColumns($this->columns);
 	}
 
 	public function columns_hide()
@@ -131,5 +174,31 @@ class ControllerInput
 				$column != 'updated_at' &&
 				$column != 'deleted_at';
 		});
+	}
+
+	protected function bestTitleForColumns(Collection $columns)
+	{
+		$firstString = $columns->first(function ($key, ColumnDecorator $columnDecorator)
+		{
+			$column = $columnDecorator->getColumn();
+
+			return
+				$column->getName() != 'id' &&
+				$columnDecorator->hasAnyTypes([Type::STRING, Type::TEXT]);
+		});
+
+		if ($firstString)
+		{
+			return $firstString['name'];
+		}
+
+		$firstNonId = $columns->first(function ($key, ColumnDecorator $value)
+		{
+			$column = $value->getColumn();
+
+			return $column->getName() != 'id';
+		});
+
+		return $firstNonId['name'];
 	}
 }

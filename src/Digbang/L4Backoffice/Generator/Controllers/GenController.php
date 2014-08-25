@@ -96,7 +96,7 @@ class GenController extends \Controller
 		$tables = $this->session->get('backoffice.gen.tables');
 
 		$backofficeNamespace = trim(\Input::get('backoffice_namespace'), ' \\');
-		$entityNamespace = '\\' . trim(\Input::get('entities_namespace'), ' \\') . '\\';
+		$entityNamespace = trim(\Input::get('entities_namespace'), ' \\');
 
 		$controllersDirPath = app_path() . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $backofficeNamespace);
 		$templatePath = realpath(
