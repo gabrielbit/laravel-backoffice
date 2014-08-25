@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Generator\Services;
 
 use Digbang\L4Backoffice\Generator\Model\ColumnDecorator;
+use Digbang\L4Backoffice\Support\Collection;
 use Doctrine\DBAL\Schema\Column;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Config\Repository as Config;
@@ -33,9 +34,34 @@ class ModelFinder
 
 	public function find()
     {
-	    return array_filter($this->schemaManager->listTableNames(), function($tableName){
-		    return $tableName != 'migrations';
-	    });
+	    $tableNames = [];
+
+	    foreach ($this->schemaManager->listTables() as $table)
+	    {
+		    /* @var $table \Doctrine\DBAL\Schema\Table */
+		    if ($table->getName() != 'migrations')
+		    {
+			    $tableNames[$table->getName()] = $table->getName();
+		    }
+	    }
+
+	    foreach ($tableNames as $tableName)
+	    {
+		    foreach ($tableNames as $otherTableName)
+		    {
+			    $singulars = [$this->str->singular($tableName), $this->str->singular($otherTableName)];
+			    $key = implode('_', $singulars);
+
+			    unset($tableNames[$key]);
+		    }
+	    }
+
+	    // Hard-coded unset of the Sentry relationship table
+	    unset($tableNames['users_groups']);
+
+	    natcasesort($tableNames);
+
+	    return array_values($tableNames);
     }
 
 	public function columns($tableName)
