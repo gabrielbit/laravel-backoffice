@@ -33,6 +33,10 @@ class {{ classData.name }}Controller extends Controller
     protected ${{ camelCase }}Repository;
     {{/ uniqueDependencies }}
 
+    protected $title = '{{ classData.name }}';
+
+    protected $titlePlural = '{{ classData.plural }}';
+
 	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory)
 	{
 		$this->backoffice = $backoffice;
@@ -55,11 +59,11 @@ class {{ classData.name }}Controller extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb(
-			['Home' => route('backoffice.index'), '{{ classData.name }}']
+			['Home' => route('backoffice.index'), $this->title]
 		);
 
 		return \View::make('l4-backoffice::index', [
-			'title'      => '{{ classData.plural }}',
+			'title'      => $this->titlePlural,
 			'list'       => $list,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -67,7 +71,7 @@ class {{ classData.name }}Controller extends Controller
 
 	public function create()
 	{
-		$label = \Lang::get('l4-backoffice::default.new', ['model' => '{{ classData.name }}']);
+		$label = \Lang::get('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
 			route('backoffice.{{ classData.snake }}.store'),
@@ -78,12 +82,12 @@ class {{ classData.name }}Controller extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => route('backoffice.index'),
-			'{{ classData.name }}' => route('backoffice.{{ classData.snake }}.index'),
+			$this->title => route('backoffice.{{ classData.snake }}.index'),
 			$label
 		]);
 
 		return \View::make('l4-backoffice::create', [
-			'title'      => '{{ classData.plural }}',
+			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -118,12 +122,12 @@ class {{ classData.name }}Controller extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home'    => route('backoffice.index'),
-			'{{ classData.plural }}' => route('backoffice.{{ classData.snake }}.index'),
+			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
 			$entity->{{ titleGetter }}
 		]);
 
 		return \View::make('l4-backoffice::show', [
-			'title'      => '{{ classData.plural }}',
+			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
 			'label'      => $entity->{{ titleGetter }},
 			'data'       => $entity->toArray(),
@@ -157,7 +161,7 @@ class {{ classData.name }}Controller extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => route('backoffice.index'),
-			'{{ classData.plural }}' => route('backoffice.{{ classData.snake }}.index'),
+			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
 			$entity->{{ titleGetter }} => route('backoffice.{{ classData.snake }}.show', $id),
 			\Lang::get('l4-backoffice::default.edit')
 		]);
@@ -301,17 +305,17 @@ class {{ classData.name }}Controller extends Controller
 			$this->backoffice->actions()
 				->link(function(Collection $row) {
 					return route('backoffice.{{ classData.snake }}.show', $row['id']);
-				}, FontAwesome::icon('eye'))
+				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.show')])
 				->link(function(Collection $row){
 					return route('backoffice.{{ classData.snake }}.edit', $row['id']);
-				}, FontAwesome::icon('edit'))
+				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.edit')])
 				->form(
 					function(Collection $row){
 						return route('backoffice.{{ classData.snake }}.destroy', $row['id']);
 					},
 					FontAwesome::icon('times'),
 					'DELETE',
-					['class' => 'text-danger']
+					['class' => 'text-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.delete')]
 				)
 		);
 	}
@@ -326,8 +330,7 @@ class {{ classData.name }}Controller extends Controller
             \Input::get('sort_by'),
             \Input::get('sort_sense'),
             10,
-            \Input::get('page', 1),
-            []
+            \Input::get('page', 1)
         );
 	}
 

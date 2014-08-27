@@ -5383,4 +5383,6 @@ permissions and limitations under the Apache License and the GPL License.
 	$(document).on('click', '.menutoggle', function(){
 		menuState.toggle();
 	});
+
+	$('[data-toggle="tooltip"]').tooltip();
 });

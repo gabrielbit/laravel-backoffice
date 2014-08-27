@@ -271,4 +271,6 @@ jQuery(document).ready(function() {
 	$(document).on('click', '.menutoggle', function(){
 		menuState.toggle();
 	});
+
+	$('[data-toggle="tooltip"]').tooltip();
 });

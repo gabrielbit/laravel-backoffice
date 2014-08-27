@@ -9,15 +9,23 @@ use Illuminate\Database\Eloquent\Model;
 class EloquentBackofficeRepository implements BackofficeRepository
 {
 	protected $eloquent;
+	protected $eagerLoad = [];
 
 	function __construct(Model $eloquent)
 	{
 		$this->eloquent = $eloquent;
 	}
 
+	public function with(array $eagerLoad)
+	{
+		$this->eagerLoad = $eagerLoad;
+
+		return $this;
+	}
+
 	public function findById($id)
 	{
-		return $this->eloquent->findOrFail($id);
+		return $this->eloquent->with($this->eagerLoad)->findOrFail($id);
 	}
 
 	public function create($params)
@@ -40,9 +48,9 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		return $this->eloquent->destroy($id);
 	}
 
-	public function search($filters, $sortBy = null, $sortSense = null, $limit = 10, $offset = 0, $eagerLoad = [])
+	public function search($filters, $sortBy = null, $sortSense = null, $limit = 10, $offset = 0)
 	{
-		$eloquent = $this->eloquent->with($eagerLoad);
+		$eloquent = $this->eloquent->with($this->eagerLoad);
 
 		$filters = array_filter($filters, function($filter){ return !empty($filter) || $filter === false; });
 		foreach ($filters as $key => $value)
@@ -58,9 +66,9 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		return $eloquent->paginate($limit);
 	}
 
-	public function all($eagerLoad = [])
+	public function all()
 	{
-		$eloquent = $this->eloquent->with($eagerLoad);
+		$eloquent = $this->eloquent->with($this->eagerLoad);
 
 		return $eloquent->get();
 	}
