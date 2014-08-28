@@ -70,7 +70,13 @@ module.exports = function(grunt) {
 				files: [
 					{
 						cwd: './vendor/digbang/backoffice-template/template/',
-						src: ['images/**', 'fonts/**'],
+						src: ['images/**', 'fonts/lato/**', 'fonts/roboto/**'],
+						dest: './public',
+						expand: true
+					},
+					{
+						cwd: './bower_components/font-awesome',
+						src: ['fonts/**'],
 						dest: './public',
 						expand: true
 					}
