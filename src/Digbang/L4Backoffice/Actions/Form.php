@@ -42,8 +42,13 @@ class Form extends Action implements ActionInterface
 
 	public function renderWith($row)
 	{
-		return parent::renderWith($row)->with([
-			'method' => $this->method()
-		]);
+		if ($view = parent::renderWith($row))
+		{
+			return $view->with([
+				'method' => $this->method()
+			]);
+		}
+
+		return $view;
 	}
 }
