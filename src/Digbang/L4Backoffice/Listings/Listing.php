@@ -56,7 +56,7 @@ class Listing implements RenderableInterface, Countable
 
 	/**
 	 * @param ColumnCollection $columnCollection
-	 * @return Listing $this
+	 * @return ColumnCollection
 	 */
 	public function columns(ColumnCollection $columnCollection = null)
 	{

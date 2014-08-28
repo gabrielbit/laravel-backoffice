@@ -35,7 +35,7 @@ class Collection implements \IteratorAggregate
 
 	public function boolean($name, $label, $options = [])
 	{
-		return $this->add($this->factory->checkbox($name, $label, $options));
+		return $this->add($this->factory->dropdown($name, $label, [''=> '', 'true' => 'Yes', 'false' => 'No'], $options));
 	}
 
 	public function find($name)

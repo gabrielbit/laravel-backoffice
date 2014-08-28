@@ -227,18 +227,10 @@ class {{ classData.name }}Controller extends Controller
 
 		$inputs = $form->inputs();
 
-
 		{{# dependencies }}
-		${{ camelCase }} = [''];
-	    foreach ($this->{{ camelCase }}Repository->all() as ${{ singular }})
-	    {
-	        ${{ camelCase }}[${{ singular }}->id] = ${{ singular }}->{{ titleGetter }};
-	    }
-
+		${{ camelCase }} = ['', ''] + array_pluck($this->{{ camelCase }}Repository->all(), {{ titleGetter }}, 'id');
 		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }});
-
 		{{/ dependencies }}
-
 		{{# inputs }}
 		$inputs->{{ type }}('{{ name }}', '{{ title }}');
 		{{/ inputs }}
@@ -255,7 +247,7 @@ class {{ classData.name }}Controller extends Controller
 
 		// Here we add filters to the list
 		{{# inputs }}
-		$filters->text('{{ name }}', '{{ title }}', ['class' => 'form-control']);
+		$filters->{{ type }}('{{ name }}', '{{ title }}', ['class' => 'form-control']);
 		{{/ inputs }}
 
 		// And filter dependencies
