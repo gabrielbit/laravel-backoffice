@@ -14,7 +14,7 @@
 	    "digbang/security":       "~1.0"
     },
     "require-dev": {
-	    "digbang/backoffice-template": "dev-master",
+	    "digbang/backoffice-template": "1.0.0",
         "phpspec/phpspec": "~2.0"
     },
     "license": "Proprietary",
