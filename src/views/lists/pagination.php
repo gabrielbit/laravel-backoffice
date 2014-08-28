@@ -1,5 +1,7 @@
 <?php
 /** @var $paginator Illuminate\Pagination\Paginator */
+$paginator->appends(\Input::except(['page']));
+
 $presenter = new Illuminate\Pagination\BootstrapPresenter($paginator);
 $paginator->setupPaginationContext();
 ?>
