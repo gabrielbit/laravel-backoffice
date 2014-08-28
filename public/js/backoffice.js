@@ -5385,4 +5385,35 @@ permissions and limitations under the Apache License and the GPL License.
 	});
 
 	$('[data-toggle="tooltip"]').tooltip();
+
+	// Hook up on any "dangerous" button and alert the user
+	jQuery('button.text-danger').click(function(){
+		var theForm = $(this).parents('form').first(),
+			message = $(this).data('confirm') || "Are you sure you want to delete this?";
+
+		bootbox.confirm(message, function(result) {
+			if (result) {
+				theForm.trigger('submit');
+			}
+		});
+
+		return false;
+	}).each(function(){
+		$(this).parents('form').ajaxForm({
+			success: function(responseText, statusText, xhr, $form){
+				$form.closest('tr').fadeOut(function(){
+					jQuery(this).remove();
+				});
+			},
+			error: function(jqXHR){
+				var response = jqXHR.responseJSON;
+
+				jQuery.gritter.add({
+					title: response.title || 'Error',
+					text: response.message,
+					class_name: 'growl-danger'
+				});
+			}
+		});
+	});
 });
