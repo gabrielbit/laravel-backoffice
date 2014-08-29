@@ -10,5 +10,5 @@
 @endif
 
 @section('panel.content')
-	@include('l4-backoffice::read', compact($label, $data, $editAction, $backAction))
+	@include('l4-backoffice::read', compact($label, $data, $actions, $topActions))
 @stop

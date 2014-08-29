@@ -139,13 +139,20 @@ class {{ classData.name }}Controller extends Controller
 			{{/ inputs }}
 		];
 
+		$actions = $this->backoffice->actions()
+			->link(route('backoffice.banners.edit', $id), \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+			->link(route('backoffice.banners.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+
+		$topActions = $this->backoffice->actions()
+			->link(route('backoffice.banners.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+
 		return \View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
 			'label'      => $entity->{{ titleGetter }},
 			'data'       => $data,
-			'editAction' => route('backoffice.{{ classData.snake }}.edit', $id),
-			'backAction' => route('backoffice.{{ classData.snake }}.index')
+			'actions'    => $actions,
+			'topActions' => $topActions
 		]);
 	}
 
