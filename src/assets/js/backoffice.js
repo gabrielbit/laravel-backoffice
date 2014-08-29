@@ -286,22 +286,5 @@ jQuery(document).ready(function() {
 		});
 
 		return false;
-	}).each(function(){
-		$(this).parents('form').ajaxForm({
-			success: function(responseText, statusText, xhr, $form){
-				$form.closest('tr').fadeOut(function(){
-					jQuery(this).remove();
-				});
-			},
-			error: function(jqXHR){
-				var response = jqXHR.responseJSON;
-
-				jQuery.gritter.add({
-					title: response.title || 'Error',
-					text: response.message,
-					class_name: 'growl-danger'
-				});
-			}
-		});
 	});
 });
