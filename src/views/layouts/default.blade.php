@@ -16,7 +16,6 @@
 	</div>
 	@show
 	<div class="leftpanelinner">
-		<h5 class="sidebartitle">{{ Lang::get('l4-backoffice::default.navigation') }}</h5>
 		@yield('body.navigation')
 	</div>
 </div>

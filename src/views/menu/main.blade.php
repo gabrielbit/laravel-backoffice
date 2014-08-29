@@ -1,3 +1,4 @@
+<h5 class="sidebartitle">{{ $label }}</h5>
 <ul {{ \HTML::attributes($options) }}>
 	@foreach($actionTree as $action)
 		@if ($action instanceof Digbang\L4Backoffice\Actions\Composite)

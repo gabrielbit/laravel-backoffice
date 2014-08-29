@@ -18,15 +18,13 @@ class MenuFactory
 	protected $actionFactory;
 	protected $controlFactory;
 	protected $config;
-	protected $translator;
 	protected $secureUrl;
 
-	function __construct(ActionFactory $actionFactory, ControlFactory $controlFactory, Config $config, Translator $translator, SecureUrl $secureUrl)
+	function __construct(ActionFactory $actionFactory, ControlFactory $controlFactory, Config $config, SecureUrl $secureUrl)
 	{
 		$this->actionFactory  = $actionFactory;
 		$this->controlFactory = $controlFactory;
 		$this->config         = $config;
-		$this->translator     = $translator;
 		$this->secureUrl      = $secureUrl;
 	}
 
@@ -34,27 +32,32 @@ class MenuFactory
 	{
 		if (!$this->menu)
 		{
-			$menu  = $this->config->get('l4-backoffice::menu');
+			$this->menu = [];
 
-			$actionTree = $this->actionFactory->collection();
+			$menus = $this->config->get('l4-backoffice::menu');
 
-			foreach ($menu as $label => $config)
+			foreach ($menus as $title => $menu)
 			{
-				$this->buildActionTree($actionTree, $label, $config);
-			}
+				$actionTree = $this->actionFactory->collection();
 
-			$this->menu = $this->buildMenu($actionTree);
+				foreach ($menu as $label => $config)
+				{
+					$this->buildActionTree($actionTree, $label, $config);
+				}
+
+				$this->menu[] = $this->buildMenu($title, $actionTree);
+			}
 		}
 
 		return $this->menu;
 	}
 
-	protected function buildMenu(ActionCollection $actionTree)
+	protected function buildMenu($title, ActionCollection $actionTree)
 	{
 		return new Menu(
 			$this->controlFactory->make(
 				'l4-backoffice::menu.main',
-				$this->translator->get('l4-backoffice::default.navigation'),
+				$title,
 				['class' => 'nav nav-pills nav-stacked nav-bracket']),
 			$actionTree);
 	}
@@ -82,7 +85,7 @@ class MenuFactory
 	{
 		if (array_key_exists('path', $config))
 		{
-			return $this->secureUrl->path($config['path']);
+			return $this->secureUrl->may($config['path']);
 		}
 
 		if (array_key_exists('route', $config))
