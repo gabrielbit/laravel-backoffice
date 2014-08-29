@@ -183,19 +183,25 @@ class {{ classData.name }}Controller extends Controller
         $entity = $this->{{ classData.snake }}Repository->findById($id);
 
 		// Get the input
-		$input = \Input::only([
-			{{# inputs }}
+		$inputData = array_filter(\Input::only([
+            {{# inputs }}
             '{{ name }}',
             {{/ inputs }}
-		]);
-
-		// Fill it with non-empty input
-		$entity->fill(array_filter($input, function($value){
-			return !empty($value) && $value !== false;
-		}));
+            {{# dependencies }}
+            '{{ column }}',
+            {{/ dependencies }}
+        ]), function($value){
+	         return !empty($value) && $value !== false;
+	    });
 
 		try
 		{
+			// Validate the input
+			$this->validate($inputData);
+
+			// Fill the entity
+            $entity->fill($inputData);
+
 			// Try to save it
 			$entity->save();
 
