@@ -1,4 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Generator\Model;
+use Doctrine\DBAL\Types\Type;
 use Illuminate\Support\Str;
 use Doctrine\DBAL\Schema\Column;
 
@@ -42,6 +43,16 @@ class ColumnDecorator implements \ArrayAccess
 	public function getType()
 	{
 		return $this->str->camel($this->column->getType()->getName());
+	}
+
+	public function getNameAccessor()
+	{
+		if ($this->isType(Type::BOOLEAN))
+		{
+			return $this->column->getName() . "? 'Yes' : 'No'";
+		}
+
+		return $this->column->getName();
 	}
 
 	public function isType($type)

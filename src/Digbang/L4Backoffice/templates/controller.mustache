@@ -130,11 +130,20 @@ class {{ classData.name }}Controller extends Controller
 			$entity->{{ titleGetter }}
 		]);
 
+		$data = [
+			{{# dependencies }}
+			'{{ title }}' => $entity->{{ singular }}->{{ titleGetter }},
+			{{/ dependencies }}
+			{{# inputs }}
+			'{{ title }}' => $entity->{{ nameAccessor }},
+			{{/ inputs }}
+		];
+
 		return \View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
 			'label'      => $entity->{{ titleGetter }},
-			'data'       => $entity->toArray(),
+			'data'       => $data,
 			'editAction' => route('backoffice.{{ classData.snake }}.edit', $id),
 			'backAction' => route('backoffice.{{ classData.snake }}.index')
 		]);
