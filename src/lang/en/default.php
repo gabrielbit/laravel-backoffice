@@ -14,6 +14,7 @@ return [
 	'edit'             => 'Edit',
 	'show'             => 'Show',
 	'delete'           => 'Delete',
+	'delete-confirm'   => 'Are you sure you want to delete this?',
 	'back'             => 'Back',
 	'yes'              => 'Yes',
 	'no'               => 'No'

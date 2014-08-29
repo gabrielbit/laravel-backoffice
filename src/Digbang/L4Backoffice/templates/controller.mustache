@@ -299,19 +299,29 @@ class {{ classData.name }}Controller extends Controller
 
 		$list->setRowActions(
 			$this->backoffice->actions()
+				// View icon
 				->link(function(Collection $row) {
 					return route('backoffice.{{ classData.snake }}.show', $row['id']);
 				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.show')])
+				// Edit icon
 				->link(function(Collection $row){
 					return route('backoffice.{{ classData.snake }}.edit', $row['id']);
 				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.edit')])
+				// Delete icon
 				->form(
 					function(Collection $row){
 						return route('backoffice.{{ classData.snake }}.destroy', $row['id']);
 					},
 					FontAwesome::icon('times'),
 					'DELETE',
-					['class' => 'text-danger', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.delete')]
+					[
+						'class'          => 'text-danger',
+						'data-toggle'    => 'tooltip',
+						'data-placement' => 'top',
+						'data-confirm'   => \Lang::get('l4-backoffice::default.delete-confirm'),
+						'title'          => \Lang::get('l4-backoffice::default.delete')
+					],
+					true
 				)
 		);
 	}
