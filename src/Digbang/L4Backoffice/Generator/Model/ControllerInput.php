@@ -50,6 +50,20 @@ class ControllerInput
 		})->values();
 	}
 
+	public function hasRequiredFields()
+	{
+		return !empty($this->requiredFields());
+	}
+
+	public function requiredFields()
+	{
+		return $this->inputs->filter(function(ColumnDecorator $columnDecorator){
+			$column = $columnDecorator->getColumn();
+
+			return $column->getNotnull() && !$column->getDefault();
+		})->values();
+	}
+
 	public function entityNamespace()
 	{
 		return $this->entityNamespace;

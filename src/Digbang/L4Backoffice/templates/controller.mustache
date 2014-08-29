@@ -105,6 +105,8 @@ class {{ classData.name }}Controller extends Controller
 
 		try
 		{
+			$this->validate($inputData);
+
 			${{ classData.camel }} = $this->{{ classData.snake }}Repository->create($inputData);
 
 			return \Redirect::to(route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
@@ -228,7 +230,7 @@ class {{ classData.name }}Controller extends Controller
 		$inputs = $form->inputs();
 
 		{{# dependencies }}
-		${{ camelCase }} = ['', ''] + array_pluck($this->{{ camelCase }}Repository->all(), {{ titleGetter }}, 'id');
+		${{ camelCase }} = ['', ''] + array_pluck($this->{{ camelCase }}Repository->all(), '{{ titleGetter }}', 'id');
 		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }});
 		{{/ dependencies }}
 		{{# inputs }}
@@ -329,5 +331,29 @@ class {{ classData.name }}Controller extends Controller
 	protected function setRepository(BackofficeRepository $backofficeRepository)
     {
         $this->{{ classData.snake }}Repository = $backofficeRepository;
+    }
+
+    protected function validate($inputData)
+    {
+        {{# hasRequiredFields }}
+        $validationRules = [
+            {{# requiredFields }}
+            '{{ name }}' => 'required',
+            {{/ requiredFields }}
+        ];
+
+        $validationMsgs = [
+            {{# requiredFields }}
+            '{{ name }}.required' => 'The {{ title }} field is required.',
+            {{/ requiredFields }}
+        ];
+
+        $validator = \Validator::make($inputData, $validationRules, $validationMsgs);
+
+        if ($validator->fails())
+        {
+            throw new ValidationException($validator->errors());
+        }
+        {{/ hasRequiredFields }}
     }
 }
