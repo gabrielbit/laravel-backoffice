@@ -95,11 +95,14 @@ class {{ classData.name }}Controller extends Controller
 
 	public function store()
 	{
-		$inputData = array_filter([
+		$inputData = array_filter(\Input::only([
             {{# inputs }}
-            '{{ name }}' => \Input::get('{{ name }}'),
+            '{{ name }}',
             {{/ inputs }}
-        ], function($input){
+            {{# dependencies }}
+            '{{ column }}',
+            {{/ dependencies }}
+        ]), function($input){
             return !empty($input) && $input !== false;
         });
 
