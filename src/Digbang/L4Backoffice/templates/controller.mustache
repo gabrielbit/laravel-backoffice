@@ -58,7 +58,7 @@ class {{ classData.name }}Controller extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb(
-			['Home' => route('backoffice.index'), $this->title]
+			['Home' => route('backoffice.index'), $this->titlePlural]
 		);
 
 		return \View::make('l4-backoffice::index', [
@@ -81,7 +81,7 @@ class {{ classData.name }}Controller extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => route('backoffice.index'),
-			$this->title => route('backoffice.{{ classData.snake }}.index'),
+			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
 			$label
 		]);
 
