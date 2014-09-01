@@ -15,6 +15,7 @@ class BackofficeServiceProvider extends ServiceProvider
 		$this->stringMacros();
 
 		$this->registerAuthRoutes();
+		$this->registerAuthFilters();
 
 		if (\Config::get('app.debug'))
 		{
@@ -87,4 +88,13 @@ class BackofficeServiceProvider extends ServiceProvider
 			$router->post('password/reset/{code}',     ['as' => "$authRoute.password.reset-request",  'uses' => "$authController@resetPasswordRequest"]);
 		});
 	}
-} 
+
+	protected function registerAuthFilters()
+	{
+		/* @var $router \Illuminate\Routing\Router */
+		$router = $this->app['router'];
+
+		$router->filter('backoffice.auth.logged', 'Digbang\Security\Filters\Auth@logged');
+		$router->filter('backoffice.auth.withPermissions', 'Digbang\Security\Filters\Auth@withPermissions');
+	}
+}

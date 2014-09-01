@@ -19,13 +19,23 @@ Add this line to your `app/config/app.php` providers array:
 ```
 
 ## Using the gen
-To use the code generator you need to also add some routes to your `routes.php` file:
+The code generator is available to projects in debug mode at the `/backoffice/gen` url.
+This is included automatically by adding the `BackofficeServiceProvider` to your `app.php`
+configuration file, so there is no need to change your routes.
 
-```php
-Route::get('gen',            'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection');
-Route::post('gen/customize', 'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@customization');
-Route::post('gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@generation');
-```
+## Authentication
+Authentication is provided via the [digbang/security](http://git.digbang.com/digbang/security) package.
+Auth urls are prefixed with `backoffice/auth/` so that they don't collide with each project urls.
+To use this, your backoffice route group should include one of the provided backoffice filters:
+
+* `backoffice.auth.logged` (only checks for guest / logged in users)
+* `backoffice.auth.withPermissions` (also checks for permissions on each url)
+
+The `digbang/security` package provides a `SecureUrl` object, that will help you build the urls that the
+currently logged in user has permission to use.
+
+You can customize your permissions repository by publishing the backoffice config files and editing the `auth.php`
+file. By default, an `InsecurePermissionRepository` implementation is used.
 
 ## Contributing
 This project is being developed with [PHPSpec](http://phpspec.net).
