@@ -1,6 +1,7 @@
 <?php namespace spec\Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Digbang\L4Backoffice\Inputs\InputFactory;
@@ -15,8 +16,9 @@ class ListingFactorySpec extends ObjectBehavior
 	{
 		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$inputFactory = new InputFactory($controlFactory);
+		$valueExtractor = new ValueExtractorFacade();
 
-		$this->beConstructedWith($inputFactory, $controlFactory);
+		$this->beConstructedWith($inputFactory, $controlFactory, $valueExtractor);
 	}
 
     function it_is_initializable()

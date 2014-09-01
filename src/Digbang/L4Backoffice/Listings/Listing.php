@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Contracts\ArrayableInterface;
@@ -47,11 +48,14 @@ class Listing implements RenderableInterface, Countable
 
 	protected $paginator;
 
-	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters)
+	protected $valueExtractor;
+
+	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters, ValueExtractorFacade $valueExtractor)
 	{
 		$this->control = $control;
 		$this->rows    = $rows;
 		$this->filters = $filters;
+		$this->valueExtractor = $valueExtractor;
 	}
 
 	/**
@@ -123,22 +127,10 @@ class Listing implements RenderableInterface, Countable
 		foreach ($this->columns as $column)
 		{
 			/* @var $column \Digbang\L4Backoffice\Listings\Column */
-			$row[$column->getId()] = $this->extractValue($element, $column->getId());
+			$row[$column->getId()] = $this->valueExtractor->extract($element, $column->getId());
 		}
 
 		return $row;
-	}
-
-	protected function extractValue($element, $id)
-	{
-		$element = $this->toArray($element);
-
-		if (!array_key_exists($id, $element))
-		{
-			throw new \InvalidArgumentException("Column $id not defined.");
-		}
-
-		return $element[$id];
 	}
 
 	public function setActions(ActionCollection $actions)
@@ -180,26 +172,5 @@ class Listing implements RenderableInterface, Countable
 	public function count()
 	{
 		return $this->rows->count();
-	}
-
-	/**
-	 * @param $element
-	 * @return array
-	 */
-	protected function toArray($element)
-	{
-		if (!is_array($element))
-		{
-			if ($element instanceof ArrayableInterface)
-			{
-				$element = $element->toArray();
-			}
-			else
-			{
-				$element = (array) $element;
-			}
-		}
-
-		return $element;
 	}
 }

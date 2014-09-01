@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Inputs\InputFactory as InputFactory;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 
@@ -21,7 +22,8 @@ class ListingFactory
         $listing = new Listing(
 	        $this->controlFactory->make('l4-backoffice::listing', ''),
 	        new DigbangCollection(),
-	        $this->inputFactory->collection()
+	        $this->inputFactory->collection(),
+	        new ValueExtractorFacade()
         );
 
 	    $listing->columns($columns);

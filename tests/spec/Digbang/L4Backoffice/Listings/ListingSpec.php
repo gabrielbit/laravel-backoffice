@@ -2,6 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
@@ -20,11 +21,13 @@ class ListingSpec extends ObjectBehavior
 	{
 		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$filterFactory  = new FilterFactory($controlFactory);
+		$valueExtractor = new ValueExtractorFacade();
 
 		$this->beConstructedWith(
 			$control,
 			new DigbangCollection(),
-			$filterFactory->collection()
+			$filterFactory->collection(),
+			$valueExtractor
 		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
@@ -67,7 +70,7 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_throw_an_error_when_filling_with_a_malformed_array()
 	{
-		$this->shouldThrow('\InvalidArgumentException')
+		$this->shouldThrow('\UnexpectedValueException')
 			->duringFill([
 			['name' => 'Some name', 'address' => 'Some Address', 'value' => 'not important'],
 			['name' => 'Other name', 'zip_code' => '12345', 'value' => 'not important'],
@@ -92,7 +95,7 @@ class ListingSpec extends ObjectBehavior
 
 	function it_should_also_fail_when_filling_with_a_malformed_collection_element()
 	{
-		$this->shouldThrow('\InvalidArgumentException')
+		$this->shouldThrow('\UnexpectedValueException')
 			->duringFill(new \Illuminate\Support\Collection([
 				['name' => 'Some name', 'address' => 'Some Address', 'value' => 'not important'],
 				['name' => 'Other name', 'zip_code' => '12345', 'value' => 'not important'],
