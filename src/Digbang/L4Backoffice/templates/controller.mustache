@@ -140,11 +140,11 @@ class {{ classData.name }}Controller extends Controller
 		];
 
 		$actions = $this->backoffice->actions()
-			->link(route('backoffice.banners.edit', $id), \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
-			->link(route('backoffice.banners.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			->link(route('backoffice.{{ classData.snake }}.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+			->link(route('backoffice.{{ classData.snake }}.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
 
 		$topActions = $this->backoffice->actions()
-			->link(route('backoffice.banners.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+			->link(route('backoffice.{{ classData.snake }}.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
 
 		return \View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
@@ -298,16 +298,29 @@ class {{ classData.name }}Controller extends Controller
 			{{# columns }}
 			'{{ name }}' => '{{ title }}',
 			{{/ columns }}
+			{{# dependencies }}
+			'{{ singular }}' => '{{ title }}',
+			{{/ dependencies }}
 		]);
 
 		$columns = $listing->columns();
 		$columns
-			->hide([{{ columns_hide }}])
+			->hide([
+				{{# hiddenColumns }}
+				'{{ name }}',
+				{{/ hiddenColumns }}
+			])
 			->sortable([
 			{{# inputs }}
 				'{{ name }}',
 			{{/ inputs }}
 		]);
+
+		{{# dependencies }}
+        $columns->setAccessor('{{ singular }}', function($row){
+            return $row['{{ singular }}']['{{ titleGetter }}'];
+        });
+        {{/ dependencies }}
 
 		return $listing;
 	}
@@ -316,7 +329,7 @@ class {{ classData.name }}Controller extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link(route('backoffice.{{ classData.snake }}.create'), 'New {{ classData.name }}', ['class' => 'btn btn-primary'])
+				->link(route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary'])
 		);
 
 		$list->setRowActions(
@@ -353,6 +366,13 @@ class {{ classData.name }}Controller extends Controller
 	 */
 	protected function getData()
 	{
+		{{# hasDependencies }}
+		$this->{{ classData.snake }}Repository->with([
+			{{# dependencies }}
+			'{{ singular }}',
+			{{/ dependencies }}
+		]);
+		{{/ hasDependencies }}
 		return $this->{{ classData.snake }}Repository->search(
             \Input::except(['page', 'sort_by', 'sort_sense']),
             \Input::get('sort_by'),
@@ -361,11 +381,6 @@ class {{ classData.name }}Controller extends Controller
             \Input::get('page', 1)
         );
 	}
-
-	protected function setRepository(BackofficeRepository $backofficeRepository)
-    {
-        $this->{{ classData.snake }}Repository = $backofficeRepository;
-    }
 
     protected function validate($inputData)
     {

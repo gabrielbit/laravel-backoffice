@@ -95,6 +95,11 @@ class ControllerInput
 		return $dependencies;
 	}
 
+	public function hasDependencies()
+	{
+		return !empty($this->dependencies());
+	}
+
 	public function uniqueDependencies()
 	{
 		$unique = [];
@@ -162,15 +167,13 @@ class ControllerInput
 		return $this->bestTitleForColumns($this->columns);
 	}
 
-	public function columns_hide()
+	public function hiddenColumns()
 	{
-		if ($this->columns->first(function($key, ColumnDecorator $value){
-			$column = $value->getColumn();
-			return $column->getName() == 'id';
-		}))
-		{
-			return "'id'";
-		}
+		return $this->columns->filter(function(ColumnDecorator $columnDecorator){
+			$name = $columnDecorator->getColumn()->getName();
+
+			return $name == 'id' || array_key_exists($name, $this->dependencies);
+		})->values();
 	}
 
 	public function classData()
