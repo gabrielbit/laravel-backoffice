@@ -44,6 +44,16 @@ class InputFactory
 
 	public function button($name, $label, $options = [])
 	{
+		if (!isset($options['name']))
+		{
+			$options['name'] = $name;
+		}
+
+		if (!isset($options['id']))
+		{
+			$options['id'] = $name;
+		}
+
 		return $this->make(
 			'l4-backoffice::inputs.button',
 			$label,

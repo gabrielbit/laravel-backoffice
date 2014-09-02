@@ -1,0 +1,1 @@
+{{ Form::button($label, $options) }}
