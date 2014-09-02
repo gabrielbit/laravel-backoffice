@@ -93,9 +93,6 @@ class Input implements InputInterface
 		return $this->control->view();
 	}
 
-	/**
-	 * @param boolean $readonly
-	 */
 	public function setReadonly()
 	{
 		$this->readonly = true;
@@ -114,5 +111,16 @@ class Input implements InputInterface
 				'value'   =>  $this->value() !== null ? $this->value() : $this->defaultsTo,
 				'readonly' => $this->readonly
 			]);
+	}
+
+	/**
+	 * Check if the input matches the given name
+	 *
+	 * @param $name
+	 * @return boolean
+	 */
+	public function hasName($name)
+	{
+		return $this->name == $name;
 	}
 }

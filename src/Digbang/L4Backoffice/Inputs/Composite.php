@@ -91,4 +91,34 @@ class Composite implements InputInterface
 		]);
 	}
 
-} 
+	/**
+	 * Check if the input matches the given name
+	 *
+	 * @param $name
+	 * @return boolean
+	 */
+	public function hasName($name)
+	{
+		return ! is_null($this->inputCollection->find($name));
+	}
+
+	/**
+	 * Sets the value of the input.
+	 * Composite requires the value to be array(able)
+	 * with keys matching input names
+	 *
+	 * @param array $value
+	 * @return void
+	 */
+	public function setValue($value)
+	{
+		foreach ((array) $value as $name => $val)
+		{
+			if ($input = $this->inputCollection->find($name))
+			{
+				/* @var $input InputInterface */
+				$input->setValue($val);
+			}
+		}
+	}
+}

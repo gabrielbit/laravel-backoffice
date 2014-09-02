@@ -21,4 +21,18 @@ interface InputInterface extends ControlInterface
 	 * @param $value
 	 */
 	public function defaultsTo($value);
+
+	/**
+	 * Check if the input matches the given name
+	 * @param $name
+	 * @return boolean
+	 */
+	public function hasName($name);
+
+	/**
+	 * Sets the value of the input
+	 * @param $value
+	 * @return void
+	 */
+	public function setValue($value);
 }

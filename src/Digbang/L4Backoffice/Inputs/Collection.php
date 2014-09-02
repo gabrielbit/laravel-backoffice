@@ -51,7 +51,7 @@ class Collection implements \IteratorAggregate
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){
-			return $input->name() == $name;
+			return $input->hasName($name);
 		});
 	}
 
