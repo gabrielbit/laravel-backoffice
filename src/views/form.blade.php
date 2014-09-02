@@ -5,15 +5,15 @@
 	</div>
 	<div class="panel-body panel-body-nopadding">
 		@foreach($inputs as $input)
-		<div class="form-group{{ $errors->has($input->name()) ? ' has-error' : '' }}">
-			<label for="{{ $input->name() }}" class="col-sm-3 control-label">
-				{{ $input->label() }}
+		<div class="form-group{{ $errors->hasAny((array) $input->name()) ? ' has-error' : '' }}">
+			<label for="{{ implode(' ', (array) $input->name()) }}" class="col-sm-3 control-label">
+				{{ implode('/', (array) $input->label()) }}
 			</label>
 			<div class="col-sm-6">
 				{{ $input->render() }}
-				@if($errors->has($input->name()))
+				@if($errors->hasAny((array) $input->name()))
 					@foreach($errors->get($input->name()) as $error)
-						<label for="{{ $input->name() }}" class="error">{{ $error }}</label>
+						<label for="{{ implode(' ', (array) $input->name()) }}" class="error">{{ $error }}</label>
 					@endforeach
 				@endif
 			</div>

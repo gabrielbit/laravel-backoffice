@@ -4,7 +4,7 @@ use Digbang\L4Backoffice\Inputs\Collection;
 use Digbang\L4Backoffice\Inputs\File;
 use Illuminate\Session\Store;
 use Illuminate\Support\Contracts\RenderableInterface;
-use Illuminate\Support\MessageBag;
+use Digbang\L4Backoffice\Support\MessageBag;
 use Digbang\L4Backoffice\Actions\Form as FormAction;
 
 class Form implements RenderableInterface
@@ -38,12 +38,14 @@ class Form implements RenderableInterface
 	 */
 	public function render()
 	{
+		$errors = $this->session->get('errors') ?: [];
+
 		return \View::make($this->view, [
 			'label'        => $this->form->label(),
 			'formOptions'  => $this->buildOptions($this->form->target(), $this->form->method(), $this->options),
 			'inputs'       => $this->collection,
 			'cancelAction' => $this->cancelAction,
-			'errors'       => $this->session->get('errors') ?: new MessageBag()
+			'errors'       => new MessageBag((array) $errors)
 		]);
 	}
 
