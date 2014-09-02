@@ -87,4 +87,12 @@ class Form implements RenderableInterface
 	        }
         }
     }
+
+	/**
+	 * @param string $view
+	 */
+	public function setView($view)
+	{
+		$this->view = $view;
+	}
 }

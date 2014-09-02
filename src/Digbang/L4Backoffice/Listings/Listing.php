@@ -173,4 +173,12 @@ class Listing implements RenderableInterface, Countable
 	{
 		return $this->rows->count();
 	}
+
+	/**
+	 * @param string $view
+	 */
+	public function setView($view)
+	{
+		$this->view = $view;
+	}
 }
