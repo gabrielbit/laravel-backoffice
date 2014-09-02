@@ -14,6 +14,7 @@ class Input implements InputInterface
 	protected $name;
 	protected $value;
 	protected $defaultsTo;
+	protected $readonly = false;
 
 	function __construct(ControlInterface $control, $name, $value = null)
 	{
@@ -93,6 +94,14 @@ class Input implements InputInterface
 	}
 
 	/**
+	 * @param boolean $readonly
+	 */
+	public function setReadonly()
+	{
+		$this->readonly = true;
+	}
+
+	/**
 	 * Get the evaluated contents of the object.
 	 *
 	 * @return \Illuminate\View\View
@@ -101,8 +110,9 @@ class Input implements InputInterface
 	{
 		return $this->control->render()
 			->with([
-				'name'    => $this->name(),
-				'value'   => $this->value() !== null ? $this->value() : $this->defaultsTo
+				'name'    =>  $this->name(),
+				'value'   =>  $this->value() !== null ? $this->value() : $this->defaultsTo,
+				'readonly' => $this->readonly
 			]);
 	}
 }
