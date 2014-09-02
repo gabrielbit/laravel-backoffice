@@ -1,5 +1,5 @@
 @if($readonly)
-{{ $value }}
+<p class="form-control-static">{{ $value }}</p>
 @else
 {{ Form::text($name, $value, $options) }}
 @endif
