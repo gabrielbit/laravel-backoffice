@@ -106,6 +106,14 @@ class InputFactory
 		return new Collection($this, new DigbangCollection());
 	}
 
+	public function composite(Collection $collection, $label = '', $options = [])
+	{
+		return new Composite(
+			$this->controlFactory->make('l4-backoffice::inputs.composite', $label, $options),
+			$collection
+		);
+	}
+
 	public function hidden($name, $options = [])
 	{
 		return $this->make(
