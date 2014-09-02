@@ -36,8 +36,6 @@ module.exports = function(grunt) {
 					"./vendor/digbang/backoffice-template/template/js/colorpicker.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery.datatables.min.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery.validate.min.js",
-					"./vendor/digbang/backoffice-template/template/js/chosen.jquery.min.js",
-					"./vendor/digbang/backoffice-template/template/js/custom.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery.prettyPhoto.js",
 					"./vendor/digbang/backoffice-template/template/js/wysihtml5-0.3.0.min.js",
 					"./vendor/digbang/backoffice-template/template/js/bootstrap-wysihtml5.js",
@@ -47,11 +45,13 @@ module.exports = function(grunt) {
 					"./bower_components/multiselect/js/jquery.multi-select.js",
 					"./bower_components/select2/select2.min.js",
 					"./bower_components/jquery-cookie/jquery.cookie.js",
+					"./vendor/digbang/backoffice-template/template/js/custom.js",
 					"./src/assets/js/backoffice.js"
 				],
 				dest: './public/js/backoffice.js',
 				options: {
-					separator: ';'
+					separator: ';\n',
+					sourceMap: true
 				}
 			},
 			"ie8compat": {

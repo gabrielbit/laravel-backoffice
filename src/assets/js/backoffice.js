@@ -1,21 +1,13 @@
-jQuery(document).ready(function() {
-	// Chosen Select
-	jQuery("select:not(.multiselect):not(.select2)").each(function(){
-		$(this).chosen({
-			'width': "100%",
-			'white-space': 'nowrap',
-			disable_search_threshold: 10
-		});
-	});
-
-	jQuery('form').on('reset', function(){
-		jQuery('select', this).each(function(){
-			jQuery(this).val('').trigger('chosen:updated');
+$(document).ready(function(){
+	// Select2
+	$("select").each(function(){
+		$(this).select2({
+			closeOnSelect: $(this).attr('multiple')
 		});
 	});
 
 	// Delete row in a table
-	jQuery('.delete-row').click(function(){
+	$('.delete-row').click(function(){
 		var theForm = $(this).parents('form').first();
 
 		bootbox.confirm("Are you sure you want to delete this?", function(result) {
@@ -29,7 +21,7 @@ jQuery(document).ready(function() {
 		$(this).parents('form').ajaxForm({
 			success: function(responseText, statusText, xhr, $form){
 				$form.closest('tr').fadeOut(function(){
-					jQuery(this).remove();
+					$(this).remove();
 				});
 			},
 			error: function(jqXHR, textStatus, errorThrown){
@@ -45,16 +37,16 @@ jQuery(document).ready(function() {
 	});
 
 	// Show action upon row hover
-	jQuery('.table-hidaction tbody tr').hover(function(){
-		jQuery(this).find('.table-action-hide a').animate({opacity: 1});
+	$('.table-hidaction tbody tr').hover(function(){
+		$(this).find('.table-action-hide a').animate({opacity: 1});
 	},function(){
-		jQuery(this).find('.table-action-hide a').animate({opacity: 0});
+		$(this).find('.table-action-hide a').animate({opacity: 0});
 	});
 
 	// --- copied from search-results.js
 	// Basic Slider
-	if (jQuery('#slider').length) {
-		jQuery('#slider').slider({
+	if ($('#slider').length) {
+		$('#slider').slider({
 			range: "min",
 			max: 100,
 			value: 50
@@ -62,19 +54,19 @@ jQuery(document).ready(function() {
 	}
 
 	// Date Picker
-	if (jQuery('.form-date').length){
-		jQuery('.form-date').datepicker({
+	if ($('.form-date').length){
+		$('.form-date').datepicker({
 			dateFormat: "yy-mm-dd",
 			onSelect: function(date){
-				jQuery(this).trigger('changeDate', date);
+				$(this).trigger('changeDate', date);
 			}
 		});
 	}
 
 	// Time Picker
-	if (jQuery('.form-time').length){
-		jQuery('.form-time').each(function(){
-			jQuery(this).timepicker({
+	if ($('.form-time').length){
+		$('.form-time').each(function(){
+			$(this).timepicker({
 				defaultTime: false,
 				showMeridian: false,
 				showSeconds: true,
@@ -83,26 +75,26 @@ jQuery(document).ready(function() {
 				disableFocus: true
 			});
 
-			jQuery(this).on('focus', function(){
-				return jQuery(this).timepicker('showWidget');
+			$(this).on('focus', function(){
+				return $(this).timepicker('showWidget');
 			});
 		});
 	}
 
 	// Combined datetime picker
-	jQuery('.form-datetime').each(function(){
+	$('.form-datetime').each(function(){
 		var
-			$date   = jQuery('.form-date', this),
-			$time   = jQuery('.form-time', this),
-			$hidden = jQuery('input[type=hidden]', this),
+			$date   = $('.form-date', this),
+			$time   = $('.form-time', this),
+			$hidden = $('input[type=hidden]', this),
 			updateHidden = function(date, time){
 				$hidden.val(date + ' ' + time);
 			};
 
-		jQuery('.form-date', this).on('changeDate', function(event, date){
+		$('.form-date', this).on('changeDate', function(event, date){
 			updateHidden(date, $time.val());
 		});
-		jQuery('.form-time', this).on('changeTime.timepicker', function(event){
+		$('.form-time', this).on('changeTime.timepicker', function(event){
 			updateHidden($date.val(), event.time.value);
 		});
 	});
@@ -110,16 +102,16 @@ jQuery(document).ready(function() {
 	// Copied from form-validation.js (edited as well)
 
 	// Basic Form
-	jQuery("form").validate({
+	$("form").validate({
 		highlight: function(element) {
-			jQuery(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+			$(element).closest('.form-group').removeClass('has-success').addClass('has-error');
 		},
 		success: function(element) {
-			jQuery(element).closest('.form-group').removeClass('has-error');
+			$(element).closest('.form-group').removeClass('has-error');
 		}
 	});
 
-	jQuery('.shoutMe').each(function(){
+	$('.shoutMe').each(function(){
 		jQuery.gritter.add({
 			title:      $(this).data('title') || 'Message',
 			text:       $(this).text(),
@@ -130,7 +122,7 @@ jQuery(document).ready(function() {
 		});
 	});
 
-	jQuery('.wysiwyg').wysihtml5({
+	$('.wysiwyg').wysihtml5({
 		"autoLink": true,
 		"font-styles": false,
 		"color": false,
@@ -166,7 +158,7 @@ jQuery(document).ready(function() {
 		stylesheets: ['../../../packages/digbang/laravel4-backoffice-scaffold/css/custom.css']
 	});
 
-	jQuery('.multiselect').multiSelect({
+	$('.multiselect').multiSelect({
 		selectableHeader: '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="Search...">',
 		selectionHeader: '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="Search...">',
 		afterInit: function(ms){
@@ -213,13 +205,6 @@ jQuery(document).ready(function() {
 		$obj.text(new_text);
 		$obj.data('text', old_text);
 	});
-
-	$('.select2').each(function(){
-		$(this).select2({
-			closeOnSelect: $(this).attr('multiple')
-		});
-	});
-
 	$(document).on('change', 'input.chk-all', function(){
 		$('input.chk-bulk').attr('checked', $(this).is(':checked'));
 	});
@@ -243,16 +228,16 @@ jQuery(document).ready(function() {
 		}
 	});
 	var menuState = new function(){
-		var collapsed = $.cookie('leftpanel-collapsed') != undefined,
+		var collapsed = jQuery.cookie('leftpanel-collapsed') != undefined,
 			collapse = function(){
 				if (!collapsed) {
-					$.cookie('leftpanel-collapsed', 'leftpanel-collapsed');
+					jQuery.cookie('leftpanel-collapsed', 'leftpanel-collapsed');
 					collapsed = !collapsed;
 				}
 			},
 			expand = function(){
 				if (collapsed) {
-					$.removeCookie('leftpanel-collapsed');
+					jQuery.removeCookie('leftpanel-collapsed');
 					collapsed = !collapsed;
 				}
 			};
@@ -275,7 +260,7 @@ jQuery(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip();
 
 	// Hook up on any button that needs confirmation and alert the user
-	jQuery('button[data-confirm]').click(function(){
+	$('button[data-confirm]').click(function(){
 		var theForm = $(this).parents('form').first(),
 			message = $(this).data('confirm');
 
