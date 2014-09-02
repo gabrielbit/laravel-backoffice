@@ -5,6 +5,8 @@ use Doctrine\DBAL\Types\Type;
 /**
  * Class Collection
  * @package Digbang\L4Backoffice\Inputs
+ * @method \Digbang\L4Backoffice\Inputs\Collection float($name, $label, $options = [])
+ * @method \Digbang\L4Backoffice\Inputs\Collection decimal($name, $label, $options = [])
  * @method \Digbang\L4Backoffice\Inputs\Collection date($name, $label, $options = [])
  * @method \Digbang\L4Backoffice\Inputs\Collection datetime($name, $label, $options = [])
  * @method \Digbang\L4Backoffice\Inputs\Collection time($name, $label, $options = [])
