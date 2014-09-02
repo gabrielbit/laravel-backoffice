@@ -83,7 +83,7 @@ class Form implements RenderableInterface
         {
 	        if ($input = $this->collection->find($name))
 	        {
-		        $input->setValue($value);
+		        $this->collection->setValue($name, $value);
 	        }
         }
     }

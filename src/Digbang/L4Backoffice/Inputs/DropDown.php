@@ -33,14 +33,14 @@ class DropDown extends Input implements InputInterface
 		return $this->data;
 	}
 
-	public function setValue($value)
+	public function setValue($name, $value)
 	{
 		if (is_bool($value))
 		{
 			$value = $value ? 'true' : 'false';
 		}
 
-		parent::setValue($value);
+		parent::setValue($name, $value);
 	}
 
 	/**

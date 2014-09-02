@@ -20,7 +20,7 @@ class Input implements InputInterface
 	{
 		$this->control = $control;
 		$this->setName($name);
-		$this->setValue($value);
+		$this->setValue($name, $value);
 
 		if (! $control->options('id'))
 		{
@@ -45,11 +45,15 @@ class Input implements InputInterface
 	}
 
 	/**
+	 * @param string $name
 	 * @param mixed $value
 	 */
-	public function setValue($value)
+	public function setValue($name, $value)
 	{
-		$this->value = $value;
+		if ($this->hasName($name))
+		{
+			$this->value = $value;
+		}
 	}
 
 	/**

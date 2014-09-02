@@ -55,7 +55,7 @@ class FormSpec extends ObjectBehavior
 
 		/* @var $aName \Digbang\L4Backoffice\Inputs\Input */
 		$aName = $inputs->find('aName');
-		$aName->setValue($value = uniqid());
+		$aName->setValue('aName', $value = uniqid());
 
 		$this->value('aName')->shouldReturn($value);
 	}

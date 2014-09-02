@@ -9,9 +9,11 @@ class Composite implements InputInterface
 {
 	protected $inputCollection;
 	protected $control;
+	protected $name;
 
-	function __construct(ControlInterface $control, Collection $inputCollection)
+	function __construct($name, ControlInterface $control, Collection $inputCollection)
 	{
+		$this->name = $name;
 		$this->control = $control;
 		$this->inputCollection = $inputCollection;
 	}
@@ -104,21 +106,17 @@ class Composite implements InputInterface
 
 	/**
 	 * Sets the value of the input.
-	 * Composite requires the value to be array(able)
-	 * with keys matching input names
 	 *
-	 * @param array $value
+	 * @param string $name
+	 * @param mixed $value
 	 * @return void
 	 */
-	public function setValue($value)
+	public function setValue($name, $value)
 	{
-		foreach ((array) $value as $name => $val)
+		if ($input = $this->inputCollection->find($name))
 		{
-			if ($input = $this->inputCollection->find($name))
-			{
-				/* @var $input InputInterface */
-				$input->setValue($val);
-			}
+			/* @var $input InputInterface */
+			$input->setValue($name, $value);
 		}
 	}
 }

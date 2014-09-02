@@ -55,6 +55,11 @@ class Collection implements \IteratorAggregate
 		});
 	}
 
+	public function setValue($name, $value)
+	{
+		return $this->find($name)->setValue($name, $value);
+	}
+
 	public function add(InputInterface $input)
 	{
 		$this->collection->push($input);

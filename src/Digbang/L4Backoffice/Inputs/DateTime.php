@@ -10,7 +10,7 @@ class DateTime extends Input implements InputInterface
 {
 	protected $date;
 
-	public function setValue($value)
+	public function setValue($name, $value)
 	{
 		if (is_array($value))
 		{
@@ -22,6 +22,6 @@ class DateTime extends Input implements InputInterface
 			$value = Carbon::parse($value);
 		}
 
-		parent::setValue($value);
+		parent::setValue($name, $value);
 	}
 }

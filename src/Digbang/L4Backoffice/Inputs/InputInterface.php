@@ -30,9 +30,10 @@ interface InputInterface extends ControlInterface
 	public function hasName($name);
 
 	/**
-	 * Sets the value of the input
+	 * Sets the value of the input matching the given name
+	 * @param $name
 	 * @param $value
 	 * @return void
 	 */
-	public function setValue($value);
+	public function setValue($name, $value);
 }
