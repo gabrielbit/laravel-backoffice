@@ -24,7 +24,7 @@ class Composite implements InputInterface
 	 */
 	public function label()
 	{
-		return $this->inputCollection->all()->lists('label', 'name');
+		return $this->extract('label');
 	}
 
 	/**
@@ -36,12 +36,27 @@ class Composite implements InputInterface
 	 */
 	public function options($name = null)
 	{
+		$options = $this->extract('options');
+
 		if ($name)
 		{
-			return $this->inputCollection->all()->lists("options.$name", 'name');
+			return $this->extractOption($name, $options);
 		}
 
-		return $this->inputCollection->all()->lists('options', 'name');
+		return $options;
+	}
+
+	protected function extractOption($name, $options)
+	{
+		$output = [];
+
+		foreach ($options as $inputName => $option)
+		{
+			/* @var $option \Illuminate\Support\Collection */
+			$output[$inputName] = $option->get($name);
+		}
+
+		return $output;
 	}
 
 	/**
@@ -59,7 +74,7 @@ class Composite implements InputInterface
 	 */
 	public function name()
 	{
-		return $this->inputCollection->all()->lists('name');
+		return $this->extract('name');
 	}
 
 	/**
@@ -68,7 +83,7 @@ class Composite implements InputInterface
 	 */
 	public function value()
 	{
-		return $this->inputCollection->all()->lists('value', 'name');
+		return $this->extract('value');
 	}
 
 	/**
@@ -78,7 +93,7 @@ class Composite implements InputInterface
 	 */
 	public function defaultsTo($value)
 	{
-		return $this->inputCollection->all()->lists('defaultsTo', 'name');
+		return $this->extract('defaultsTo');
 	}
 
 	/**
@@ -118,5 +133,17 @@ class Composite implements InputInterface
 			/* @var $input InputInterface */
 			$input->setValue($name, $value);
 		}
+	}
+
+	protected function extract($key)
+	{
+		$output = [];
+		foreach ($this->inputCollection as $input)
+		{
+			/* @var $input InputInterface */
+			$labels[$input->name()] = $input->{$key}();
+		}
+
+		return $output;
 	}
 }
