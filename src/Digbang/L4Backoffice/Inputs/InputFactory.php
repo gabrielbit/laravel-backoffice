@@ -106,6 +106,16 @@ class InputFactory
 		return new Collection($this, new DigbangCollection());
 	}
 
+	public function hidden($name, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.hidden',
+			$name,
+			$options,
+			$name
+		);
+	}
+
 	protected function make($view, $label, $options, $name)
 	{
 		return new Input(

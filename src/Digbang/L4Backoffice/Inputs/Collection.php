@@ -38,6 +38,11 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->dropdown($name, $label, [''=> '', 'true' => 'Yes', 'false' => 'No'], $options));
 	}
 
+	public function hidden($name, $options = [])
+	{
+		return $this->add($this->factory->hidden($name, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){
