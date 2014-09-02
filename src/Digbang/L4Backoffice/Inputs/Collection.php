@@ -43,9 +43,9 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->hidden($name, $options));
 	}
 
-	public function composite(Collection $collection, $label = '', $options = [])
+	public function composite($name, Collection $collection, $label = '', $options = [])
 	{
-		return $this->add($this->factory->composite($collection, $label, $options));
+		return $this->add($this->factory->composite($name, $collection, $label, $options));
 	}
 
 	public function find($name)
