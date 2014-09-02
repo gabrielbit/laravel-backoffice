@@ -24,7 +24,7 @@ class Composite implements InputInterface
 	 */
 	public function label()
 	{
-		return $this->extract('label');
+		return $this->control->label();
 	}
 
 	/**
