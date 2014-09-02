@@ -36,27 +36,7 @@ class Composite implements InputInterface
 	 */
 	public function options($name = null)
 	{
-		$options = $this->extract('options');
-
-		if ($name)
-		{
-			return $this->extractOption($name, $options);
-		}
-
-		return $options;
-	}
-
-	protected function extractOption($name, $options)
-	{
-		$output = [];
-
-		foreach ($options as $inputName => $option)
-		{
-			/* @var $option \Illuminate\Support\Collection */
-			$output[$inputName] = $option->get($name);
-		}
-
-		return $output;
+		return $this->control->options($name);
 	}
 
 	/**
@@ -151,19 +131,10 @@ class Composite implements InputInterface
 	 * Check if the given class name exists on the control
 	 *
 	 * @param $className
-	 *
 	 * @return boolean
 	 */
 	public function hasClass($className)
 	{
-		foreach ($this->inputCollection as $input)
-		{
-			if ($input->hasClass($className))
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return $this->control->hasClass($className);
 	}
 }
