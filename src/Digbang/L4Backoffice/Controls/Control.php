@@ -70,6 +70,20 @@ class Control implements ControlInterface
 	}
 
 	/**
+	 * Check if the given class name exists on the control
+	 *
+	 * @param $className
+	 *
+	 * @return boolean
+	 */
+	public function hasClass($className)
+	{
+		$classes = $this->options('class');
+
+		return strpos($classes, $className) !== false;
+	}
+
+	/**
 	 * Get the evaluated contents of the object.
 	 *
 	 * @return \Illuminate\View\View

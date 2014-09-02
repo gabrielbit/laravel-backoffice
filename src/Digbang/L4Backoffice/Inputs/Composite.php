@@ -146,4 +146,24 @@ class Composite implements InputInterface
 
 		return $output;
 	}
+
+	/**
+	 * Check if the given class name exists on the control
+	 *
+	 * @param $className
+	 *
+	 * @return boolean
+	 */
+	public function hasClass($className)
+	{
+		foreach ($this->inputCollection as $input)
+		{
+			if ($input->hasClass($className))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

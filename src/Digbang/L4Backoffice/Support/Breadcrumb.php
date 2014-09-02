@@ -46,6 +46,18 @@ class Breadcrumb implements ControlInterface
 	}
 
 	/**
+	 * Check if the given class name exists on the control
+	 *
+	 * @param $className
+	 *
+	 * @return boolean
+	 */
+	public function hasClass($className)
+	{
+		return $this->control->hasClass($className);
+	}
+
+	/**
 	 * Get the evaluated contents of the object.
 	 *
 	 * @return string

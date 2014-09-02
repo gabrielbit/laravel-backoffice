@@ -45,6 +45,18 @@ class Input implements InputInterface
 	}
 
 	/**
+	 * Check if the given class name exists on the control
+	 *
+	 * @param $className
+	 *
+	 * @return boolean
+	 */
+	public function hasClass($className)
+	{
+		return $this->control->hasClass($className);
+	}
+
+	/**
 	 * @param string $name
 	 * @param mixed $value
 	 */

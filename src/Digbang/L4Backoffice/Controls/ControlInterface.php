@@ -22,4 +22,11 @@ interface ControlInterface extends RenderableInterface
 	 * @return string
 	 */
 	public function view();
+
+	/**
+	 * Check if the given class name exists on the control
+	 * @param $className
+	 * @return boolean
+	 */
+	public function hasClass($className);
 }

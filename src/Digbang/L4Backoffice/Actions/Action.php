@@ -87,6 +87,18 @@ class Action implements ActionInterface, ControlInterface
 		return $this->control->view();
 	}
 
+	/**
+	 * Check if the given class name exists on the control
+	 *
+	 * @param $className
+	 *
+	 * @return boolean
+	 */
+	public function hasClass($className)
+	{
+		return $this->control->hasClass($className);
+	}
+
 	public function render()
 	{
 		return $this->renderTarget($this->target());
