@@ -175,7 +175,7 @@ class {{ classData.name }}Controller extends Controller
 			'{{ name }}' => $entity->{{ name }},
 			{{/ inputs }}
 			{{# dependencies }}
-			'{{ column }}' => $entity->{{ column }},
+			'{{ singular }}' => $entity->{{ singular }}->id,
 			{{/ dependencies }}
 		]);
 
