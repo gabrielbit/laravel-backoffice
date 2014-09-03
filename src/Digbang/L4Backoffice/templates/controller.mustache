@@ -254,7 +254,7 @@ class {{ classData.name }}Controller extends Controller
 		$inputs = $form->inputs();
 
 		{{# dependencies }}
-		${{ camelCase }} = array_merge(['' => ''], $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id'));
+		${{ camelCase }} = ['' => ''] + $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id');
 		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }}, ['placeholder' => '{{ title }}']);
 		{{/ dependencies }}
 		{{# inputs }}
@@ -278,7 +278,7 @@ class {{ classData.name }}Controller extends Controller
 
 		// And filter dependencies
 		{{# dependencies }}
-        ${{ camelCase }} = array_merge(['' => ''], $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id'));
+        ${{ camelCase }} = ['' => ''] + $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id');
         $filters->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }}, ['placeholder' => '{{ title }}']);
 
         {{/ dependencies }}
