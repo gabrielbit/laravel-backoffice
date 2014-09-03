@@ -30,7 +30,9 @@
 											@endif
 										</th>
 									@endforeach
-									<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
+									@if($rowActions)
+										<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
+									@endif
 								</tr>
 							</thead>
 							<tbody>
@@ -44,13 +46,13 @@
 								@foreach($columns as $column)
 									<td>{{ \Str::parse($column->getValue($row)) ?: '-' }}</td>
 								@endforeach
-									<td>
-										@if($rowActions)
-											@foreach($rowActions as $action)
-												{{ $action->renderWith($row) }}
-											@endforeach
-										@endif
+								@if($rowActions)
+									<td class="row-actions">
+										@foreach($rowActions as $action)
+											{{ $action->renderWith($row) }}
+										@endforeach
 									</td>
+								@endif
 								</tr>
 							@endforeach
 							</tbody>

@@ -207,6 +207,15 @@ $(document).ready(function(){
 	});
 	$(document).on('change', 'input.chk-all', function(){
 		$('input.chk-bulk').attr('checked', $(this).is(':checked'));
+
+		if ($(this).is(':checked'))
+		{
+			$('.actions-bulk').show();
+		}
+		else
+		{
+			$('.actions-bulk').hide();
+		}
 	});
 
 	$(document).on('change', 'input.chk-bulk', function(){
@@ -225,6 +234,15 @@ $(document).ready(function(){
 		else
 		{
 			$all.attr('checked', null);
+		}
+
+		if (checked > 0)
+		{
+			$('.actions-bulk').show();
+		}
+		else
+		{
+			$('.actions-bulk').hide();
 		}
 	});
 	var menuState = new function(){

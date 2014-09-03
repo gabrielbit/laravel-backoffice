@@ -17,5 +17,6 @@ return [
 	'delete-confirm'   => 'Are you sure you want to delete this?',
 	'back'             => 'Back',
 	'yes'              => 'Yes',
-	'no'               => 'No'
+	'no'               => 'No',
+	'bulk-actions'     => 'Bulk actions'
 ];
