@@ -2,7 +2,9 @@ $(document).ready(function(){
 	// Select2
 	$("select").each(function(){
 		$(this).select2({
-			closeOnSelect: $(this).attr('multiple')
+			closeOnSelect: $(this).attr('multiple'),
+			with: "resolve",
+			allowClear: true
 		});
 	});
 
@@ -244,6 +246,20 @@ $(document).ready(function(){
 		{
 			$('.actions-bulk').hide();
 		}
+	});
+
+	$('.actions-bulk').find('form').each(function(){
+		$(this).on('submit', function(){
+			var self = this;
+
+			$('.chk-bulk:checked').each(function(){
+				var $hidden = $('<input type="hidden">');
+				$hidden.attr('name', 'row[]');
+				$hidden.val($(this).val());
+
+				$(self).append($hidden);
+			});
+		});
 	});
 	var menuState = new function(){
 		var collapsed = jQuery.cookie('leftpanel-collapsed') != undefined,
