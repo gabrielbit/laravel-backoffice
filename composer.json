@@ -11,7 +11,8 @@
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
 	    "mustache/mustache":      "~2.4",
-	    "digbang/security":       "~1.0"
+	    "digbang/security":       "~1.0",
+	    "maatwebsite/excel":      "~1.0"
     },
     "require-dev": {
 	    "digbang/backoffice-template": "1.0.0",

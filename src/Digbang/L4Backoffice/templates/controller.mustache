@@ -8,6 +8,7 @@ use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Digbang\FontAwesome\Facade as FontAwesome;
+use Maatwebsite\Excel\Excel;
 use {{ entityNamespace}}\{{ model }};
 {{# uniqueDependencies }}
 use {{ entityNamespace }}\{{ studlyCase }};
@@ -25,6 +26,11 @@ class {{ classData.name }}Controller extends Controller
      */
     protected ${{ classData.snake }}Repository;
 
+	/**
+     * @var \Maatwebsite\Excel\Excel
+     */
+    protected $excelExporter;
+
     {{# uniqueDependencies }}
     /**
      * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
@@ -36,10 +42,12 @@ class {{ classData.name }}Controller extends Controller
 
     protected $titlePlural = '{{ classData.plural }}';
 
-	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory)
+	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter)
 	{
 		$this->backoffice = $backoffice;
 		$this->{{ classData.snake }}Repository = $repositoryFactory->makeForEloquentModel(new {{ model }}());
+
+		$this->excelExporter = $excelExporter;
 
 		// Dependencies
 		{{# uniqueDependencies }}
@@ -247,6 +255,27 @@ class {{ classData.name }}Controller extends Controller
 		}
 	}
 
+	public function export()
+	{
+		$list = $this->getListing();
+
+		$list->fill($this->getData(null));
+
+		$columns = $list->columns()->hide([])->sortable([]);
+		$rows = $list->rows();
+
+		$this->excelExporter->create(\Str::slug($this->titlePlural), function($excel) use ($columns, $rows) {
+			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
+				$sheet->loadView('l4-backoffice::lists.list', [
+					'bulkActions' => [],
+					'rowActions' => [],
+					'columns' => $columns,
+					'items' => $rows
+				]);
+			});
+		})->download('xls');
+	}
+
 	protected function buildForm($target, $label, $method = 'POST', $cancelAction = '', $options = [])
 	{
 		$form = $this->backoffice->form($target, $label, $method, $cancelAction, $options);
@@ -325,6 +354,7 @@ class {{ classData.name }}Controller extends Controller
 		$list->setActions(
 			$this->backoffice->actions()
 				->link(route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary'])
+				->link(route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success'])
 		);
 
 		$list->setRowActions(
@@ -359,7 +389,7 @@ class {{ classData.name }}Controller extends Controller
 	/**
 	 * @return array
 	 */
-	protected function getData()
+	protected function getData($limit = 10)
 	{
 		{{# hasDependencies }}
 		$this->{{ classData.snake }}Repository->with([
@@ -372,7 +402,7 @@ class {{ classData.name }}Controller extends Controller
             \Input::except(['page', 'sort_by', 'sort_sense']),
             \Input::get('sort_by'),
             \Input::get('sort_sense'),
-            10,
+            $limit,
             \Input::get('page', 1)
         );
 	}

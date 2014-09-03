@@ -30,6 +30,7 @@
 Route::group(['prefix' => 'backoffice'], function(){
 	...
 @foreach($tables as $table)
+	Route::get('/{{ $table }}/export', ['as' => 'backoffice.{{ $table }}.export', 'uses' => "{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller@export");
 	Route::resource('{{ $table }}', "{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller");
 @endforeach
 	...

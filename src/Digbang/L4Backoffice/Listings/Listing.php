@@ -72,6 +72,14 @@ class Listing implements RenderableInterface, Countable
 		return $this->columns;
 	}
 
+	/**
+	 * @return Collection
+	 */
+	public function rows()
+	{
+		return $this->rows;
+	}
+
 	public function filters($name = null)
 	{
 		if (!$name)

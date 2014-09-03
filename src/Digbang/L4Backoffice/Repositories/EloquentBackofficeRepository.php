@@ -63,7 +63,16 @@ class EloquentBackofficeRepository implements BackofficeRepository
 			$eloquent = $eloquent->orderBy($sortBy, $sortSense);
 		}
 
-		return $eloquent->paginate($limit);
+		if($limit)
+		{
+			$results = $eloquent->paginate($limit);
+		}
+		else
+		{
+			$results = $eloquent->get();
+		}
+
+		return $results;
 	}
 
 	public function all()

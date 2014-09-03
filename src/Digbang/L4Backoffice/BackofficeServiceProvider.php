@@ -37,6 +37,7 @@ class BackofficeServiceProvider extends ServiceProvider
 
 		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
 		$this->app->register('Digbang\Security\SecurityServiceProvider');
+		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
 
 		$this->app->bind('Mustache_Engine', function(){
 			return new \Mustache_Engine([
