@@ -62,6 +62,11 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->composite($name, $collection, $label, $options));
 	}
 
+	public function password($name, $label, $options = [])
+	{
+		return $this->add($this->factory->password($name, $label, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){

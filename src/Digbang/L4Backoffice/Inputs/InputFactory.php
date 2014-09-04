@@ -111,6 +111,16 @@ class InputFactory
 		);
 	}
 
+	public function password($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.password',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());
