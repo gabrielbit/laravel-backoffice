@@ -120,19 +120,19 @@ class BackofficeServiceProvider extends ServiceProvider
 
 			foreach (['users' => 'User', 'groups' => 'Group'] as $path => $name)
 			{
-				$path = "backoffice-$path";
+				$fullPath = "backoffice-$path";
 
-				$router->group(['prefix' => $path], function() use ($router, $name, $path, $bkNamespace) {
-					$router->get("export",         ['as' => "backoffice.$path.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$path.list"]);
+				$router->group(['prefix' => $fullPath], function() use ($router, $name, $path, $fullPath, $bkNamespace) {
+					$router->get("export",         ['as' => "backoffice.$fullPath.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$fullPath.list"]);
 
-					$router->get("/",              ["as" => "backoffice.$path.index",   "uses" => "$bkNamespace\\{$name}Controller@index",   "permission" => "backoffice.$path.list"]);
-					$router->get("create",         ["as" => "backoffice.$path.create",  "uses" => "$bkNamespace\\{$name}Controller@create",  "permission" => "backoffice.$path.create"]);
-					$router->post("/",             ["as" => "backoffice.$path.store",   "uses" => "$bkNamespace\\{$name}Controller@store",   "permission" => "backoffice.$path.create"]);
-					$router->get("{{$path}}",      ["as" => "backoffice.$path.show",    "uses" => "$bkNamespace\\{$name}Controller@show",    "permission" => "backoffice.$path.read"]);
-					$router->get("{{$path}}/edit", ["as" => "backoffice.$path.edit",    "uses" => "$bkNamespace\\{$name}Controller@edit",    "permission" => "backoffice.$path.update"]);
+					$router->get("/",              ["as" => "backoffice.$fullPath.index",   "uses" => "$bkNamespace\\{$name}Controller@index",   "permission" => "backoffice.$fullPath.list"]);
+					$router->get("create",         ["as" => "backoffice.$fullPath.create",  "uses" => "$bkNamespace\\{$name}Controller@create",  "permission" => "backoffice.$fullPath.create"]);
+					$router->post("/",             ["as" => "backoffice.$fullPath.store",   "uses" => "$bkNamespace\\{$name}Controller@store",   "permission" => "backoffice.$fullPath.create"]);
+					$router->get("{{$path}}",      ["as" => "backoffice.$fullPath.show",    "uses" => "$bkNamespace\\{$name}Controller@show",    "permission" => "backoffice.$fullPath.read"]);
+					$router->get("{{$path}}/edit", ["as" => "backoffice.$fullPath.edit",    "uses" => "$bkNamespace\\{$name}Controller@edit",    "permission" => "backoffice.$fullPath.update"]);
 					$router->match(['PUT',
-						  'PATCH'], "{{$path}}",   ["as" => "backoffice.$path.update",  "uses" => "$bkNamespace\\{$name}Controller@update",  "permission" => "backoffice.$path.update"]);
-					$router->delete("{{$path}}",   ["as" => "backoffice.$path.destroy", "uses" => "$bkNamespace\\{$name}Controller@destroy", "permission" => "backoffice.$path.delete"]);
+						  'PATCH'], "{{$path}}",   ["as" => "backoffice.$fullPath.update",  "uses" => "$bkNamespace\\{$name}Controller@update",  "permission" => "backoffice.$fullPath.update"]);
+					$router->delete("{{$path}}",   ["as" => "backoffice.$fullPath.destroy", "uses" => "$bkNamespace\\{$name}Controller@destroy", "permission" => "backoffice.$fullPath.delete"]);
 				});
 			}
 
