@@ -120,6 +120,8 @@ class BackofficeServiceProvider extends ServiceProvider
 
 			foreach (['users' => 'User', 'groups' => 'Group'] as $path => $name)
 			{
+				$path = "backoffice-$path";
+
 				$router->group(['prefix' => $path], function() use ($router, $name, $path, $bkNamespace) {
 					$router->get("export",         ['as' => "backoffice.$path.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$path.list"]);
 
@@ -134,8 +136,8 @@ class BackofficeServiceProvider extends ServiceProvider
 				});
 			}
 
-			$router->post('users/{id}/resend-activation', ['as' => 'backoffice.users.resend-activation', 'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resendActivation", 'permission' => 'backoffice.users.update']);
-			$router->post('users/{id}/reset-password',    ['as' => 'backoffice.users.reset-password',    'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resetPassword",    'permission' => 'backoffice.users.update']);
+			$router->post('backoffice-users/{id}/resend-activation', ['as' => 'backoffice.backoffice-users.resend-activation', 'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resendActivation", 'permission' => 'backoffice.backoffice-users.update']);
+			$router->post('backoffice-users/{id}/reset-password',    ['as' => 'backoffice.backoffice-users.reset-password',    'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resetPassword",    'permission' => 'backoffice.backoffice-users.update']);
 		});
 	}
 }
