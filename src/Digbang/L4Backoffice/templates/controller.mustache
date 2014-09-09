@@ -5,8 +5,9 @@ use Digbang\L4Backoffice\Repositories\BackofficeRepository;
 use Digbang\L4Backoffice\Repositories\BackofficeRepositoryFactory;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
+use Digbang\Security\Urls\SecureUrl;
+use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Collection;
 use Digbang\FontAwesome\Facade as FontAwesome;
 use Maatwebsite\Excel\Excel;
 use {{ entityNamespace}}\{{ model }};
@@ -31,6 +32,11 @@ class {{ classData.name }}Controller extends Controller
      */
     protected $excelExporter;
 
+    /**
+     * @var \Digbang\Security\Urls\SecureUrl
+     */
+    protected $secureUrl;
+
     {{# uniqueDependencies }}
     /**
      * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
@@ -38,21 +44,23 @@ class {{ classData.name }}Controller extends Controller
     protected ${{ camelCase }}Repository;
     {{/ uniqueDependencies }}
 
-    protected $title = '{{ classData.name }}';
-
+    protected $title       = '{{ classData.name }}';
     protected $titlePlural = '{{ classData.plural }}';
 
-	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter)
+	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter, SecureUrl $secureUrl)
 	{
 		$this->backoffice = $backoffice;
 		$this->{{ classData.snake }}Repository = $repositoryFactory->makeForEloquentModel(new {{ model }}());
 
 		$this->excelExporter = $excelExporter;
+		$this->secureUrl = $secureUrl;
 
+		{{# hasDependencies }}
 		// Dependencies
 		{{# uniqueDependencies }}
 		$this->{{ camelCase }}Repository = $repositoryFactory->makeForEloquentModel(new {{ studlyCase }}());
 		{{/ uniqueDependencies }}
+		{{/ hasDependencies }}
 	}
 
 	public function index()
@@ -81,10 +89,10 @@ class {{ classData.name }}Controller extends Controller
 		$label = \Lang::get('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			route('backoffice.{{ classData.snake }}.store'),
+			$this->secureUrl->route('backoffice.{{ classData.snake }}.store'),
 			$label,
 			'POST',
-			route('backoffice.{{ classData.snake }}.index')
+			$this->secureUrl->route('backoffice.{{ classData.snake }}.index')
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -119,7 +127,7 @@ class {{ classData.name }}Controller extends Controller
 
 			${{ classData.camel }} = $this->{{ classData.snake }}Repository->create($inputData);
 
-			return \Redirect::to(route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', ${{ classData.camel }}->getKey()));
 		}
 		catch (ValidationException $e)
 		{
@@ -147,12 +155,20 @@ class {{ classData.name }}Controller extends Controller
 			{{/ inputs }}
 		];
 
-		$actions = $this->backoffice->actions()
-			->link(route('backoffice.{{ classData.snake }}.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
-			->link(route('backoffice.{{ classData.snake }}.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+		$actions = $this->backoffice->actions();
 
-		$topActions = $this->backoffice->actions()
-			->link(route('backoffice.{{ classData.snake }}.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+		try {
+			$actions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+		} catch (PermissionException $e) {}
+
+		try {
+			$actions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+		} catch (PermissionException $e) {}
+
+		$topActions = $this->backoffice->actions();
+		try {
+			$topActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+		} catch (PermissionException $e) {}
 
 		return \View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
@@ -172,10 +188,10 @@ class {{ classData.name }}Controller extends Controller
 		$label = \Lang::get('l4-backoffice::default.edit');
 
 		$form = $this->buildForm(
-			route('backoffice.{{ classData.snake }}.update', $id),
+			$this->secureUrl->route('backoffice.{{ classData.snake }}.update', $id),
 			$label,
 			'PUT',
-			route('backoffice.{{ classData.snake }}.show', $id)
+			$this->secureUrl->route('backoffice.{{ classData.snake }}.show', $id)
 		);
 
 		$form->fill([
@@ -230,12 +246,16 @@ class {{ classData.name }}Controller extends Controller
 			$entity->save();
 
 			// Redirect to show
-			return \Redirect::route('backoffice.{{ classData.snake }}.show', [$entity->getKey()]);
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', [$entity->getKey()]);
 		}
 		catch (ValidationException $e)
 		{
 			// Or redirect back with the errors
 			return \Redirect::back()->withInput()->withErrors($e->getErrors());
+		}
+		catch (PermissionException $e)
+		{
+			return \Redirect::to($this->secureUrl->route('backoffice.index'));
 		}
 	}
 
@@ -247,11 +267,15 @@ class {{ classData.name }}Controller extends Controller
 			$this->{{ classData.snake }}Repository->destroy($id);
 
 			// Redirect to the listing
-			return \Redirect::route('backoffice.{{ classData.snake }}.index')->with(['success' => "{{ classData.name }} $id deleted"]);
+			return \Redirect::$this->secureUrl->route('backoffice.{{ classData.snake }}.index')->with(['success' => "{{ classData.name }} $id deleted"]);
 		}
 		catch (ValidationException $e)
 		{
 			return \Redirect::back()->withErrors($e->getErrors());
+		}
+		catch (PermissionException $e)
+		{
+			return \Redirect::to($this->secureUrl->route('backoffice.index'));
 		}
 	}
 
@@ -351,39 +375,68 @@ class {{ classData.name }}Controller extends Controller
 
 	protected function buildListActions(Listing $list)
 	{
-		$list->setActions(
-			$this->backoffice->actions()
-				->link(route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary'])
-				->link(route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success'])
+		$listActions = $this->backoffice->actions();
+		try {
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary'])
+        } catch (PermissionException $e) {}
+        try {
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success'])
+        } catch (PermissionException $e) {}
+
+		$list->setActions($listActions);
+
+		$rowActions = $this->backoffice->actions();
+
+		// View icon
+		$rowActions->link(
+			function(\Illuminate\Support\Collection $row) {
+				try {
+					return $this->secureUrl->route('backoffice.{{ classData.snake }}.show', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('eye'),
+			[
+				'data-toggle' => 'tooltip',
+				'data-placement' => 'top',
+				'title' => \Lang::get('l4-backoffice::default.show')
+			]
 		);
 
-		$list->setRowActions(
-			$this->backoffice->actions()
-				// View icon
-				->link(function(Collection $row) {
-					return route('backoffice.{{ classData.snake }}.show', $row['id']);
-				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.show')])
-				// Edit icon
-				->link(function(Collection $row){
-					return route('backoffice.{{ classData.snake }}.edit', $row['id']);
-				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.edit')])
-				// Delete icon
-				->form(
-					function(Collection $row){
-						return route('backoffice.{{ classData.snake }}.destroy', $row['id']);
-					},
-					FontAwesome::icon('times'),
-					'DELETE',
-					[
-						'class'          => 'text-danger',
-						'data-toggle'    => 'tooltip',
-						'data-placement' => 'top',
-						'data-confirm'   => \Lang::get('l4-backoffice::default.delete-confirm'),
-						'title'          => \Lang::get('l4-backoffice::default.delete')
-					],
-					true
-				)
+		// Edit icon
+		$rowActions->link(
+			function(\Illuminate\Support\Collection $row){
+				try {
+					return $this->secureUrl->route('backoffice.{{ classData.snake }}.edit', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('edit'),
+			[
+				'data-toggle' => 'tooltip',
+				'data-placement' => 'top',
+				'title' => \Lang::get('l4-backoffice::default.edit')
+			]
 		);
+
+		// Delete icon
+		$rowActions->form(
+			function(\Illuminate\Support\Collection $row){
+				try {
+					return $this->secureUrl->route('backoffice.{{ classData.snake }}.destroy', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('times'),
+			'DELETE',
+			[
+				'class'          => 'text-danger',
+				'data-toggle'    => 'tooltip',
+				'data-placement' => 'top',
+				'data-confirm'   => \Lang::get('l4-backoffice::default.delete-confirm'),
+				'title'          => \Lang::get('l4-backoffice::default.delete')
+			],
+			true
+		);
+
+		$list->setRowActions($rowActions);
 	}
 
 	/**
