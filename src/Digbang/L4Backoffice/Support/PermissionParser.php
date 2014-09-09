@@ -1,0 +1,81 @@
+<?php namespace Digbang\L4Backoffice\Support;
+
+use Cartalyst\Sentry\Users\UserInterface;
+use Illuminate\Support\Str as LaravelStr;
+use Illuminate\Translation\Translator;
+
+/**
+ * Class PermissionParser
+ * @package Digbang\L4Backoffice\Support
+ */
+class PermissionParser
+{
+	/**
+	 * @var \Illuminate\Support\Str
+	 */
+	protected $str;
+
+	/**
+	 * @var \Illuminate\Translation\Translator
+	 */
+	protected $translator;
+
+	function __construct(LaravelStr $str, Translator $translator)
+	{
+		$this->str = $str;
+		$this->translator = $translator;
+	}
+
+	public function toDropdownArray(array $permissions)
+	{
+		$output = [];
+		foreach ($permissions as $permission)
+		{
+			list($prefix, $resource, $method) = array_pad(explode('.', $permission, 3), 3, null);
+
+			if (!$method)
+			{
+				$method = $resource;
+			}
+
+			$title = $this->titleize($resource);
+
+			if (!array_key_exists($title, $output))
+			{
+				$output[$title] = [];
+			}
+
+			$output[$title][$permission] = $this->trans($resource, $method);
+		}
+
+		return $output;
+	}
+
+	public function toViewTable(array $allPermissions, $userOrGroup)
+	{
+		return \View::make('l4-backoffice::auth.partials.permissions', [
+			'allPermissions' => $this->toDropdownArray($allPermissions),
+			'userOrGroup' => $userOrGroup
+		]);
+	}
+
+	public function trans($resource, $method)
+	{
+		if ($this->translator->has("l4-backoffice::permissions.$resource.$method"))
+		{
+			return $this->translator->get("l4-backoffice::permissions.$resource.$method");
+		}
+
+		if ($this->translator->has("l4-backoffice::permissions.system-defaults.$method"))
+		{
+			return $this->translator->get("l4-backoffice::permissions.system-defaults.$method");
+		}
+
+		return $this->titleize($method);
+	}
+
+	protected function titleize($string)
+	{
+		return $this->str->title(str_replace(['.', '-', '_', '/'], ' ', $string));
+	}
+} 

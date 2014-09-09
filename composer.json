@@ -8,10 +8,11 @@
 	    "illuminate/database":    "~4.2",
 	    "illuminate/config":      "~4.2",
 	    "illuminate/translation": "~4.2",
+	    "illuminate/validation":  "~4.2",
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
 	    "mustache/mustache":      "~2.4",
-	    "digbang/security":       "~1.0",
+	    "digbang/security":       "~1.1",
 	    "maatwebsite/excel":      "~1.0"
     },
     "require-dev": {

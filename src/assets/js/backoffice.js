@@ -1,6 +1,7 @@
 $(document).ready(function(){
+	$selects = $('select');
 	// Select2
-	$("select").each(function(){
+	$selects.filter(":not(.multiselect)").each(function(){
 		$(this).select2({
 			closeOnSelect: $(this).attr('multiple'),
 			with: "resolve",
@@ -160,40 +161,43 @@ $(document).ready(function(){
 		stylesheets: ['../../../packages/digbang/laravel4-backoffice-scaffold/css/custom.css']
 	});
 
-	$('.multiselect').multiSelect({
-		selectableHeader: '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="Search...">',
-		selectionHeader: '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="Search...">',
-		afterInit: function(ms){
-			var that = this,
-				$selectableSearch = that.$selectableUl.prev(),
-				$selectionSearch = that.$selectionUl.prev(),
-				selectableSearchString = '#'+that.$container.attr('id')+' .ms-elem-selectable:not(.ms-selected)',
-				selectionSearchString = '#'+that.$container.attr('id')+' .ms-elem-selection.ms-selected';
+	$selects.filter('.multiselect').each(function(){
+		$(this).multiSelect({
+			selectableHeader: '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="' + $(this).attr('placeholder') + '">',
+			selectionHeader:  '<input type="text" class="search-input form-control mb5" autocomplete="off" placeholder="' + $(this).attr('placeholder') + '">',
+			selectableOptgroup: true,
+			afterInit: function(ms){
+				var that = this,
+					$selectableSearch = that.$selectableUl.prev(),
+					$selectionSearch = that.$selectionUl.prev(),
+					selectableSearchString = '#' + that.$container.attr('id') + ' .ms-selectable ul.ms-list > li:visible',
+					selectionSearchString  = '#' + that.$container.attr('id') + ' .ms-selection ul.ms-list > li:visible';
 
-			that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
-				.on('keydown', function(e){
-					if (e.which === 40){
-						that.$selectableUl.focus();
-						return false;
-					}
-				});
+				that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+					.on('keydown', function(e){
+						if (e.which === 13){
+							that.$selectableUl.focus();
+							return false;
+						}
+					});
 
-			that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
-				.on('keydown', function(e){
-					if (e.which == 40){
-						that.$selectionUl.focus();
-						return false;
-					}
-				});
-		},
-		afterSelect: function(){
-			this.qs1.cache();
-			this.qs2.cache();
-		},
-		afterDeselect: function(){
-			this.qs1.cache();
-			this.qs2.cache();
-		}
+				that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+					.on('keydown', function(e){
+						if (e.which == 13){
+							that.$selectionUl.focus();
+							return false;
+						}
+					});
+			},
+			afterSelect: function(){
+				this.qs1.cache();
+				this.qs2.cache();
+			},
+			afterDeselect: function(){
+				this.qs1.cache();
+				this.qs2.cache();
+			}
+		});
 	});
 
 	$(document).on('click', '#show-more-link', function(ev) {

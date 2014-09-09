@@ -3,6 +3,7 @@
 use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
+use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Http\Request;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Translation\Translator;
@@ -34,7 +35,7 @@ class MenuFactory
 		{
 			$this->menu = [];
 
-			$menus = $this->config->get('l4-backoffice::menu');
+			$menus = $this->config->get('l4-backoffice::menu.menu');
 
 			foreach ($menus as $title => $menu)
 			{
@@ -103,7 +104,14 @@ class MenuFactory
 
 	protected function addLink(ActionCollection $root, $label, $config)
 	{
-		$root->link($this->getUrlFromConfig($config), $label, [], 'l4-backoffice::menu.link', array_get($config, 'icon'));
+		try
+		{
+			$root->link($this->getUrlFromConfig($config), $label, [], 'l4-backoffice::menu.link', array_get($config, 'icon'));
+		}
+		catch (PermissionException $e)
+		{
+			// Don't add it, user has no permission to see this
+		}
 	}
 
 	/**

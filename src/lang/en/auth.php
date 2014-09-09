@@ -9,6 +9,7 @@ return [
 	'forgot_password'  => 'Forgot your password?',
 	'copyright'        => 'Copyright &copy;' . date('Y') . '. All Rights Reserved',
 	'activation' => [
+		'title' => 'Resend Activation Email',
 		'success' => 'You have activated your account! Please choose your new password.',
 		'expired' => [
 			'title' => 'The activation link is incorrect or has expired.',
@@ -17,6 +18,7 @@ return [
 	],
 	'reset-password' => [
 		'title' => 'Reset password',
+		'confirm' => 'A password reset link will be sent to the user\'s email address',
 		'email-request' => 'Enter your email to reset your password.',
 		'send-email' => 'Send password reset',
 		'text' => 'Insert your new password to access your account.',
@@ -32,11 +34,16 @@ return [
 		'user' => [
 			'not-found'     => 'User was not found.',
 			'not-activated' => 'User is not activated.',
-			'already-active' => 'This user has already been activated.'
+			'already-active' => 'This user has already been activated.',
+			'email-required' => 'The Email field is required.',
+			'password-required' => 'The Password field is required.'
 		],
 		'reset-password' => [
 			'email' => 'The email field is required',
 			'incorrect' => 'The reset password code provided is incorrect.'
+		],
+		'group' => [
+
 		]
 	]
 ];

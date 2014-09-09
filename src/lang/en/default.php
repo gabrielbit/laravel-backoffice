@@ -18,5 +18,6 @@ return [
 	'back'             => 'Back',
 	'yes'              => 'Yes',
 	'no'               => 'No',
-	'bulk-actions'     => 'Bulk actions'
+	'bulk-actions'     => 'Bulk actions',
+	'permissions'      => 'Permissions'
 ];

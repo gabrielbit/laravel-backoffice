@@ -14,8 +14,10 @@ class BackofficeServiceProvider extends ServiceProvider
 
 		$this->stringMacros();
 
+		$this->registerCommands();
 		$this->registerAuthRoutes();
 		$this->registerAuthFilters();
+		$this->registerUserGroupRoutes();
 
 		if (\Config::get('app.debug'))
 		{
@@ -97,5 +99,43 @@ class BackofficeServiceProvider extends ServiceProvider
 
 		$router->filter('backoffice.auth.logged', 'Digbang\Security\Filters\Auth@logged');
 		$router->filter('backoffice.auth.withPermissions', 'Digbang\Security\Filters\Auth@withPermissions');
+	}
+
+	protected function registerCommands()
+	{
+		$ns = 'Digbang\L4Backoffice\Commands';
+		$this->commands([
+			"$ns\\AuthGenerationCommand",
+			"$ns\\InstallCommand"
+		]);
+	}
+
+	protected function registerUserGroupRoutes()
+	{
+		/* @var $router \Illuminate\Routing\Router */
+		$router = $this->app['router'];
+
+		$router->group(['prefix' => 'backoffice', 'before' => 'backoffice.auth.withPermissions'], function() use ($router){
+			$bkNamespace = "Digbang\\L4Backoffice\\Auth";
+
+			foreach (['users' => 'User', 'groups' => 'Group'] as $path => $name)
+			{
+				$router->group(['prefix' => $path], function() use ($router, $name, $path, $bkNamespace) {
+					$router->get("export",         ['as' => "backoffice.$path.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$path.list"]);
+
+					$router->get("/",              ["as" => "backoffice.$path.index",   "uses" => "$bkNamespace\\{$name}Controller@index",   "permission" => "backoffice.$path.list"]);
+					$router->get("create",         ["as" => "backoffice.$path.create",  "uses" => "$bkNamespace\\{$name}Controller@create",  "permission" => "backoffice.$path.create"]);
+					$router->post("/",             ["as" => "backoffice.$path.store",   "uses" => "$bkNamespace\\{$name}Controller@store",   "permission" => "backoffice.$path.create"]);
+					$router->get("{{$path}}",      ["as" => "backoffice.$path.show",    "uses" => "$bkNamespace\\{$name}Controller@show",    "permission" => "backoffice.$path.read"]);
+					$router->get("{{$path}}/edit", ["as" => "backoffice.$path.edit",    "uses" => "$bkNamespace\\{$name}Controller@edit",    "permission" => "backoffice.$path.update"]);
+					$router->match(['PUT',
+						  'PATCH'], "{{$path}}",   ["as" => "backoffice.$path.update",  "uses" => "$bkNamespace\\{$name}Controller@update",  "permission" => "backoffice.$path.update"]);
+					$router->delete("{{$path}}",   ["as" => "backoffice.$path.destroy", "uses" => "$bkNamespace\\{$name}Controller@destroy", "permission" => "backoffice.$path.delete"]);
+				});
+			}
+
+			$router->post('users/{id}/resend-activation', ['as' => 'backoffice.users.resend-activation', 'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resendActivation", 'permission' => 'backoffice.users.update']);
+			$router->post('users/{id}/reset-password',    ['as' => 'backoffice.users.reset-password',    'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resetPassword",    'permission' => 'backoffice.users.update']);
+		});
 	}
 }

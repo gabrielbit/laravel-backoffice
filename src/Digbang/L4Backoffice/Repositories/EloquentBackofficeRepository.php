@@ -23,6 +23,10 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		return $this;
 	}
 
+	/**
+	 * @param $id
+	 * @return Model
+	 */
 	public function findById($id)
 	{
 		return $this->eloquent->with($this->eagerLoad)->findOrFail($id);

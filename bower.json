@@ -15,7 +15,7 @@
     "jquery": "~1.10",
     "jquery-form": "~3.46.0",
     "bootbox": "~4.2.0",
-    "multiselect": "~0.9.11",
+    "multiselect": "~0.9.12",
     "quicksearch": "~2.0.3",
     "select2": "~3.4.8",
     "jquery-cookie": "~1.4.1",

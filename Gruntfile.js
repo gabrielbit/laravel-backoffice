@@ -45,7 +45,9 @@ module.exports = function(grunt) {
 					"./bower_components/multiselect/js/jquery.multi-select.js",
 					"./bower_components/select2/select2.min.js",
 					"./bower_components/jquery-cookie/jquery.cookie.js",
+					"./bower_components/multiselect/js/jquery.multi-select.js",
 					"./vendor/digbang/backoffice-template/template/js/custom.js",
+					"./src/assets/js/auth.js",
 					"./src/assets/js/backoffice.js"
 				],
 				dest: './public/js/backoffice.js',
@@ -78,6 +80,12 @@ module.exports = function(grunt) {
 						cwd: './bower_components/font-awesome',
 						src: ['fonts/**'],
 						dest: './public',
+						expand: true
+					},
+					{
+						cwd: './bower_components/multiselect/img',
+						src: ['*.png'],
+						dest: './public/images/',
 						expand: true
 					}
 				]

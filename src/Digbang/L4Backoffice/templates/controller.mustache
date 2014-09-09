@@ -66,7 +66,7 @@ class {{ classData.name }}Controller extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb(
-			['Home' => route('backoffice.index'), $this->titlePlural]
+			['Home' => 'backoffice.index', $this->titlePlural]
 		);
 
 		return \View::make('l4-backoffice::index', [
@@ -88,8 +88,8 @@ class {{ classData.name }}Controller extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => route('backoffice.index'),
-			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
+			'Home' => 'backoffice.index',
+			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
 			$label
 		]);
 
@@ -133,8 +133,8 @@ class {{ classData.name }}Controller extends Controller
 		$entity = $this->{{ classData.snake }}Repository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home'    => route('backoffice.index'),
-			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
+			'Home'    => 'backoffice.index',
+			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
 			$entity->{{ titleGetter }}
 		]);
 
@@ -188,9 +188,9 @@ class {{ classData.name }}Controller extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => route('backoffice.index'),
-			$this->titlePlural => route('backoffice.{{ classData.snake }}.index'),
-			$entity->{{ titleGetter }} => route('backoffice.{{ classData.snake }}.show', $id),
+			'Home' => 'backoffice.index',
+			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
+			$entity->{{ titleGetter }} => ['backoffice.{{ classData.snake }}.show', $id],
 			\Lang::get('l4-backoffice::default.edit')
 		]);
 

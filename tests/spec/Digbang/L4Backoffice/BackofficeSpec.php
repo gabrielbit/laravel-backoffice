@@ -6,6 +6,7 @@ use Digbang\L4Backoffice\Actions\ActionFactory;
 use Digbang\L4Backoffice\Forms\FormFactory;
 use Digbang\L4Backoffice\Listings\ColumnFactory;
 use Digbang\L4Backoffice\Listings\ListingFactory;
+use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Session\Store;
 use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
@@ -13,7 +14,7 @@ use Prophecy\Argument;
 
 class BackofficeSpec extends ObjectBehavior
 {
-	function let(Store $session, Factory $viewFactory)
+	function let(Store $session, Factory $viewFactory, SecureUrl $secureUrl)
 	{
 		/* @var $session \PhpSpec\Wrapper\Collaborator */
 		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
@@ -27,7 +28,8 @@ class BackofficeSpec extends ObjectBehavior
 			$actionFactory,
 			$controlFactory,
 			$formFactory,
-			$columnFactory
+			$columnFactory,
+			$secureUrl
 		);
 	}
 

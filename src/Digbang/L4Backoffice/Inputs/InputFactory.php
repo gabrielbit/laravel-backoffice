@@ -31,6 +31,19 @@ class InputFactory
 
 	public function dropdown($name, $label = null, $data = [], $options = [])
     {
+	    if (isset($options['multiple']))
+	    {
+		    if (!isset($options['id']))
+		    {
+			    $options['id'] = trim($name, '[]');
+		    }
+
+		    if (! ends_with($name, '[]'))
+		    {
+			    $name .= '[]';
+		    }
+	    }
+
 	    return new DropDown(
 		    $this->controlFactory->make(
 			    'l4-backoffice::inputs.dropdown',
