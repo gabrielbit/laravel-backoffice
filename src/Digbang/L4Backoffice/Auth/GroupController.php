@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Auth;
 
-use Cartalyst\Sentry\Groups\Eloquent\Group;
+use Digbang\Security\Entities\Group;
 use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Repositories\BackofficeRepositoryFactory;
 use Digbang\L4Backoffice\Listings\Listing;

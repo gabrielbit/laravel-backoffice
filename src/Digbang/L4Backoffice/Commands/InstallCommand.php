@@ -1,9 +1,9 @@
 <?php namespace Digbang\L4Backoffice\Commands;
 
 use Digbang\Security\Entities\Group;
-use Cartalyst\Sentry\Sentry;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Illuminate\Console\Command;
+use Illuminate\Container\Container;
 use Symfony\Component\Console\Input\InputOption;
 
 class InstallCommand extends Command
@@ -27,11 +27,11 @@ class InstallCommand extends Command
 	/**
 	 * Create a new command instance.
 	 */
-	public function __construct(Sentry $sentry)
+	public function __construct(Container $app)
 	{
 		parent::__construct();
 
-		$this->sentry = $sentry;
+		$this->sentry = $app['sentry'];
 	}
 
 	/**

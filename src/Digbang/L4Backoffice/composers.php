@@ -4,6 +4,6 @@ View::composer('l4-backoffice::menu', function(\Illuminate\View\View $view){
 });
 
 View::composer('l4-backoffice::auth.partials.menu', function(\Illuminate\View\View $view){
-	$sentry = \App::make('Cartalyst\Sentry\Sentry');
+	$sentry = \App::make('sentry');
 	$view->with(['user' => $sentry->getUser()]);
 });

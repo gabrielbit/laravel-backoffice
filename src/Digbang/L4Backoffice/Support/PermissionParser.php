@@ -1,6 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Support;
 
-use Cartalyst\Sentry\Users\UserInterface;
 use Illuminate\Support\Str as LaravelStr;
 use Illuminate\Translation\Translator;
 

@@ -57,7 +57,9 @@ class ModelFinder
 	    }
 
 	    // Hard-coded unset of the Sentry relationship table
-	    unset($tableNames['users_groups']);
+	    unset($tableNames[\Config::get('security::auth.user_groups_pivot_table')]);
+	    unset($tableNames[\Config::get('security::auth.users.table')]);
+	    unset($tableNames[\Config::get('security::auth.groups.table')]);
 
 	    natcasesort($tableNames);
 

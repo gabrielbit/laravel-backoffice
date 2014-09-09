@@ -1,12 +1,12 @@
 <?php namespace Digbang\L4Backoffice\Auth;
 
-use Cartalyst\Sentry\Groups\Eloquent\Group;
 use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Repositories\BackofficeRepositoryFactory;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Digbang\L4Backoffice\Support\PermissionParser;
 use Digbang\Security\Entities\User;
+use Digbang\Security\Entities\Group;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Urls\SecureUrl;

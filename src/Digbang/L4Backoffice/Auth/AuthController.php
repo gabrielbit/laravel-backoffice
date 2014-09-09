@@ -3,6 +3,7 @@
 use Cartalyst\Sentry\Users\UserAlreadyActivatedException;
 use Digbang\Security\Auth\AccessControl;
 use Digbang\Security\Auth\Emailer;
+use Illuminate\Container\Container;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\MessageBag;
@@ -21,9 +22,9 @@ class AuthController extends Controller
 	protected $accessControl;
 	protected $emailer;
 
-	function __construct(Sentry $sentry, Redirector $redirector, AccessControl $accessControl, Emailer $emailer)
+	function __construct(Redirector $redirector, AccessControl $accessControl, Emailer $emailer, Container $app)
 	{
-		$this->sentry = $sentry;
+		$this->sentry = $app['sentry'];
 		$this->redirector = $redirector;
 		$this->accessControl = $accessControl;
 		$this->emailer = $emailer;
