@@ -82,15 +82,15 @@ class UserController extends Controller
 		$label = \Lang::get('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route('backoffice.users.store'),
+			$this->secureUrl->route('backoffice.backoffice-users.store'),
 			$label,
 			'POST',
-			$this->secureUrl->route('backoffice.users.index')
+			$this->secureUrl->route('backoffice.backoffice-users.index')
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => 'backoffice.index',
-			$this->titlePlural => 'backoffice.users.index',
+			$this->titlePlural => 'backoffice.backoffice-users.index',
 			$label
 		]);
 
@@ -134,7 +134,7 @@ class UserController extends Controller
 			$user->setAllPermissions(\Input::get('permissions', []));
 			$user->save();
 
-			return \Redirect::to($this->secureUrl->route('backoffice.users.show', $user->getKey()));
+			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-users.show', $user->getKey()));
 		}
 		catch (ValidationException $e)
 		{
@@ -153,7 +153,7 @@ class UserController extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => 'backoffice.index',
-			$this->titlePlural => 'backoffice.users.index',
+			$this->titlePlural => 'backoffice.backoffice-users.index',
 			$user->email
 		]);
 
@@ -170,16 +170,16 @@ class UserController extends Controller
 		// Actions with security concerns
 		$actions = $this->backoffice->actions();
 		try {
-			$actions->link($this->secureUrl->route('backoffice.users.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
+			$actions->link($this->secureUrl->route('backoffice.backoffice-users.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 		try {
-			$actions->link($this->secureUrl->route('backoffice.users.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			$actions->link($this->secureUrl->route('backoffice.backoffice-users.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 
 		$topActions = $this->backoffice->actions();
 
 		try {
-			$topActions->link($this->secureUrl->route('backoffice.users.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+			$topActions->link($this->secureUrl->route('backoffice.backoffice-users.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
 		} catch (PermissionException $e) { /* Do nothing */ }
 
 		return \View::make('l4-backoffice::show', [
@@ -200,10 +200,10 @@ class UserController extends Controller
 		$label = \Lang::get('l4-backoffice::default.edit');
 
 		$form = $this->buildForm(
-			$this->secureUrl->route('backoffice.users.update', $id),
+			$this->secureUrl->route('backoffice.backoffice-users.update', $id),
 			$label,
 			'PUT',
-			$this->secureUrl->route('backoffice.users.show', $id)
+			$this->secureUrl->route('backoffice.backoffice-users.show', $id)
 		);
 
 		$permissions = $user->getAllPermissions();
@@ -219,8 +219,8 @@ class UserController extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => 'backoffice.index',
-			$this->titlePlural => 'backoffice.users.index',
-			$user->first_name . ' ' . $user->last_name => ['backoffice.users.show', $id],
+			$this->titlePlural => 'backoffice.backoffice-users.index',
+			$user->first_name . ' ' . $user->last_name => ['backoffice.backoffice-users.show', $id],
 			\Lang::get('l4-backoffice::default.edit')
 		]);
 
@@ -260,7 +260,7 @@ class UserController extends Controller
 
 			$user->save();
 
-			return \Redirect::to($this->secureUrl->route('backoffice.users.show', [$user->getKey()]));
+			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-users.show', [$user->getKey()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -281,7 +281,7 @@ class UserController extends Controller
 			$this->usersRepository->destroy($id);
 
 			// Redirect to the listing
-			return \Redirect::to($this->secureUrl->route('backoffice.users.index'))->with(['success' => "User $id deleted"]);
+			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-users.index'))->with(['success' => "User $id deleted"]);
 		}
 		catch (ValidationException $e)
 		{
@@ -396,10 +396,10 @@ class UserController extends Controller
 		$actions = $this->backoffice->actions();
 
 		try {
-			$actions->link($this->secureUrl->route('backoffice.users.create'), FontAwesome::icon('plus') . ' New User', ['class' => 'btn btn-primary']);
+			$actions->link($this->secureUrl->route('backoffice.backoffice-users.create'), FontAwesome::icon('plus') . ' New User', ['class' => 'btn btn-primary']);
 		} catch (PermissionException $e) { /* Do nothing */}
 		try {
-			$actions->link($this->secureUrl->route('backoffice.users.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success']);
+			$actions->link($this->secureUrl->route('backoffice.backoffice-users.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */}
 
 		$list->setActions($actions);
@@ -409,14 +409,14 @@ class UserController extends Controller
 		// View icon
 		$rowActions->link(function(Collection $row) {
 			try {
-				return $this->secureUrl->route('backoffice.users.show', $row['id']);
+				return $this->secureUrl->route('backoffice.backoffice-users.show', $row['id']);
 			} catch (PermissionException $e) { return false; }
 		}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.show')]);
 
 		// Edit icon
 		$rowActions->link(function(Collection $row){
 			try {
-				return $this->secureUrl->route('backoffice.users.edit', $row['id']);
+				return $this->secureUrl->route('backoffice.backoffice-users.edit', $row['id']);
 			} catch (PermissionException $e) { return false; }
 		}, FontAwesome::icon('edit'), ['class' => 'text-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.edit')]);
 
@@ -424,7 +424,7 @@ class UserController extends Controller
 		$rowActions->form(
 			function(Collection $row){
 				try {
-				return $this->secureUrl->route('backoffice.users.destroy', $row['id']);
+				return $this->secureUrl->route('backoffice.backoffice-users.destroy', $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('times'),
@@ -442,7 +442,7 @@ class UserController extends Controller
 		$rowActions->form(
 			function(Collection $row){
 				try {
-				return $this->secureUrl->route('backoffice.users.reset-password', $row['id']);
+				return $this->secureUrl->route('backoffice.backoffice-users.reset-password', $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('unlock-alt'),
@@ -461,7 +461,7 @@ class UserController extends Controller
 			function(Collection $row){
 				if ($row['activated']) return false;
 				try {
-					return $this->secureUrl->route('backoffice.users.resend-activation', $row['id']);
+					return $this->secureUrl->route('backoffice.backoffice-users.resend-activation', $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('reply-all'),
