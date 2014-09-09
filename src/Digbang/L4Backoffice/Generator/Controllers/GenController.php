@@ -138,7 +138,7 @@ class GenController extends \Controller
 		return \View::make('l4-backoffice::gen.generation', [
 			'title' => $title,
 			'breadcrumb' => $breadcrumb,
-			'tables' => ['foo', 'bar', 'baz', 'a_really_long_table'],
+			'tables' => ['foos', 'bars', 'bazes', 'a_really_long_tables'],
 			'backofficeNamespace' => 'A\\\\Really\\\\Long\\\\Namespace'
 		]);
 	}

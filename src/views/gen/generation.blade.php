@@ -23,17 +23,35 @@
 					<dd>{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller</dd>
 				@endforeach
 			</dl>
-			<h5>Please add this routes to your routes.php:</h5>
+			<h5>Please add the new resources to your routes.php:</h5>
 			<div class="well-lg">
 				<pre>
 					<code class="php">
-Route::group(['prefix' => 'backoffice'], function(){
-	// ...
+Route::group(['prefix' => 'backoffice', 'before' => 'backoffice.auth.withPermissions'], function(){
+	$bkNamespace = '{{ $backofficeNamespace }}';
+	Route::get('/', ['as' => 'backoffice.index', 'uses' => "$bkNamespace\\HomeController@index"]);
+	$resources = [
+		// ... Add this new resources if it's not the first time you run the gen
 @foreach($tables as $table)
-	Route::get('{{ $table }}/export', ['as' => 'backoffice.{{ $table }}.export', 'uses' => "{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller@export"]);
-	Route::resource('{{ $table }}', "{{ $backofficeNamespace }}\\{{ \Str::studly(\Str::singular($table)) }}Controller");
+		'{{ \Str::studly(\Str::singular($table)) }}' => '{{ $table }}',
 @endforeach
-	// ...
+		// ...
+	];
+
+	foreach ($resources as $name => $path)
+	{
+		Route::group(['prefix' => $path], function() use ($name, $path, $bkNamespace) {
+			Route::get("/",              ["as" => "backoffice.$path.index",   "uses" => "$bkNamespace\\{$name}Controller@index",   "permission" => "backoffice.$path.list"]);
+			Route::get("create",         ["as" => "backoffice.$path.create",  "uses" => "$bkNamespace\\{$name}Controller@create",  "permission" => "backoffice.$path.create"]);
+			Route::post("/",             ["as" => "backoffice.$path.store",   "uses" => "$bkNamespace\\{$name}Controller@store",   "permission" => "backoffice.$path.create"]);
+			Route::get("@{{$path}}",      ["as" => "backoffice.$path.show",    "uses" => "$bkNamespace\\{$name}Controller@show",    "permission" => "backoffice.$path.read"]);
+			Route::get("@{{$path}}/edit", ["as" => "backoffice.$path.edit",    "uses" => "$bkNamespace\\{$name}Controller@edit",    "permission" => "backoffice.$path.update"]);
+			Route::match(['PUT',
+				'PATCH'], "@{{$path}}",   ["as" => "backoffice.$path.update",  "uses" => "$bkNamespace\\{$name}Controller@update",  "permission" => "backoffice.$path.update"]);
+			Route::delete("@{{$path}}",   ["as" => "backoffice.$path.destroy", "uses" => "$bkNamespace\\{$name}Controller@destroy", "permission" => "backoffice.$path.delete"]);
+			Route::get("export",         ['as' => "backoffice.$path.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$path.list"]);
+		});
+	}
 });
 					</code>
 				</pre>

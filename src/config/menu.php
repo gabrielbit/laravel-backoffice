@@ -18,18 +18,13 @@
 return [
 	'menu' => [
 		'Backoffice' => [
-			'System settings' => [
-				'icon' => 'cogs',
-				'children' => [
-					'Backoffice users' => [
-						'icon'   => 'user',
-						'action' => 'Digbang\L4Backoffice\Auth\UserController@index'
-					],
-					'Backoffice groups' => [
-						'icon'   => 'group',
-						'action' => 'Digbang\L4Backoffice\Auth\GroupController@index'
-					]
-				]
+			'Backoffice users' => [
+				'icon'   => 'user',
+				'action' => 'Digbang\L4Backoffice\Auth\UserController@index'
+			],
+			'Backoffice groups' => [
+				'icon'   => 'group',
+				'action' => 'Digbang\L4Backoffice\Auth\GroupController@index'
 			]
 		]
 	]
