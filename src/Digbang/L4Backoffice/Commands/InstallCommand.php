@@ -3,6 +3,7 @@
 use Cartalyst\Sentry\Groups\Eloquent\Group;
 use Cartalyst\Sentry\Sentry;
 use Cartalyst\Sentry\Users\Eloquent\User;
+use Cartalyst\Sentry\Users\UserNotFoundException;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -60,13 +61,14 @@ class InstallCommand extends Command
 		if (! $this->option('no-superuser'))
 		{
 			$this->info("Creating backoffice superuser...");
-			if (!$this->sentry->findUserByLogin('admin@digbang.com'))
+			try
+			{
+				$this->sentry->findUserByLogin('admin@digbang.com');
+				$this->info("User already exists.");
+			}
+			catch (UserNotFoundException $e)
 			{
 				$this->createSuperuser();
-			}
-			else
-			{
-				$this->info("User already exists.");
 			}
 		}
 
