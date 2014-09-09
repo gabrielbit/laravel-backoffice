@@ -4,8 +4,11 @@ Backoffice for Laravel 4
 This project exposes various services and objects to create and maintain a typical backoffice project.
 
 ## Usage
-* Through the `Digbang\L4Backoffice\Backoffice` class
-* Through the code generator pages
+* Add it to your `composer.json`
+* Add the service provider (see below)
+* Run `php artisan backoffice:install`
+* Run code generation through the code generator pages in `/backoffice/gen`
+* Access the objects through the `Digbang\L4Backoffice\Backoffice` class
 
 ## Adding the service provider
 Add this line to your `app/config/app.php` providers array:
@@ -35,7 +38,13 @@ The `digbang/security` package provides a `SecureUrl` object, that will help you
 currently logged in user has permission to use.
 
 You can customize your permissions repository by publishing the backoffice config files and editing the `auth.php`
-file. By default, an `InsecurePermissionRepository` implementation is used.
+file. By default, a `RoutePermissionRepository` implementation is used.
+
+## Users and Groups
+The Backoffice will associate `users` and `groups` resources for you, and will be available through the
+`/backoffice/backoffice-users` and `/backoffice/backoffice-groups` urls, respectively.
+
+Use this CRUDs to administrate users and groups. Make sure only administrators can access this pages!
 
 ## Contributing
 This project is being developed with [PHPSpec](http://phpspec.net).
