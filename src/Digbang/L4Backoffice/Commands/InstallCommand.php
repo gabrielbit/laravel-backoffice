@@ -112,7 +112,9 @@ class InstallCommand extends Command
 			'email'       => 'admin@digbang.com',
 			'password'    => $password,
 			'activated'   => true,
-			'permissions' => ['superuser' => 1]
+			'permissions' => ['superuser' => 1],
+			'first_name'  => 'Admin',
+			'last_name'   => 'Digbang'
 		]);
 	}
 }
