@@ -2,6 +2,7 @@
 
 use Digbang\Security\Entities\Group;
 use Cartalyst\Sentry\Users\UserNotFoundException;
+use Digbang\Security\Permissions\PermissionRepository;
 use Illuminate\Console\Command;
 use Illuminate\Container\Container;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,15 +24,17 @@ class InstallCommand extends Command
 	protected $description = 'Install the backoffice interactively.';
 
 	protected $sentry;
+	protected $permissionRepository;
 
 	/**
 	 * Create a new command instance.
 	 */
-	public function __construct(Container $app)
+	public function __construct(Container $app, PermissionRepository $permissionRepository)
 	{
 		parent::__construct();
 
 		$this->sentry = $app['sentry'];
+		$this->permissionRepository = $permissionRepository;
 	}
 
 	/**
@@ -50,9 +53,34 @@ class InstallCommand extends Command
 
 		if (! $this->option('no-groups'))
 		{
-			if (Group::count() == 0) {
+			if (Group::count() == 0)
+			{
+				$permissions = $this->permissionRepository->all();
+				if (!empty($permissions))
+				{
+					$permissions = array_combine($permissions, array_fill(0, count($permissions), 1));
+				}
+
 				$this->info("Creating Administrators backoffice group...");
-				Group::create(['name' => 'Administrators']);
+				Group::create([
+					'name' => 'Administrators',
+					'permissions' => $permissions
+				]);
+
+				foreach ($permissions as $permission => $aOne)
+				{
+					if (strpos($permission, 'backoffice-users') !== false ||
+						strpos($permission, 'backoffice-groups') !== false)
+					{
+						unset($permissions[$permission]);
+					}
+				}
+
+				$this->info("Creating Operators backoffice group...");
+				Group::create([
+					'name' => 'Operators',
+					'permissions' => $permissions
+				]);
 			}
 		}
 
