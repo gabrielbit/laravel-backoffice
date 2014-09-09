@@ -4,7 +4,7 @@ use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
 
-class Menu implements RenderableInterface
+class Menu implements RenderableInterface, \Countable
 {
 	protected $actionTree;
 	protected $control;
@@ -24,7 +24,7 @@ class Menu implements RenderableInterface
 	}
 
 	/**
-	 * @return mixed
+	 * @return ActionCollection
 	 */
 	public function getActionTree()
 	{
@@ -41,5 +41,15 @@ class Menu implements RenderableInterface
 		return $this->control->render()->with([
 			'actionTree' => $this->actionTree
 		]);
+	}
+
+	public function count()
+	{
+		return $this->actionTree->count();
+	}
+
+	public function isEmpty()
+	{
+		return $this->count() == 0;
 	}
 }

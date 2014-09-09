@@ -46,7 +46,11 @@ class MenuFactory
 					$this->buildActionTree($actionTree, $label, $config);
 				}
 
-				$this->menu[] = $this->buildMenu($title, $actionTree);
+				$menu         = $this->buildMenu($title, $actionTree);
+				if (! $menu->isEmpty())
+				{
+					$this->menu[] = $menu;
+				}
 			}
 		}
 
