@@ -1,12 +1,10 @@
 <?php namespace Digbang\L4Backoffice\Commands;
 
-use Cartalyst\Sentry\Groups\Eloquent\Group;
+use Digbang\Security\Entities\Group;
 use Cartalyst\Sentry\Sentry;
-use Cartalyst\Sentry\Users\Eloquent\User;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class InstallCommand extends Command
 {
