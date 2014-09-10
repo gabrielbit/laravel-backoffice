@@ -158,7 +158,7 @@ class {{ classData.name }}Controller extends Controller
 		$actions = $this->backoffice->actions();
 
 		try {
-			$actions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+			$actions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) {}
 
 		try {
@@ -246,7 +246,7 @@ class {{ classData.name }}Controller extends Controller
 			$entity->save();
 
 			// Redirect to show
-			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', [$entity->getKey()]);
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', [$entity->getKey()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -377,10 +377,10 @@ class {{ classData.name }}Controller extends Controller
 	{
 		$listActions = $this->backoffice->actions();
 		try {
-            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary'])
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary']);
         } catch (PermissionException $e) {}
         try {
-            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success'])
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success']);
         } catch (PermissionException $e) {}
 
 		$list->setActions($listActions);
