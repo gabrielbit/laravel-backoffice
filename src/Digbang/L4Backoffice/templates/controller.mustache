@@ -199,7 +199,7 @@ class {{ classData.name }}Controller extends Controller
 			'{{ name }}' => $entity->{{ name }},
 			{{/ inputs }}
 			{{# dependencies }}
-			'{{ singular }}' => $entity->{{ singular }}->id,
+			'{{ column }}' => $entity->{{ singular }}->id,
 			{{/ dependencies }}
 		]);
 
@@ -396,9 +396,9 @@ class {{ classData.name }}Controller extends Controller
 			},
 			FontAwesome::icon('eye'),
 			[
-				'data-toggle' => 'tooltip',
+				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
-				'title' => \Lang::get('l4-backoffice::default.show')
+				'title'          => \Lang::get('l4-backoffice::default.show')
 			]
 		);
 
@@ -411,9 +411,10 @@ class {{ classData.name }}Controller extends Controller
 			},
 			FontAwesome::icon('edit'),
 			[
-				'data-toggle' => 'tooltip',
+				'class'          => 'text-success',
+				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
-				'title' => \Lang::get('l4-backoffice::default.edit')
+				'title'          => \Lang::get('l4-backoffice::default.edit')
 			]
 		);
 
