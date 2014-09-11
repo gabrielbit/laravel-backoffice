@@ -11,7 +11,7 @@ class Composite extends Input implements InputInterface
 
 	function __construct($name, ControlInterface $control, Collection $inputCollection)
 	{
-		$this->inputcollection = $inputCollection;
+		$this->inputCollection = $inputCollection;
 		
 		parent::__construct($control, $name);
 	}
