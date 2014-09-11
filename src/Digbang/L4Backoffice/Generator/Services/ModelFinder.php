@@ -23,17 +23,15 @@ class ModelFinder
 		$this->db = $databaseManager;
 		$this->config = $config;
 		$this->str = $str;
-
-		$databases = array_fetch($this->config->get('database.connections'), 'database');
-
-		if (empty($databases)) throw new \InvalidArgumentException('No databases found. Configure your connection and try again');
-
-		$this->schemaManager = $this->db->connection()->getDoctrineSchemaManager();
 	}
-
 
 	public function find()
     {
+	    if (!$this->schemaManager)
+	    {
+		    $this->init();
+	    }
+
 	    $tableNames = [];
 
 	    foreach ($this->schemaManager->listTables() as $table)
@@ -68,6 +66,11 @@ class ModelFinder
 
 	public function columns($tableName)
 	{
+		if (!$this->schemaManager)
+		{
+			$this->init();
+		}
+
 		return array_map(function(Column $column){
 			// Decorate Doctrine Column with our decorator
 			return new ColumnDecorator($column, $this->str);
@@ -76,6 +79,20 @@ class ModelFinder
 
 	public function foreignKeys($tableName)
 	{
+		if (!$this->schemaManager)
+		{
+			$this->init();
+		}
+
 		return new Collection($this->schemaManager->listTableForeignKeys($tableName));
+	}
+
+	public function init()
+	{
+		$databases = array_fetch($this->config->get('database.connections'), 'database');
+
+		if (empty($databases)) throw new \InvalidArgumentException('No databases found. Configure your connection and try again');
+
+		$this->schemaManager = $this->db->connection()->getDoctrineSchemaManager();
 	}
 }
