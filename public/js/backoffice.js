@@ -4038,7 +4038,7 @@ function log() {
 		};
 		
 		this.strip_html = function (input) {
-			var output = input.replace(new RegExp('<[^<]+\\>', 'g'), "");
+			var output = input.replace(new RegExp('<[^<]+\\>', 'g'), ' ');
 			output = $.trim(output.toLowerCase());
 			return output;
 		};

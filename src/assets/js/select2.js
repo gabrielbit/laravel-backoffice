@@ -8,5 +8,10 @@ $(document).ready(function(){
 				'closeOnSelect': false
 			});
 		}
+
+		if ($(this).attr('readonly'))
+		{
+			$(this).select2('readonly', true);
+		}
 	});
 });
