@@ -5158,6 +5158,8 @@ $(document).ready(function(){
 			with: "resolve",
 			allowClear: true
 		});
+
+		$(this).select2('readonly', $(this).is('[readonly]'));
 	});
 
 	// Delete row in a table
