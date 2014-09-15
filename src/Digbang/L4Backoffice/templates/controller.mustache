@@ -347,7 +347,8 @@ class {{ classData.name }}Controller extends Controller
 			'{{ name }}' => '{{ title }}',
 			{{/ columns }}
 			{{# dependencies }}
-			'{{ singular }}' => '{{ title }}',
+			'{{ singular }}.{{ titleGetter }}' => '{{ title }}',
+			'{{ singular }}',
 			{{/ dependencies }}
 		]);
 
@@ -357,15 +358,21 @@ class {{ classData.name }}Controller extends Controller
 				{{# hiddenColumns }}
 				'{{ name }}',
 				{{/ hiddenColumns }}
+				{{# dependencies }}
+                '{{ singular }}',
+                {{/ dependencies }}
 			])
 			->sortable([
 			{{# inputs }}
 				'{{ name }}',
 			{{/ inputs }}
+			{{# dependencies }}
+            '{{ singular }}.{{ titleGetter }}',
+            {{/ dependencies }}
 		]);
 
 		{{# dependencies }}
-        $columns->setAccessor('{{ singular }}', function($row){
+        $columns->setAccessor('{{ singular }}.{{ titleGetter }}', function($row){
             return $row['{{ singular }}']['{{ titleGetter }}'];
         });
         {{/ dependencies }}

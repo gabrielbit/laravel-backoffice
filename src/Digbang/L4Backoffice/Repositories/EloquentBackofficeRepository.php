@@ -1,6 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class EloquentBackofficeRepository
@@ -64,7 +66,20 @@ class EloquentBackofficeRepository implements BackofficeRepository
 
 		if ($sortBy && $sortSense)
 		{
-			$eloquent = $eloquent->orderBy($sortBy, $sortSense);
+			if (strpos($sortBy, '.') !== false)
+			{
+				list($relation, $remoteColumn) = explode('.', $sortBy, 2);
+				$relationObject = $this->eloquent->{$relation}();
+
+				if ($relationObject instanceof BelongsTo)
+				{
+					$eloquent = $this->sortByJoinedRelation($eloquent, $relationObject, $remoteColumn, $sortSense);
+				}
+			}
+			else
+			{
+				$eloquent = $eloquent->orderBy($sortBy, $sortSense);
+			}
 		}
 
 		if($limit)
@@ -84,5 +99,22 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		$eloquent = $this->eloquent->with($this->eagerLoad);
 
 		return $eloquent->get();
+	}
+
+	protected function sortByJoinedRelation(Builder $eloquent, BelongsTo $relationObject, $remoteColumn, $sortSense)
+	{
+		/* @var $eloquent Builder */
+		$eloquent = $eloquent->select($this->eloquent->getTable() . '.*');
+
+		$relationTable = $relationObject->getRelated()->getTable();
+
+		$eloquent = $eloquent->join(
+			$relationTable,
+			$relationObject->getQualifiedForeignKey(),
+			'=',
+			$relationObject->getQualifiedOtherKeyName()
+		);
+
+		return $eloquent->orderBy("$relationTable.$remoteColumn", $sortSense);
 	}
 }
