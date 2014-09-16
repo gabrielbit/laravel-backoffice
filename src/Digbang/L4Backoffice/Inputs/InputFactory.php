@@ -158,6 +158,16 @@ class InputFactory
 		);
 	}
 
+	public function colorPicker($name, $label, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.colorpicker',
+			$label,
+			$options,
+			$name
+		);
+	}
+
 	protected function make($view, $label, $options, $name)
 	{
 		return new Input(

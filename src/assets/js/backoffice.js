@@ -312,4 +312,28 @@ $(document).ready(function(){
 
 		return false;
 	});
+
+	// ColorPicker
+	$('.colorpicker-container').each(function(){
+		$input = $('input[type=text]', this);
+		$preview = $('.preview', this);
+
+		$('.colorselector', this).ColorPicker({
+			onShow: function (colpkr) {
+				$(colpkr).fadeIn(500);
+				return false;
+			},
+			onHide: function (colpkr) {
+				$(colpkr).fadeOut(500);
+				return false;
+			},
+			onChange: function (hsb, hex, rgb) {
+				var hexValue = '#' + hex;
+
+				$preview.css('backgroundColor', hexValue);
+				$input.val(hexValue);
+			}
+		});
+	});
+
 });
