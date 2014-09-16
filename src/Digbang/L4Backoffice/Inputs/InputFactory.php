@@ -150,12 +150,17 @@ class InputFactory
 
 	public function hidden($name, $options = [])
 	{
-		return $this->make(
+		$input = $this->make(
 			'l4-backoffice::inputs.hidden',
 			$name,
 			$options,
 			$name
 		);
+
+		// By default, hidden inputs are hidden ;-)
+		$input->hide();
+
+		return $input;
 	}
 
 	public function colorPicker($name, $label, $options = [])

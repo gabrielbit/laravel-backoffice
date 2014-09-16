@@ -143,6 +143,20 @@ class Collection implements \IteratorAggregate
 		return $this->collection;
 	}
 
+	public function getVisible()
+	{
+		return $this->collection->filter(function(Input $input){
+			return $input->isVisible();
+		});
+	}
+
+	public function getHidden()
+	{
+		return $this->collection->filter(function(Input $input){
+			return ! $input->isVisible();
+		});
+	}
+
 	/**
 	 * Retrieve an external iterator
 	 * @link http://php.net/manual/en/iteratoraggregate.getiterator.php

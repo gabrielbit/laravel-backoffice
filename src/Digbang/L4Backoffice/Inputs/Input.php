@@ -15,6 +15,7 @@ class Input implements InputInterface
 	protected $value;
 	protected $defaultsTo;
 	protected $readonly = false;
+	protected $visible = true;
 
 	function __construct(ControlInterface $control, $name, $value = null)
 	{
@@ -138,5 +139,15 @@ class Input implements InputInterface
 	public function hasName($name)
 	{
 		return $this->name == $name;
+	}
+
+	public function hide()
+	{
+		$this->visible = false;
+	}
+
+	public function isVisible()
+	{
+		return $this->visible;
 	}
 }

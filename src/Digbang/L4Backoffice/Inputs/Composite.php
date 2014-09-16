@@ -86,4 +86,17 @@ class Composite extends Input implements InputInterface
 	{
 		return $this->control->hasClass($className);
 	}
+
+	public function isVisible()
+	{
+		return count($this->inputCollection->getVisible()) > 0;
+	}
+
+	public function hide()
+	{
+		foreach ($this->inputCollection->getVisible() as $input)
+		{
+			$input->hide();
+		}
+	}
 }

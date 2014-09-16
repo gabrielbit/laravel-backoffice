@@ -1,10 +1,13 @@
 <div class="panel panel-default">
 	{{ Form::open($formOptions) }}
+	@foreach($inputs->getHidden() as $input)
+		{{ $input->render() }}
+	@endforeach
 	<div class="panel-heading">
 		<h4 class="panel-title">{{ $label }}</h4>
 	</div>
 	<div class="panel-body panel-body-nopadding">
-		@foreach($inputs as $input)
+		@foreach($inputs->getVisible() as $input)
 		<div class="form-group{{ $errors->has($input->name()) ? ' has-error' : '' }}">
 			<label for="{{ $input->name() }}" class="col-sm-3 control-label">
 				{{ $input->label() }}

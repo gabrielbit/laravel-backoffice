@@ -36,4 +36,14 @@ interface InputInterface extends ControlInterface
 	 * @return void
 	 */
 	public function setValue($name, $value);
+
+	/**
+	 * @return boolean
+	 */
+	public function isVisible();
+
+	/**
+	 * @return void
+	 */
+	public function hide();
 }
