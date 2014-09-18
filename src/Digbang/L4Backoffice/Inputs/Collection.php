@@ -72,6 +72,11 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->colorPicker($name, $label, $options));
 	}
 
+	public function file($name, $label, $options = [])
+	{
+		return $this->add($this->factory->file($name, $label, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){

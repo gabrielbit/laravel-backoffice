@@ -3,6 +3,7 @@
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+use Digbang\L4Backoffice\Uploads\FileUploadHandler;
 use Illuminate\Http\Request;
 
 class InputFactory
@@ -170,6 +171,20 @@ class InputFactory
 			$label,
 			$options,
 			$name
+		);
+	}
+
+	public function file($name, $label, $options = [])
+	{
+		return new File(
+			new FileUploadHandler(),
+			$this->controlFactory->make(
+				'l4-backoffice::inputs.file',
+				$label,
+				$options
+			),
+			$name,
+			$this->request ? $this->request->get($name) : null
 		);
 	}
 
