@@ -8,6 +8,16 @@
   display: none;
 
   & > .btn-group {
-    margin-bottom: 0;
+	  margin-bottom: 0;
+
+	  .dropdown-menu > li > * {
+		  display: block;
+	  }
+	  button {
+		  &:extend(.dropdown-menu>li>a all);
+
+		  width: 100%;
+		  text-align: left;
+	  }
   }
 }

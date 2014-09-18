@@ -254,16 +254,16 @@ $(document).ready(function(){
 		}
 	});
 
-	$('.actions-bulk').find('form').each(function(){
+	$('form').each(function(){
 		$(this).on('submit', function(){
-			var self = this;
+			var $self = $(this);
 
 			$('.chk-bulk:checked').each(function(){
 				var $hidden = $('<input type="hidden">');
 				$hidden.attr('name', 'row[]');
 				$hidden.val($(this).val());
 
-				$(self).append($hidden);
+				$self.append($hidden);
 			});
 		});
 	});
