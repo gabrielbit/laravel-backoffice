@@ -1,5 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
+use Digbang\L4Backoffice\Forms\Form as GenericForm;
+
 class Collection implements \IteratorAggregate, \Countable
 {
 	protected $factory;
@@ -41,6 +43,13 @@ class Collection implements \IteratorAggregate, \Countable
 	public function add(ActionInterface $action)
 	{
 		$this->collection->push($action);
+
+		return $this;
+	}
+
+	public function modal(GenericForm $form, $label, $options = [], $icon = null)
+	{
+		$this->collection->push($this->factory->modal($form, $label, $options, $icon));
 
 		return $this;
 	}
