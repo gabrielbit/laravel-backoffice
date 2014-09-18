@@ -1,4 +1,6 @@
-@include('l4-backoffice::filters', ['filters' => $filters])
+@if(count($filters))
+	@include('l4-backoffice::filters', ['filters' => $filters])
+@endif
 <div class="row">
 	<div class="col-sm-12 col-md-12">
 		<div class="panel panel-default">
