@@ -1,7 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlFactory;
-use Digbang\L4Backoffice\Forms\Form as GenericForm;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
 use Illuminate\Http\Request;
 
@@ -38,7 +37,7 @@ class ActionFactory
 		    $method);
     }
 
-	public function modal(GenericForm $form, $label, $options = [], $icon = null)
+	public function modal($form, $label, $options = [], $icon = null)
 	{
 		$uniqid = uniqid('form_');
 		$options['data-toggle'] = "modal";
