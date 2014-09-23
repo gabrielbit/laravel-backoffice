@@ -267,7 +267,7 @@ class {{ classData.name }}Controller extends Controller
 			$this->{{ classData.snake }}Repository->destroy($id);
 
 			// Redirect to the listing
-			return \Redirect::$this->secureUrl->route('backoffice.{{ classData.snake }}.index')->with(['success' => "{{ classData.name }} $id deleted"]);
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.index'))->with(['success' => "{{ classData.name }} $id deleted"]);
 		}
 		catch (ValidationException $e)
 		{
