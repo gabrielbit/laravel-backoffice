@@ -39,13 +39,8 @@ class ActionFactory
 
 	public function modal($form, $label, $options = [], $icon = null)
 	{
-		$uniqid = uniqid('form_');
-		$options['data-toggle'] = "modal";
-		$options['data-target'] = "#$uniqid";
-
 		return new Modal(
 			$form,
-			$uniqid,
 			$this->controlFactory->make('l4-backoffice::actions.modal', $label, $options),
 			$icon
 		);

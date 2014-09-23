@@ -6,28 +6,37 @@ use Illuminate\Support\Collection as LaravelCollection;
 class Modal extends Action implements ActionInterface
 {
 	protected $form;
-	protected $uniqid;
 
-	function __construct($form, $uniqid, ControlInterface $control, $icon = null)
+	function __construct($form, ControlInterface $control, $icon = null)
 	{
 		parent::__construct($control, '#', $icon);
-
-		$this->form   = $form;
-		$this->uniqid = $uniqid;
+		$this->form = $form;
 	}
 
 	public function render()
 	{
+		$uniqid = uniqid('form_');
+
+		$options = $this->control->options();
+		$options['data-toggle'] = "modal";
+		$options['data-target'] = "#$uniqid";
+
 		return parent::render()->with(
 			[
 				'form'   => $this->form,
-				'uniqid' => $this->uniqid
+				'uniqid' => $uniqid
 			]
 		);
 	}
 
 	public function renderWith($row)
 	{
+		$uniqid = uniqid('form_');
+
+		$options = $this->control->options();
+		$options['data-toggle'] = "modal";
+		$options['data-target'] = "#$uniqid";
+
 		if ($rendered = parent::renderWith($row))
 		{
 			$form = $this->form;
@@ -40,7 +49,7 @@ class Modal extends Action implements ActionInterface
 			return $rendered->with(
 				[
 					'form'   => $form,
-					'uniqid' => $this->uniqid
+					'uniqid' => $uniqid
 				]
 			);
 		}
