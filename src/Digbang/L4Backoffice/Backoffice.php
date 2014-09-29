@@ -44,9 +44,18 @@ class Backoffice
 		    $routes = [];
 		    foreach ($data as $text => $route)
 		    {
-			    if (is_string($route) && strpos($route, '//') === false)
+			    if (! is_string($text))
 			    {
-				    $routes[$text] = call_user_func_array([$this->secureUrl, 'route'], (array) $route);
+				    $routes[] =  $route;
+			    }
+			    else
+			    {
+				    if (! is_string($route) || strpos($route, '//') === false)
+				    {
+					    $route = call_user_func_array([$this->secureUrl, 'route'], (array) $route);
+				    }
+
+				    $routes[$text] = $route;
 			    }
 		    }
 
