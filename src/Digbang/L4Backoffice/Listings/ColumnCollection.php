@@ -11,17 +11,27 @@ class ColumnCollection extends Collection
 
 	public function hide($ids)
     {
-	    foreach ((array) $ids as $id)
-	    {
-		    $this->each(function(Column &$column) use ($id) {
-			    if ($column->getId() == $id) {
-				    $column->setHidden(true);
-			    }
-		    });
-	    }
-
-	    return $this;
+	    return $this->toggleHidden($ids, true);
     }
+
+	public function show($ids)
+	{
+		return $this->toggleHidden($ids, false);
+	}
+
+	protected function toggleHidden($ids, $isHidden)
+	{
+		foreach ((array) $ids as $id)
+		{
+			$this->each(function(Column &$column) use ($id, $isHidden) {
+				if ($column->getId() == $id) {
+					$column->setHidden($isHidden);
+				}
+			});
+		}
+
+		return $this;
+	}
 
 	public function sortable($ids)
 	{
