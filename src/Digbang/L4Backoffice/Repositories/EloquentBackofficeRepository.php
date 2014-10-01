@@ -61,7 +61,11 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		$filters = array_filter($filters, function($filter){ return !empty($filter) || $filter === false; });
 		foreach ($filters as $key => $value)
 		{
-			$eloquent = $eloquent->where($key, $value);
+			$eloquent = $eloquent->where(
+				$key,
+				$this->extractOperatorFrom($value),
+				$this->trimOperators($value)
+			);
 		}
 
 		if ($sortBy && $sortSense)
@@ -116,5 +120,20 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		);
 
 		return $eloquent->orderBy("$relationTable.$remoteColumn", $sortSense);
+	}
+
+	protected function extractOperatorFrom($value)
+	{
+		if (preg_match('/^[<>=!]+/', $value, $matches))
+		{
+			return $matches[0];
+		}
+
+		return '=';
+	}
+
+	protected function trimOperators($value)
+	{
+		return ltrim($value, ' <>=!');
 	}
 }
