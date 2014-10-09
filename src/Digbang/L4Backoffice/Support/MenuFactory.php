@@ -95,7 +95,8 @@ class MenuFactory
 
 		if (array_key_exists('route', $config))
 		{
-			return $this->secureUrl->route($config['route']);
+			list($route, $params) = array_pad((array) $config['route'], 2, []);
+			return $this->secureUrl->route($route, $params);
 		}
 
 		if (array_key_exists('action', $config))
