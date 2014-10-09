@@ -50,6 +50,8 @@ class Listing implements RenderableInterface, Countable
 
 	protected $valueExtractor;
 
+	protected $resetAction;
+
 	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters, ValueExtractorFacade $valueExtractor)
 	{
 		$this->control = $control;
@@ -96,8 +98,9 @@ class Listing implements RenderableInterface, Countable
 			'columns'     => $this->columns->visible(),
 			'items'       => $this->rows,
 			'filters'     => $this->filters->all(),
+			'resetAction' => $this->getResetAction(),
 			'actions'     => $this->actions(),
-			'rowActions' => $this->rowActions(),
+			'rowActions'  => $this->rowActions(),
 			'bulkActions' => $this->bulkActions(),
 			'paginator'   => $this->paginator
 		]);
@@ -169,6 +172,16 @@ class Listing implements RenderableInterface, Countable
 	public function bulkActions()
 	{
 		return $this->bulkActions;
+	}
+
+	public function setResetAction($url)
+	{
+		$this->resetAction = $url;
+	}
+
+	public function getResetAction()
+	{
+		return $this->resetAction ?: \Request::url();
 	}
 
 	/**
