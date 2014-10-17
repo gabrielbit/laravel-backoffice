@@ -77,6 +77,11 @@ class Collection implements \IteratorAggregate
 		return $this->add($this->factory->file($name, $label, $options));
 	}
 
+	public function textarea($name, $label = null, $options = [])
+	{
+		return $this->add($this->factory->textarea($name, $label, $options));
+	}
+
 	public function find($name)
 	{
 		return $this->collection->first(function($key, InputInterface $input) use ($name){

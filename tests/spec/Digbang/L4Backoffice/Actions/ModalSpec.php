@@ -12,9 +12,10 @@ class ModalSpec extends ObjectBehavior
 	function let(Form $form, ControlInterface $control, View $view)
 	{
 		$control->render()->willReturn($view);
+		$control->options()->willReturn([]);
 		$view->with(Argument::any())->willReturn($view);
 
-		$this->beConstructedWith($form, 'aUniqueId', $control, 'anIcon');
+		$this->beConstructedWith($form, $control, 'anIcon');
 	}
 
     function it_is_initializable()

@@ -135,6 +135,16 @@ class InputFactory
 		);
 	}
 
+	public function textarea($name, $label = null, $options = [])
+	{
+		return $this->make(
+			'l4-backoffice::inputs.textarea',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());
