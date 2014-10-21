@@ -70,7 +70,7 @@ class UserController extends Controller
 
 		$list->fill($this->getData());
 
-		$breadcrumb = $this->backoffice->breadcrumb(['Home' => 'backoffice.index', $this->titlePlural]);
+		$breadcrumb = $this->backoffice->breadcrumb([\Lang::get('l4-backoffice::default.home') => 'backoffice.index', $this->titlePlural]);
 
 		return \View::make('l4-backoffice::index', [
 			'title'      => $this->titlePlural,
@@ -91,7 +91,7 @@ class UserController extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-users.index',
 			$label
 		]);
@@ -154,7 +154,7 @@ class UserController extends Controller
 		$user = $this->usersRepository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-users.index',
 			\Lang::get(
 				'l4-backoffice::auth.user_name',
@@ -163,13 +163,13 @@ class UserController extends Controller
 		]);
 
 		$data = [
-			'First Name' => $user->first_name,
-			'Last Name' => $user->last_name,
-			'Email' => $user->email,
-			'Permissions' => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $user),
-			'Activated' => \Lang::get('l4-backoffice::default.' . ($user->activated ? 'yes' : 'no')),
-			'Activated At' => $user->activated_at,
-			'Last Login' => $user->last_login
+			\Lang::get('l4-backoffice::auth.first_name') => $user->first_name,
+			\Lang::get('l4-backoffice::auth.last_name') => $user->last_name,
+			\Lang::get('l4-backoffice::auth.email') => $user->email,
+			\Lang::get('l4-backoffice::auth.permissions') => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $user),
+			\Lang::get('l4-backoffice::auth.activated') => \Lang::get('l4-backoffice::default.' . ($user->activated ? 'yes' : 'no')),
+			\Lang::get('l4-backoffice::auth.activated_at') => $user->activated_at,
+			\Lang::get('l4-backoffice::auth.last_login') => $user->last_login
 		];
 
 		// Actions with security concerns
@@ -226,7 +226,7 @@ class UserController extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-users.index',
 			\Lang::get(
 					'l4-backoffice::auth.user_name',

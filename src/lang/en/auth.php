@@ -57,6 +57,7 @@ return [
 	'last_name' => 'Last Name',
 	'name' => 'Name',
 	'activated' => 'Activated',
+	'activated_at' => 'Activated At',
 	'last_login' => 'Last login',
 	'group' => 'Group',
 	'groups' => 'Groups',

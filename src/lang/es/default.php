@@ -1,0 +1,28 @@
+<?php
+return [
+	'backoffice'       => 'Backoffice',
+	'home'             => 'Inicio',
+	'navigation'       => 'Navegación',
+	'search'           => 'Buscar',
+	'reset'            => 'Borrar',
+	'simple_filters'   => 'Simple',
+	'advanced_filters' => 'Avanzado',
+	'actions'          => 'Acciones',
+	'empty_listing'    => 'No hay resultados.',
+	'select-all'       => 'Seleccionar todo',
+	'select-none'      => 'Borrar selección',
+	'new'              => 'Nuevo :model',
+	'edit'             => 'Editar',
+	'edit_model'       => 'Editar :model',
+	'show'             => 'Ver',
+	'delete'           => 'Eliminar',
+	'delete-confirm'   => '¿Está seguro de que desea eliminar esto?',
+	'back'             => 'Atrás',
+	'yes'              => 'Sí',
+	'no'               => 'No',
+	'bulk-actions'     => 'Acciones masivas',
+	'permissions'      => 'Permisos',
+	'cancel'           => 'Cancelar',
+	'delete_msg'       => ':model :id eliminado',
+	'export'           => 'Exportar'
+];

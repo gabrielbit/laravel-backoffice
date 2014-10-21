@@ -179,7 +179,7 @@ class AuthController extends Controller
 		}
 		catch (UserNotFoundException $e)
 		{
-			return $this->redirector->back()->withErrors(['email' => $e->getMessage()]);
+			return $this->redirector->back()->withErrors(['email' => \Lang::get('l4-backoffice::auth.validation.user.not-found')]);
 		}
 	}
 }

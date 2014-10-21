@@ -1,6 +1,7 @@
 <?php
 return [
 	'backoffice'       => 'Backoffice',
+	'home'             => 'Home',
 	'navigation'       => 'Navigation',
 	'search'           => 'Search',
 	'reset'            => 'Reset',

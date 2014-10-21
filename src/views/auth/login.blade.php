@@ -33,7 +33,7 @@
 				<label for="remember">{{ Lang::get('l4-backoffice::auth.remember_me') }}</label>
 			</div>
 			<div class="form-group">
-				{{ Form::submit('Sign In', ['class' => 'btn btn-success btn-block']) }}
+				{{ Form::submit(Lang::get('l4-backoffice::auth.sign_in'), ['class' => 'btn btn-success btn-block']) }}
 				{{ link_to_route('backoffice.auth.password.forgot', Lang::get('l4-backoffice::auth.forgot_password'), [], ['class' => 'mt10 pull-right']) }}
 			</div>
 			{{ Form::close() }}
