@@ -175,7 +175,7 @@ class AuthController extends Controller
 			);
 
 			return $this->redirector->route('backoffice.auth.login')
-				->with('info', 'An email was sent to ' . $user->email . ' with instructions.');
+				->with('info', \Lang::get('l4-backoffice::auth.reset-password.email-sent', ['email' => $user->email]));
 		}
 		catch (UserNotFoundException $e)
 		{

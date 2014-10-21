@@ -25,6 +25,7 @@ return [
 		'send-email' => 'Send password reset',
 		'text' => 'Insert your new password to access your account.',
 		'submit' => 'Reset password',
+		'email-sent' => 'An email was sent to :email with instructions.',
 		'success' => 'Password reset successfully, please login with your new password.'
 	],
 	'validation'      => [
