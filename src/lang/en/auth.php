@@ -2,6 +2,7 @@
 return [
 	'welcome_message'  => 'Welcome to our backoffice!',
 	'sign_in'          => 'Sign In',
+	'sign_out'         => 'Sign Out',
 	'sign_in_msg'      => 'Enter your email and password to access your account',
 	'email'            => 'Email',
 	'password'         => 'Password',
@@ -46,5 +47,6 @@ return [
 		'group' => [
 
 		]
-	]
+	],
+	'user_name' => ':name :lastname'
 ];
