@@ -145,6 +145,18 @@ class InputFactory
 		);
 	}
 
+	public function wysiwyg($name, $label = null, $options = [])
+	{
+		$options['class'] = trim(array_get($options, 'class', '') . " wysiwyg");
+
+		return $this->make(
+			'l4-backoffice::inputs.textarea',
+			$label,
+			$this->buildOptions($options, $label),
+			$name
+		);
+	}
+
 	public function collection()
 	{
 		return new Collection($this, new DigbangCollection());
