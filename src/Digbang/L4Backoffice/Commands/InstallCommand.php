@@ -26,6 +26,8 @@ class InstallCommand extends Command
 	protected $sentry;
 	protected $permissionRepository;
 
+	protected $files;
+
 	/**
 	 * Create a new command instance.
 	 */
@@ -35,6 +37,7 @@ class InstallCommand extends Command
 
 		$this->sentry = $app['sentry'];
 		$this->permissionRepository = $permissionRepository;
+		$this->files = $app['files'];
 	}
 
 	/**
@@ -104,6 +107,37 @@ class InstallCommand extends Command
 			$this->call('config:publish', ['digbang/l4-backoffice']);
 			$this->call('config:publish', ['digbang/security']);
 		}
+
+		if (! $this->option('no-lang-files'))
+		{
+			$this->info('Publishing backoffice language files...');
+
+			$this->copyLanguageFiles();
+		}
+	}
+
+	protected function copyLanguageFiles()
+	{
+		$myLangPath = realpath(__DIR__ . '/../../../lang');
+		$projectLangPath = app_path('lang/packages');
+
+		if (! $this->files->isDirectory($projectLangPath))
+		{
+			$this->files->makeDirectory($projectLangPath, 2775, true);
+		}
+
+		foreach (new \FilesystemIterator($myLangPath, \FilesystemIterator::SKIP_DOTS) as $languageDir) /* @type $languageDir \DirectoryIterator */
+		{
+			$this->info(
+				'Copying ' . $languageDir->getPathname() . ' to ' .
+				$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
+			);
+
+			$this->files->copyDirectory(
+				$languageDir->getPathname(),
+				$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
+			);
+		}
 	}
 
 	/**
@@ -113,8 +147,8 @@ class InstallCommand extends Command
 	 */
 	protected function getArguments()
 	{
-		return array(
-		);
+		return [
+		];
 	}
 
 	/**
@@ -128,7 +162,8 @@ class InstallCommand extends Command
 			['no-migrations', 'M', InputOption::VALUE_NONE, 'Run without security migrations'],
 			['no-configs',    'C', InputOption::VALUE_NONE, 'Run without configuration publishing'],
 			['no-groups',     'G', InputOption::VALUE_NONE, 'Run without admin group creation'],
-			['no-superuser',  'S', InputOption::VALUE_NONE, 'Run without superuser creation']
+			['no-superuser',  'S', InputOption::VALUE_NONE, 'Run without superuser creation'],
+			['no-lang-files', 'L', InputOption::VALUE_NONE, 'Run without copying language files']
 		];
 	}
 
