@@ -19,5 +19,6 @@ return [
 	'yes'              => 'Yes',
 	'no'               => 'No',
 	'bulk-actions'     => 'Bulk actions',
-	'permissions'      => 'Permissions'
+	'permissions'      => 'Permissions',
+	'cancel'           => 'Cancel'
 ];
