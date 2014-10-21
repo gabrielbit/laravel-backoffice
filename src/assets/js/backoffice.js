@@ -336,4 +336,8 @@ $(document).ready(function(){
 		});
 	});
 
+	// Cancel buttons on modal close modals instead
+	$('.modal .js-btn-cancel').each(function(){
+		$(this).attr('data-dismiss', 'modal');
+	});
 });
