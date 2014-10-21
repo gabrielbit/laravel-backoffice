@@ -1,4 +1,4 @@
 <?php
 return [
-	'showing' => 'Showing :from - :to of :total'
+	'showing' => '{0} No results|[1:inf] Showing :from - :to of :total'
 ];
