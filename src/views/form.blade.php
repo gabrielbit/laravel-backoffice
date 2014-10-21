@@ -27,7 +27,7 @@
 		<div class="row">
 			<div class="col-sm-6 col-sm-offset-3">
 				{{ Form::submit($label, ['class' => 'btn btn-primary']) }}
-				<a href="{{ $cancelAction }}" class="btn btn-default js-btn-cancel">{{ Lang::get('default.cancel') }}</a>
+				<a href="{{ $cancelAction }}" class="btn btn-default js-btn-cancel">{{ Lang::get('l4-backoffice::default.cancel') }}</a>
 			</div>
 		</div>
 	</div>
