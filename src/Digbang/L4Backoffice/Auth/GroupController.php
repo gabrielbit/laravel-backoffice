@@ -63,8 +63,8 @@ class GroupController extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-				\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
-				$this->titlePlural
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural
 		]);
 
 		return \View::make('l4-backoffice::index', [
@@ -86,7 +86,7 @@ class GroupController extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home')             => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-groups.index',
 			$label
 		]);
@@ -139,7 +139,7 @@ class GroupController extends Controller
 		$entity = $this->groupsRepository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home')             => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-groups.index',
 			$entity->name
 		]);
@@ -186,7 +186,7 @@ class GroupController extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home')             => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-groups.index',
 			$entity->name      => ['backoffice.backoffice-groups.show', $id],
 			$label
