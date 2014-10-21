@@ -271,7 +271,7 @@ class {{ classData.name }}Controller extends Controller
 		}
 		catch (ValidationException $e)
 		{
-			return \Redirect::back()->withErrors($e->getErrors());
+			return \Redirect::back()->withDanger(implode('<br/>', $e->getErrors()));
 		}
 		catch (PermissionException $e)
 		{
