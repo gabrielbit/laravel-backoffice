@@ -35,8 +35,8 @@ class GroupController extends Controller
 	protected $permissionParser;
 	protected $secureUrl;
 
-    protected $title = 'Group';
-    protected $titlePlural = 'Groups';
+    protected $title;
+    protected $titlePlural;
 
 	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, SecureUrl $secureUrl)
 	{
@@ -47,6 +47,9 @@ class GroupController extends Controller
 		$this->excelExporter = $excelExporter;
 		$this->permissionParser = $permissionParser;
 		$this->secureUrl = $secureUrl;
+
+		$this->title = \Lang::get('l4-backoffice::auth.group');
+		$this->titlePlural = \Lang::get('l4-backoffice::auth.groups');
 	}
 
 	public function index()
@@ -168,7 +171,7 @@ class GroupController extends Controller
 		/* @var $entity Group */
 		$entity = $this->groupsRepository->findById($id);
 
-		$label = \Lang::get('l4-backoffice::default.edit');
+		$label = \Lang::get('l4-backoffice::default.edit_model', ['model' => $this->title]);
 
 		$form = $this->buildForm(
 			$this->secureUrl->route('backoffice.backoffice-groups.update', $id),
@@ -186,11 +189,11 @@ class GroupController extends Controller
 			'Home'             => 'backoffice.index',
 			$this->titlePlural => 'backoffice.backoffice-groups.index',
 			$entity->name      => ['backoffice.backoffice-groups.show', $id],
-			\Lang::get('l4-backoffice::default.edit')
+			$label
 		]);
 
 		return \View::make('l4-backoffice::edit', [
-			'title'      => 'Edit Group',
+			'title'      => $label,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -245,11 +248,12 @@ class GroupController extends Controller
 			$this->groupsRepository->destroy($id);
 
 			// Redirect to the listing
-			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-groups.index'))->with(['success' => "Group $id deleted"]);
+			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-groups.index'))
+				->withSuccess(\Lang::get('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
 		}
 		catch (ValidationException $e)
 		{
-			return \Redirect::back()->withErrors($e->getErrors());
+			return \Redirect::back()->withDanger(implode('<br/>', $e->getErrors()));
 		}
 	}
 
@@ -280,10 +284,10 @@ class GroupController extends Controller
 
 		$inputs = $form->inputs();
 
-		$inputs->text('name', 'Name');
+		$inputs->text('name', \Lang::get('l4-backoffice::auth.name'));
 
 		$permissions = $this->permissionsRepository->all();
-		$inputs->dropdown('permissions', 'Permissions', $this->permissionParser->toDropdownArray($permissions), ['multiple' => 'multiple', 'class' => 'multiselect']);
+		$inputs->dropdown('permissions', \Lang::get('l4-backoffice::auth.permissions'), $this->permissionParser->toDropdownArray($permissions), ['multiple' => 'multiple', 'class' => 'multiselect']);
 
 		return $form;
 	}
@@ -296,10 +300,8 @@ class GroupController extends Controller
 		$filters = $list->filters();
 
 		// Here we add filters to the list
-		$filters->string('name', 'Name', ['class' => 'form-control']);
-		$filters->text('permissions', 'Permissions', ['class' => 'form-control']);
-
-		// And filter dependencies
+		$filters->string('name', \Lang::get('l4-backoffice::auth.name'), ['class' => 'form-control']);
+		$filters->text('permissions', \Lang::get('l4-backoffice::auth.permissions'), ['class' => 'form-control']);
 	}
 
 	/**
@@ -308,8 +310,8 @@ class GroupController extends Controller
 	protected function getListing()
 	{
 		$listing = $this->backoffice->listing([
-			'id' => 'Id',
-			'name' => 'Name'
+			'name' => \Lang::get('l4-backoffice::auth.name'),
+			'id'
 		]);
 
 		$columns = $listing->columns();
@@ -322,8 +324,8 @@ class GroupController extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link($this->secureUrl->route('backoffice.backoffice-groups.create'), FontAwesome::icon('plus') . ' New Group', ['class' => 'btn btn-primary'])
-				->link($this->secureUrl->route('backoffice.backoffice-groups.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success'])
+				->link($this->secureUrl->route('backoffice.backoffice-groups.create'), FontAwesome::icon('plus') . \Lang::get('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
+				->link($this->secureUrl->route('backoffice.backoffice-groups.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' ' . \Lang::get('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
 		);
 
 		$list->setRowActions(
@@ -382,7 +384,7 @@ class GroupController extends Controller
         ];
 
         $validationMsgs = [
-            'name.required' => 'The Name field is required.',
+            'name.required' => \Lang::get('l4-backoffice::auth.validation.group.name'),
         ];
 
         $validator = \Validator::make($inputData, $validationRules, $validationMsgs);

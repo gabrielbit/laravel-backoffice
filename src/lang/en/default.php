@@ -12,6 +12,7 @@ return [
 	'select-none'      => 'Select none',
 	'new'              => 'New :model',
 	'edit'             => 'Edit',
+	'edit_model'       => 'Edit :model',
 	'show'             => 'Show',
 	'delete'           => 'Delete',
 	'delete-confirm'   => 'Are you sure you want to delete this?',

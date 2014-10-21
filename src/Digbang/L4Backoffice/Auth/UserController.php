@@ -236,7 +236,7 @@ class UserController extends Controller
 		]);
 
 		return \View::make('l4-backoffice::edit', [
-			'title'      => 'Edit User',
+			'title'      => \Lang::get('l4-backoffice::default.edit_model', ['model' => $this->title]),
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);

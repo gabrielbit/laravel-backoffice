@@ -46,7 +46,7 @@ return [
 			'incorrect' => 'The reset password code provided is incorrect.'
 		],
 		'group' => [
-
+			'name' => 'The Name field is required.'
 		]
 	],
 	'user' => 'User',
@@ -58,6 +58,7 @@ return [
 	'name' => 'Name',
 	'activated' => 'Activated',
 	'last_login' => 'Last login',
+	'group' => 'Group',
 	'groups' => 'Groups',
 	'permissions' => 'Permissions'
 ];
