@@ -46,6 +46,12 @@ class Modal extends Action implements ActionInterface
 				$form = $form(new LaravelCollection($row));
 			}
 
+			if (!$form)
+			{
+				// If the callback returns false, we don't render!
+				return '';
+			}
+
 			return $rendered->with(
 				[
 					'form'   => $form,
