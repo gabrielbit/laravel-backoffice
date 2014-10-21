@@ -20,5 +20,7 @@ return [
 	'no'               => 'No',
 	'bulk-actions'     => 'Bulk actions',
 	'permissions'      => 'Permissions',
-	'cancel'           => 'Cancel'
+	'cancel'           => 'Cancel',
+	'delete_msg'       => ':model :id deleted',
+	'export'           => 'Export'
 ];

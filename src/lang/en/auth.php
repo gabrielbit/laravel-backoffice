@@ -34,10 +34,10 @@ return [
 			'wrong'    => 'Wrong password, try again.'
 		],
 		'user' => [
-			'not-found'     => 'User was not found.',
-			'not-activated' => 'User is not activated.',
-			'already-active' => 'This user has already been activated.',
-			'email-required' => 'The Email field is required.',
+			'not-found'         => 'User was not found.',
+			'not-activated'     => 'User is not activated.',
+			'already-active'    => 'This user has already been activated.',
+			'email-required'    => 'The Email field is required.',
 			'password-required' => 'The Password field is required.'
 		],
 		'reset-password' => [
@@ -48,5 +48,15 @@ return [
 
 		]
 	],
-	'user_name' => ':name :lastname'
+	'user' => 'User',
+	'users' => 'Users',
+	'user_name' => ':name :lastname',
+	'permission_error' => "You don't have the required permissions to do this.",
+	'first_name' => 'First Name',
+	'last_name' => 'Last Name',
+	'name' => 'Name',
+	'activated' => 'Activated',
+	'last_login' => 'Last login',
+	'groups' => 'Groups',
+	'permissions' => 'Permissions'
 ];
