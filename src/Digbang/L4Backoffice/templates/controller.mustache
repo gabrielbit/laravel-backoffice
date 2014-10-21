@@ -42,21 +42,21 @@ class {{ classData.name }}Controller extends Controller
      * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
      */
     protected ${{ camelCase }}Repository;
+
     {{/ uniqueDependencies }}
 
     protected $title       = '{{ classData.name }}';
+
     protected $titlePlural = '{{ classData.plural }}';
 
 	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter, SecureUrl $secureUrl)
 	{
 		$this->backoffice = $backoffice;
-		$this->{{ classData.snake }}Repository = $repositoryFactory->makeForEloquentModel(new {{ model }}());
-
 		$this->excelExporter = $excelExporter;
 		$this->secureUrl = $secureUrl;
 
+		$this->{{ classData.snake }}Repository = $repositoryFactory->makeForEloquentModel(new {{ model }}());
 		{{# hasDependencies }}
-		// Dependencies
 		{{# uniqueDependencies }}
 		$this->{{ camelCase }}Repository = $repositoryFactory->makeForEloquentModel(new {{ studlyCase }}());
 		{{/ uniqueDependencies }}
@@ -73,9 +73,10 @@ class {{ classData.name }}Controller extends Controller
 
 		$list->fill($this->getData());
 
-		$breadcrumb = $this->backoffice->breadcrumb(
-			['Home' => 'backoffice.index', $this->titlePlural]
-		);
+		$breadcrumb = $this->backoffice->breadcrumb([
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural
+		]);
 
 		return \View::make('l4-backoffice::index', [
 			'title'      => $this->titlePlural,
@@ -96,7 +97,7 @@ class {{ classData.name }}Controller extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
 			$label
 		]);
@@ -137,21 +138,21 @@ class {{ classData.name }}Controller extends Controller
 
 	public function show($id)
 	{
-		/* @var $entity {{ model }} */
-		$entity = $this->{{ classData.snake }}Repository->findById($id);
+		/* @var ${{ classData.camel }} {{ model }} */
+		${{ classData.camel }} = $this->{{ classData.snake }}Repository->findById($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home'    => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
-			$entity->{{ titleGetter }}
+			${{ classData.camel }}->{{ titleGetter }}
 		]);
 
 		$data = [
 			{{# dependencies }}
-			'{{ title }}' => $entity->{{ singular }}->{{ titleGetter }},
+			'{{ title }}' => ${{ classData.camel }}->{{ singular }}->{{ titleGetter }},
 			{{/ dependencies }}
 			{{# inputs }}
-			'{{ title }}' => $entity->{{ nameAccessor }},
+			'{{ title }}' => ${{ classData.camel }}->{{ nameAccessor }},
 			{{/ inputs }}
 		];
 
@@ -173,7 +174,7 @@ class {{ classData.name }}Controller extends Controller
 		return \View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
-			'label'      => $entity->{{ titleGetter }},
+			'label'      => ${{ classData.camel }}->{{ titleGetter }},
 			'data'       => $data,
 			'actions'    => $actions,
 			'topActions' => $topActions
@@ -182,10 +183,10 @@ class {{ classData.name }}Controller extends Controller
 
 	public function edit($id)
 	{
-		/* @var $entity {{ model }} */
-		$entity = $this->{{ classData.snake }}Repository->findById($id);
+		/* @var ${{ classData.camel }} {{ model }} */
+		${{ classData.camel }} = $this->{{ classData.snake }}Repository->findById($id);
 
-		$label = \Lang::get('l4-backoffice::default.edit');
+		$label = \Lang::get('l4-backoffice::default.edit_model', ['model' => $this->title]);
 
 		$form = $this->buildForm(
 			$this->secureUrl->route('backoffice.{{ classData.snake }}.update', $id),
@@ -196,22 +197,22 @@ class {{ classData.name }}Controller extends Controller
 
 		$form->fill([
 			{{# inputs }}
-			'{{ name }}' => $entity->{{ name }},
+			'{{ name }}' => ${{ classData.camel }}->{{ name }},
 			{{/ inputs }}
 			{{# dependencies }}
-			'{{ column }}' => $entity->{{ singular }}->id,
+			'{{ column }}' => ${{ classData.camel }}->{{ singular }}->id,
 			{{/ dependencies }}
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => 'backoffice.index',
+			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => 'backoffice.{{ classData.snake }}.index',
-			$entity->{{ titleGetter }} => ['backoffice.{{ classData.snake }}.show', $id],
+			${{ classData.camel }}->{{ titleGetter }} => ['backoffice.{{ classData.snake }}.show', $id],
 			\Lang::get('l4-backoffice::default.edit')
 		]);
 
 		return \View::make('l4-backoffice::edit', [
-			'title'      => 'Edit {{ classData.name }}',
+			'title'      => $label,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -219,8 +220,8 @@ class {{ classData.name }}Controller extends Controller
 
 	public function update($id)
 	{
-		/* @var $entity {{ model }} */
-        $entity = $this->{{ classData.snake }}Repository->findById($id);
+		/* @var ${{ classData.camel }} {{ model }} */
+		${{ classData.camel }} = $this->{{ classData.snake }}Repository->findById($id);
 
 		// Get the input
 		$inputData = array_filter(\Input::only([
@@ -240,13 +241,13 @@ class {{ classData.name }}Controller extends Controller
 			$this->validate($inputData);
 
 			// Fill the entity
-            $entity->fill($inputData);
+			${{ classData.camel }}->fill($inputData);
 
 			// Try to save it
-			$entity->save();
+			${{ classData.camel }}->save();
 
 			// Redirect to show
-			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', [$entity->getKey()]));
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.show', [${{ classData.camel }}->getKey()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -255,7 +256,7 @@ class {{ classData.name }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return \Redirect::to($this->secureUrl->route('backoffice.index'));
+			return \Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(\Lang::get('l4-backoffice::auth.permission_error'));
 		}
 	}
 
@@ -267,7 +268,7 @@ class {{ classData.name }}Controller extends Controller
 			$this->{{ classData.snake }}Repository->destroy($id);
 
 			// Redirect to the listing
-			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.index'))->with(['success' => "{{ classData.name }} $id deleted"]);
+			return \Redirect::to($this->secureUrl->route('backoffice.{{ classData.snake }}.index'))->withSuccess(\Lang::get('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
 		}
 		catch (ValidationException $e)
 		{
@@ -275,7 +276,7 @@ class {{ classData.name }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return \Redirect::to($this->secureUrl->route('backoffice.index'));
+			return \Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(\Lang::get('l4-backoffice::auth.permission_error'));
 		}
 	}
 
@@ -384,10 +385,10 @@ class {{ classData.name }}Controller extends Controller
 	{
 		$listActions = $this->backoffice->actions();
 		try {
-            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . ' New {{ classData.name }}', ['class' => 'btn btn-primary']);
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.create'), FontAwesome::icon('plus') . \Lang::get('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
         } catch (PermissionException $e) {}
         try {
-            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' Export', ['class' => 'btn btn-success']);
+            $listActions->link($this->secureUrl->route('backoffice.{{ classData.snake }}.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' ' . \Lang::get('l4-backoffice::default.export'), ['class' => 'btn btn-success']);
         } catch (PermissionException $e) {}
 
 		$list->setActions($listActions);
