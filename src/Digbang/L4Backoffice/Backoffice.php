@@ -71,7 +71,7 @@ class Backoffice
 		    // Discard the first one
 		    array_shift($data);
 
-		    return call_user_func_array([$this, 'breadcrumb'], $data + [$current]);
+		    return $this->breadcrumb($data + [$current], $label, $options);
 	    }
     }
 

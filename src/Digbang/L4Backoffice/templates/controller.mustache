@@ -93,7 +93,7 @@ class {{ classData.name }}Controller extends Controller
 			$this->secureUrl->route('backoffice.{{ classData.snake }}.store'),
 			$label,
 			'POST',
-			$this->secureUrl->route('backoffice.{{ classData.snake }}.index')
+			$this->secureUrl->bestRoute(['backoffice.{{ classData.snake }}.index', 'backoffice.index'])
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -192,7 +192,11 @@ class {{ classData.name }}Controller extends Controller
 			$this->secureUrl->route('backoffice.{{ classData.snake }}.update', $id),
 			$label,
 			'PUT',
-			$this->secureUrl->route('backoffice.{{ classData.snake }}.show', $id)
+			$this->secureUrl->bestRoute([
+				['backoffice.{{ classData.snake }}.show', $id],
+				'backoffice.{{ classData.snake }}.index',
+				'backoffice.index'
+			])
 		);
 
 		$form->fill([
