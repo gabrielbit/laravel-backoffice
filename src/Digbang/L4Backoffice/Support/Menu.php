@@ -45,7 +45,21 @@ class Menu implements RenderableInterface, \Countable
 
 	public function count()
 	{
-		return $this->actionTree->count();
+		$count = 0;
+
+		foreach ($this->actionTree as $action)
+		{
+			if ($action instanceof ActionCollection)
+			{
+				$count += $action->count();
+			}
+			else
+			{
+				$count++;
+			}
+		}
+
+		return $count;
 	}
 
 	public function isEmpty()
