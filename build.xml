@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="l4-backoffice" default="unit-tests">
+	<property name="toolsdir" value="" />
+
+	<target name="unit-tests" depends="prepare,lint,dependencies,phpspec" />
+
+	<target name="clean" unless="clean.done" description="Cleanup build artifacts">
+		<delete dir="${project.basedir}/build/coverage"/>
+		<delete dir="${project.basedir}/build/logs"/>
+		<property name="clean.done" value="true"/>
+	</target>
+
+	<target name="prepare" unless="prepare.done" depends="clean" description="Prepare for build">
+		<mkdir dir="${project.basedir}/build/coverage"/>
+		<mkdir dir="${project.basedir}/build/logs"/>
+		<property name="prepare.done" value="true"/>
+	</target>
+
+	<target name="dependencies" unless="dependencies.done" description="Download and build dependency files">
+		<exec executable="${toolsdir}composer">
+			<arg value="install"/>
+			<arg value="--no-scripts"/>
+		</exec>
+		<exec executable="${toolsdir}npm">
+			<arg value="install"/>
+		</exec>
+		<exec executable="${toolsdir}bower">
+			<arg value="update"/>
+		</exec>
+		<exec executable="${toolsdir}grunt" />
+	</target>
+
+	<target name="lint" description="Perform syntax check of sourcecode files">
+		<phplint>
+			<fileset dir="${project.basedir}/src">
+				<include name="**/*.php"/>
+			</fileset>
+			<fileset dir="${project.basedir}/tests">
+				<include name="**/*.php"/>
+			</fileset>
+		</phplint>
+	</target>
+	<target name="phpspec" description="Run unit tests with PHPSpec">
+		<exec executable="${project.basedir}/vendor/bin/phpspec">
+			<arg value="run"/>
+		</exec>
+	</target>
+</project>
