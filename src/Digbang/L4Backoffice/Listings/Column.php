@@ -86,7 +86,7 @@ class Column
 
 	public function getValue(array $row)
 	{
-		if (is_callable($this->accessor))
+		if ($this->accessor instanceof \Closure)
 		{
 			$accessor = $this->accessor;
 
