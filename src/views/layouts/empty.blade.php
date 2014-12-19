@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-	<link rel="shortcut icon" href="images/favicon.png" type="image/png">
+	<link rel="shortcut icon" href="/packages/digbang/l4-backoffice/images/favicon.png" type="image/png">
 
 	<title>@yield('head.title', Lang::get('l4-backoffice::default.backoffice'))</title>
 
