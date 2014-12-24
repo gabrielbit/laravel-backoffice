@@ -290,7 +290,7 @@ class {{ classData.name }}Controller extends Controller
 
 		$list->fill($this->getData(null));
 
-		$columns = $list->columns()->hide([])->sortable([]);
+		$columns = $list->columns()->visible();
 		$rows = $list->rows();
 
 		$this->excelExporter->create(\Str::slug($this->titlePlural), function($excel) use ($columns, $rows) {
