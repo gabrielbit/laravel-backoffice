@@ -37,7 +37,7 @@ class PermissionParser
 				$method = $resource;
 			}
 
-			$title = $this->titleize($resource);
+			$title = $this->trans($resource, 'permission-group', $resource);
 
 			if (!array_key_exists($title, $output))
 			{
@@ -58,7 +58,7 @@ class PermissionParser
 		]);
 	}
 
-	public function trans($resource, $method)
+	public function trans($resource, $method, $default = null)
 	{
 		if ($this->translator->has("l4-backoffice::permissions.$resource.$method"))
 		{
@@ -70,6 +70,11 @@ class PermissionParser
 			return $this->translator->get("l4-backoffice::permissions.system-defaults.$method");
 		}
 
+		if($default !== null)
+		{
+			$method = $default;
+		}
+
 		return $this->titleize($method);
 	}
 
@@ -77,4 +82,4 @@ class PermissionParser
 	{
 		return $this->str->title(str_replace(['.', '-', '_', '/'], ' ', $string));
 	}
-} 
+}
