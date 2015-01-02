@@ -13,6 +13,8 @@ class EloquentBackofficeRepository implements BackofficeRepository
 	protected $eloquent;
 	protected $eagerLoad = [];
 
+	use EloquentBackofficeRepositoryTrait;
+
 	function __construct(Model $eloquent)
 	{
 		$this->eloquent = $eloquent;
@@ -103,37 +105,5 @@ class EloquentBackofficeRepository implements BackofficeRepository
 		$eloquent = $this->eloquent->with($this->eagerLoad);
 
 		return $eloquent->get();
-	}
-
-	protected function sortByJoinedRelation(Builder $eloquent, BelongsTo $relationObject, $remoteColumn, $sortSense)
-	{
-		/* @var $eloquent Builder */
-		$eloquent = $eloquent->select($this->eloquent->getTable() . '.*');
-
-		$relationTable = $relationObject->getRelated()->getTable();
-
-		$eloquent = $eloquent->join(
-			$relationTable,
-			$relationObject->getQualifiedForeignKey(),
-			'=',
-			$relationObject->getQualifiedOtherKeyName()
-		);
-
-		return $eloquent->orderBy("$relationTable.$remoteColumn", $sortSense);
-	}
-
-	protected function extractOperatorFrom($value)
-	{
-		if (preg_match('/^[<>=!]+/', $value, $matches))
-		{
-			return $matches[0];
-		}
-
-		return '=';
-	}
-
-	protected function trimOperators($value)
-	{
-		return ltrim($value, ' <>=!');
 	}
 }
