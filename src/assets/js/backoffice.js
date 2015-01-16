@@ -254,17 +254,19 @@ $(document).ready(function(){
 		}
 	});
 
-	$('form').each(function(){
+	$('.actions-bulk form').each(function(){
 		$(this).on('submit', function(){
 			var $self = $(this);
+            $self.find('.bulk-row').remove();
 
-			$('.chk-bulk:checked').each(function(){
-				var $hidden = $('<input type="hidden">');
-				$hidden.attr('name', 'row[]');
-				$hidden.val($(this).val());
+            $('.chk-bulk:checked').each(function(){
+                var $hidden = $('<input type="hidden">');
+                $hidden.attr('class', 'bulk-row');
+                $hidden.attr('name', 'row[]');
+                $hidden.val($(this).val());
 
-				$self.append($hidden);
-			});
+                $self.append($hidden);
+            });
 		});
 	});
 	var menuState = new function(){
