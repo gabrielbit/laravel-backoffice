@@ -47,7 +47,7 @@ trait UserTrait
 	/**
 	 * @type bool
 	 */
-	private $isActivated = false;
+	private $activated = false;
 
 	/**
 	 * @type string
@@ -172,7 +172,7 @@ trait UserTrait
 	 */
 	public function isActivated()
 	{
-		return $this->isActivated;
+		return $this->activated;
 	}
 
 	/**
@@ -304,7 +304,7 @@ trait UserTrait
 		}
 
 		$this->activationCode = null;
-		$this->isActivated    = true;
+		$this->activated    = true;
 		$this->activatedAt    = new \DateTimeImmutable;
 
 		return $this->save();
