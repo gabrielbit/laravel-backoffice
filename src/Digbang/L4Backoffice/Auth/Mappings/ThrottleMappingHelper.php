@@ -1,8 +1,10 @@
 <?php namespace Digbang\L4Backoffice\Auth\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
+use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\L4Backoffice\Auth\Entities\User;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
+use Illuminate\Support\Str;
 
 final class ThrottleMappingHelper
 {
@@ -16,10 +18,22 @@ final class ThrottleMappingHelper
 	 */
 	private $userField;
 
-	function __construct($userClassName = User::class, $userField = 'user')
+	/**
+	 * @type string
+	 */
+	private $foreignKey;
+
+	/**
+	 * @type string
+	 */
+	private $otherKey;
+
+	function __construct($userClassName = User::class, $userField = 'user', $foreignKey = 'user_id', $otherKey = 'id')
 	{
 		$this->userClassName = $userClassName;
 		$this->userField     = $userField;
+		$this->foreignKey = $foreignKey;
+		$this->otherKey = $otherKey;
 	}
 
 	public function addMappings(Builder $builder)
@@ -41,8 +55,8 @@ final class ThrottleMappingHelper
 			$fieldBuilder->nullable();
 		});
 
-		$builder->belongsTo($this->userClassName, $this->userField, function (FieldBuilder $fieldBuilder){
-			$fieldBuilder->nullable();
+		$builder->belongsTo($this->userClassName, $this->userField, function (BelongsTo $belongsTo){
+			$belongsTo->keys($this->foreignKey, $this->otherKey, true);
 		});
 	}
 }
