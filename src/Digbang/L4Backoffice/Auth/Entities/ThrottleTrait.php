@@ -35,7 +35,7 @@ trait ThrottleTrait
 	/**
 	 * @type int
 	 */
-	private $attempts;
+	private $attempts = 0;
 
 	/**
 	 * @type string
@@ -45,12 +45,12 @@ trait ThrottleTrait
 	/**
 	 * @type bool
 	 */
-	private $suspended;
+	private $suspended = false;
 
 	/**
 	 * @type boolean
 	 */
-	private $banned;
+	private $banned = false;
 
 	/**
 	 * @type \Carbon\Carbon
