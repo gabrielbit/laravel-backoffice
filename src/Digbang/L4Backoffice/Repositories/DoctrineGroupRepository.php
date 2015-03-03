@@ -1,22 +1,32 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
-use Cartalyst\Sentry\Groups\GroupInterface;
 use Cartalyst\Sentry\Groups\GroupNotFoundException;
 use Cartalyst\Sentry\Groups\ProviderInterface as GroupProviderInterface;
+use Digbang\L4Backoffice\Auth\Contracts\Group as GroupInterface;
+use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
 use Digbang\L4Backoffice\Auth\Entities\Group;
-use Digbang\L4Backoffice\Support\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
+use Illuminate\Config\Repository;
 
 class DoctrineGroupRepository extends EntityRepository implements GroupProviderInterface
 {
-    /**
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(EntityManagerInterface $em)
+	private $entityName;
+
+	/**
+	 * @param EntityManagerInterface        $em
+	 * @param \Illuminate\Config\Repository $config
+	 */
+    public function __construct(EntityManagerInterface $em, Repository $config)
     {
-        parent::__construct($em, $em->getClassMetadata(Group::class));
+
+        parent::__construct(
+	        $em,
+	        $em->getClassMetadata(
+		        $this->entityName = $config->get('security::auth.groups.model', Group::class)
+	        )
+        );
     }
 
     /**
@@ -24,7 +34,7 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
      *
      * @param  int $id
      *
-     * @return \Cartalyst\Sentry\Groups\GroupInterface  $group
+     * @return GroupInterface $group
      * @throws \Cartalyst\Sentry\Groups\GroupNotFoundException
      */
     public function findById($id)
@@ -44,7 +54,7 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
      *
      * @param  string $name
      *
-     * @return \Cartalyst\Sentry\Groups\GroupInterface  $group
+     * @return GroupInterface  $group
      * @throws \Cartalyst\Sentry\Groups\GroupNotFoundException
      */
     public function findByName($name)
@@ -66,11 +76,13 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
      *
      * @param  array $attributes
      *
-     * @return \Cartalyst\Sentry\Groups\GroupInterface
+     * @return GroupInterface
      */
     public function create(array $attributes)
     {
-        $group = new Group($attributes['name'], array_get($attributes, 'permissions', []));
+	    $entityName = $this->entityName;
+
+        $group = $entityName::create($attributes['name'], array_get($attributes, 'permissions', []));
 
         $this->save($group);
 
@@ -100,13 +112,16 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
     }
 
     /**
-     * @param Group $group
+     * @param GroupInterface $group
      *
-     * @return Group
+     * @return GroupInterface
      */
-    private function group(Group $group)
+    private function group(GroupInterface $group)
     {
-        $group->setGroupRepository($this);
+	    if ($group instanceof RepositoryAware)
+	    {
+		    $group->setRepository($this);
+	    }
 
         return $group;
     }

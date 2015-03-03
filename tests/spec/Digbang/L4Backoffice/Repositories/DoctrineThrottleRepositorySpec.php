@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Persisters\Entity\EntityPersister;
 use Doctrine\ORM\UnitOfWork;
+use Illuminate\Config\Repository;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -27,17 +28,18 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
         EntityManagerInterface $em,
         ClassMetadata $cm,
         UnitOfWork $uow,
-        EntityPersister $ep
+        EntityPersister $ep,
+		Repository $config
     )
     {
-        $throttle = new Throttle();
+	    $config->get('security::auth.throttling.model', Throttle::class)->willReturn(Throttle::class);
+	    $this->user = new User('testing', 'asd');
+        $throttle = new Throttle($this->user, '127.0.0.1');
 
         $cm->name = Throttle::class;
         $em->getClassMetadata(Throttle::class)->willReturn($cm);
         $em->getUnitOfWork()->willReturn($uow);
         $uow->getEntityPersister(Throttle::class)->willReturn($ep);
-
-        $this->user = new User('testing', 'asd');
 
         // Successful find by ID
         $em->find(Throttle::class, 1, Argument::cetera())->willReturn($throttle);
@@ -56,7 +58,7 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
         // Failed to find by everything else
         $ep->load(Argument::cetera())->willReturn(null);
 
-        $this->beConstructedWith($em);
+        $this->beConstructedWith($em, $config);
     }
 
 

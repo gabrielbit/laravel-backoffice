@@ -25,7 +25,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         $user = new User('testing', 'asd');
 
-        $config->get('security::auth.users.model')->willReturn(User::class);
+        $config->get('security::auth.users.model', Argument::any())->willReturn(User::class);
         $cm->name = User::class;
         $em->getClassMetadata(User::class)->willReturn($cm);
         $em->getUnitOfWork()->willReturn($uow);
@@ -122,7 +122,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         $users = $this->findAllInGroup($group);
 
-        $users->shouldBeArray();
+        $users->shouldBeAnInstanceOf(\Traversable::class);
         $users[0]->shouldBeAnInstanceOf(User::class);
     }
 
@@ -130,7 +130,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         $users = $this->findAllWithAccess('a_certain_permission');
 
-        $users->shouldBeArray();
+	    $users->shouldBeAnInstanceOf(\Traversable::class);
         $users[0]->shouldBeAnInstanceOf(User::class);
     }
 
@@ -138,7 +138,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         $users = $this->findAllWithAnyAccess(['a_certain_permission', 'an_optional_permission']);
 
-        $users->shouldBeArray();
+	    $users->shouldBeAnInstanceOf(\Traversable::class);
         $users[0]->shouldBeAnInstanceOf(User::class);
     }
 

@@ -1,7 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
 use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
-use Cartalyst\Sentry\Throttling\ThrottleInterface;
+use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
+use Digbang\L4Backoffice\Auth\Contracts\Throttle as ThrottleInterface;
 use Cartalyst\Sentry\Users\UserInterface;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Digbang\L4Backoffice\Auth\Entities\Throttle;
@@ -11,6 +12,7 @@ use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
+use Illuminate\Config\Repository;
 
 class DoctrineThrottleRepository extends EntityRepository implements ThrottleProvider
 {
@@ -26,9 +28,16 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     private $enabled = true;
 
-    public function __construct(EntityManagerInterface $em)
+	/**
+	 * @type string
+	 */
+	private $entityName;
+
+    public function __construct(EntityManagerInterface $em, Repository $config)
     {
-        parent::__construct($em, $em->getClassMetadata(Throttle::class));
+        parent::__construct($em, $em->getClassMetadata(
+	        $this->entityName = $config->get('security::auth.throttling.model', Throttle::class)
+        ));
 
         $this->expr = Criteria::expr();
     }
@@ -36,10 +45,10 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
     /**
      * Finds a throttler by the given user ID.
      *
-     * @param  \Cartalyst\Sentry\Users\UserInterface $user
-     * @param  string                                $ipAddress
+     * @param  UserInterface $user
+     * @param  string        $ipAddress
      *
-     * @return \Cartalyst\Sentry\Throttling\ThrottleInterface
+     * @return ThrottleInterface
      */
     public function findByUser(UserInterface $user, $ipAddress = null)
     {
@@ -56,7 +65,8 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
 
         if (! $throttle)
         {
-            $throttle = new Throttle($user, $ipAddress);
+	        $entityName = $this->entityName;
+            $throttle = $entityName::create($user, $ipAddress);
 
             $this->save($throttle);
         }
@@ -67,10 +77,10 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
     /**
      * Finds a throttler by the given user ID.
      *
-     * @param  mixed  $id
-     * @param  string $ipAddress
+     * @param integer $id
+     * @param string  $ipAddress
      *
-     * @return \Cartalyst\Sentry\Throttling\ThrottleInterface
+     * @return ThrottleInterface
      */
     public function findByUserId($id, $ipAddress = null)
     {
@@ -87,10 +97,10 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
     /**
      * Finds a throttling interface by the given user login.
      *
-     * @param  string $login
-     * @param  string $ipAddress
+     * @param string $login
+     * @param string $ipAddress
      *
-     * @return \Cartalyst\Sentry\Throttling\ThrottleInterface
+     * @return ThrottleInterface
      */
     public function findByUserLogin($login, $ipAddress = null)
     {
@@ -155,9 +165,12 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
         );
     }
 
-    private function throttle(Throttle $throttle)
+    private function throttle(ThrottleInterface $throttle)
     {
-        $throttle->setThrottleRepository($this);
+	    if ($throttle instanceof RepositoryAware)
+	    {
+		    $throttle->setRepository($this);
+	    }
 
         return $throttle;
     }

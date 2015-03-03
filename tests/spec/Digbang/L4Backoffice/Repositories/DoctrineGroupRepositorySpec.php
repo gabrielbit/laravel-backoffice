@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Persisters\Entity\EntityPersister;
 use Doctrine\ORM\UnitOfWork;
+use Illuminate\Config\Repository;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -18,8 +19,9 @@ use Prophecy\Argument;
  */
 class DoctrineGroupRepositorySpec extends ObjectBehavior
 {
-    function let(EntityManagerInterface $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep)
+    function let(EntityManagerInterface $em, ClassMetadata $cm, UnitOfWork $uow, EntityPersister $ep, Repository $config)
     {
+	    $config->get('security::auth.groups.model', Group::class)->willReturn(Group::class);
         $group = new Group('Testing Group');
 
         $cm->name = Group::class;
@@ -38,7 +40,7 @@ class DoctrineGroupRepositorySpec extends ObjectBehavior
         // Failed to find by everything else
         $ep->load(Argument::cetera())->willReturn(null);
 
-        $this->beConstructedWith($em);
+        $this->beConstructedWith($em, $config);
     }
 
     function it_is_initializable()

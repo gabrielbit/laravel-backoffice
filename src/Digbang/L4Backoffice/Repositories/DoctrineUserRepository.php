@@ -1,8 +1,9 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
 use Cartalyst\Sentry\Hashing\HasherInterface;
-use Cartalyst\Sentry\Users\UserInterface;
+use Digbang\L4Backoffice\Auth\Contracts\User as UserInterface;
 use Cartalyst\Sentry\Users\UserNotFoundException;
+use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
 use Digbang\L4Backoffice\Auth\Entities\User;
 use Digbang\L4Backoffice\Support\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -21,10 +22,15 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      */
     private $hasher;
 
+	/**
+	 * @type string
+	 */
+	private $entityName;
+
     public function __construct(EntityManagerInterface $em, Repository $config, HasherInterface $hasher)
     {
         parent::__construct($em, $em->getClassMetadata(
-            $config->get('security::auth.users.model')
+            $this->entityName = $config->get('security::auth.users.model', User::class)
         ));
 
         $this->hasher = $hasher;
@@ -35,7 +41,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  mixed $id
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      * @throws \Cartalyst\Sentry\Users\UserNotFoundException
      */
     public function findById($id)
@@ -55,7 +61,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  string $login
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      * @throws \Cartalyst\Sentry\Users\UserNotFoundException
      */
     public function findByLogin($login)
@@ -75,7 +81,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  array $credentials
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      * @throws \Cartalyst\Sentry\Users\UserNotFoundException
      */
     public function findByCredentials(array $credentials)
@@ -95,7 +101,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  string $code
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      * @throws \Cartalyst\Sentry\Users\UserNotFoundException
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -117,7 +123,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  string $code
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      * @throws RuntimeException
      * @throws \Cartalyst\Sentry\Users\UserNotFoundException
      */
@@ -205,11 +211,13 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      *
      * @param  array $credentials
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      */
     public function create(array $credentials)
     {
-        $user = new User($credentials['email'], $credentials['password']);
+	    $entityName = $this->entityName;
+
+	    $user = $entityName::createFromCredentials($credentials['email'], $credentials['password']);
 
         $this->save($user);
 
@@ -219,12 +227,12 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
     /**
      * Returns an empty user object.
      *
-     * @return \Cartalyst\Sentry\Users\UserInterface
+     * @return \Digbang\L4Backoffice\Auth\Contracts\User
      */
     public function getEmptyUser()
     {
         return $this->user(
-            (new \ReflectionClass(User::class))->newInstanceWithoutConstructor()
+            (new \ReflectionClass($this->entityName))->newInstanceWithoutConstructor()
         );
     }
 
@@ -261,16 +269,19 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
         return $this->hasher->checkhash($string, $hashedString);
     }
 
-    private function user(User $user)
+    private function user(UserInterface $user)
     {
-        $user->setUserRepository($this);
+	    if ($user instanceof RepositoryAware)
+	    {
+		    $user->setRepository($this);
+	    }
 
         return $user;
     }
 
     private function userCollection(array $users)
     {
-        return (new Collection($users))->map(function(User $user){
+        return (new Collection($users))->map(function(UserInterface $user){
             return $this->user($user);
         });
     }
