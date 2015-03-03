@@ -1,0 +1,18 @@
+suites:
+  l4-backoffice:
+    namespace: Digbang\L4Backoffice
+    spec_path: tests
+code_coverage:
+  blacklist:
+    - tests
+    - build
+    - public
+    - vendor
+  format:
+    - html
+    - clover
+  output:
+    html: build/coverage
+    clover: build/logs/coverage.xml
+extensions:
+  - PhpSpec\Extension\CodeCoverageExtension

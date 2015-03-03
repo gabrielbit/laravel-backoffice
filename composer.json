@@ -16,8 +16,11 @@
 	    "maatwebsite/excel":      "~1.0"
     },
     "require-dev": {
-	    "digbang/backoffice-template": "1.0.0",
-        "phpspec/phpspec": "~2.0",
+        "laravel/framework":      "~4.2",
+        "doctrine/common":                   "2.5.*@dev",
+        "digbang/doctrine":                  "dev-laravel4",
+        "digbang/backoffice-template":       "1.0.0",
+        "phpspec/phpspec":                   "~2.0",
         "henrikbjorn/phpspec-code-coverage": "~0.2"
     },
     "license": "Proprietary",
@@ -44,6 +47,12 @@
 		{
 			"type": "vcs",
 			"url": "git@git.digbang.com:digbang/security.git"
+		},
+		{
+			"type": "vcs",
+			"url": "git@git.digbang.com:digbang/doctrine.git"
 		}
-	]
+	],
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

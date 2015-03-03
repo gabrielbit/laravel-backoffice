@@ -12,4 +12,4 @@ class BackofficeRepositoryFactory
 	{
 		return new EloquentBackofficeRepository($eloquent);
 	}
-} 
+}

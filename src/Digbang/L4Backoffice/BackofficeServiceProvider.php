@@ -1,6 +1,12 @@
 <?php namespace Digbang\L4Backoffice;
 
+use Digbang\L4Backoffice\Repositories\DoctrineGroupRepository;
+use Digbang\L4Backoffice\Repositories\DoctrineThrottleRepository;
+use Digbang\L4Backoffice\Repositories\DoctrineUserRepository;
 use Illuminate\Support\ServiceProvider;
+use Cartalyst\Sentry\Users\ProviderInterface      as UserProvider;
+use Cartalyst\Sentry\Groups\ProviderInterface     as GroupProvider;
+use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
 
 /**
  * Class BackofficeServiceProvider
@@ -38,14 +44,34 @@ class BackofficeServiceProvider extends ServiceProvider
 		$this->app->bind('linkMaker', 'Digbang\L4Backoffice\Support\LinkMaker');
 
 		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
-		$this->app->register('Digbang\Security\SecurityServiceProvider');
+        $this->app->register('Digbang\Security\SecurityServiceProvider');
 		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
 
 		$this->app->bind('Mustache_Engine', function(){
 			return new \Mustache_Engine([
-				'cache' => new \Mustache_Cache_FilesystemCache(storage_path() . DIRECTORY_SEPARATOR . 'cache')
+				'cache' => new \Mustache_Cache_FilesystemCache(storage_path('cache'))
 			]);
 		});
+
+        /** @type \Illuminate\Config\Repository $config */
+        $config = $this->app['config'];
+
+        if ($config->get('security::auth.driver') == 'custom')
+        {
+            if (! isset($this->app[UserProvider::class]))
+            {
+                $this->app->bind(UserProvider::class, DoctrineUserRepository::class, true);
+            }
+
+            if (! isset($this->app[GroupProvider::class]))
+            {
+                $this->app->bind(GroupProvider::class, DoctrineGroupRepository::class, true);
+            }
+            if (! isset($this->app[ThrottleProvider::class]))
+            {
+                $this->app->bind(ThrottleProvider::class, DoctrineThrottleRepository::class, true);
+            }
+        }
 	}
 
 	protected function stringMacros()
