@@ -11,7 +11,7 @@ class ValueExtractorFacade implements ValueExtractor
 	protected $extractors = [];
 
 	/**
-	 * @param        $element
+	 * @param mixed  $element
 	 * @param string $key
 	 *
 	 * @return string the extracted value
@@ -30,12 +30,17 @@ class ValueExtractorFacade implements ValueExtractor
 	 */
 	protected function getExtractorFor($element)
 	{
-		if ($element instanceof Model)
+		switch (true)
 		{
-			return $this->eloquentExtractor();
+			case $element instanceof Model:
+				return $this->eloquentExtractor();
+			case is_array($element):
+				return $this->arrayExtractor();
+			case is_object($element):
+				return $this->objectExtractor();
 		}
 
-		return $this->arrayExtractor();
+		throw new \UnexpectedValueException("Unable to extract values from given element.");
 	}
 
 	/**
@@ -62,5 +67,18 @@ class ValueExtractorFacade implements ValueExtractor
 		}
 
 		return $this->extractors['array'];
+	}
+
+	/**
+	 * @return ObjectValueExtractor
+	 */
+	protected function objectExtractor()
+	{
+		if (!array_key_exists('object', $this->extractors))
+		{
+			$this->extractors['object'] = new ObjectValueExtractor();
+		}
+
+		return $this->extractors['object'];
 	}
 }

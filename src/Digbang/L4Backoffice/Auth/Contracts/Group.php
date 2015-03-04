@@ -1,6 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Auth\Contracts;
 
-interface Group
+use Cartalyst\Sentry\Groups\GroupInterface;
+
+interface Group extends GroupInterface
 {
 	/**
 	 * @param string $name

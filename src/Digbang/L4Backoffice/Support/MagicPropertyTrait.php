@@ -33,13 +33,16 @@ trait MagicPropertyTrait
 	 */
 	public function __get($property)
 	{
-		if (method_exists($this, $method = 'get' . studly_case($property)))
+		foreach (['get', 'is'] as $prefix)
 		{
-			$reflectionMethod = $this->__getReflectionMethod($method);
-
-			if ($reflectionMethod->isPublic())
+			if (method_exists($this, $method = $prefix . studly_case($property)))
 			{
-				return $reflectionMethod->invoke($this);
+				$reflectionMethod = $this->__getReflectionMethod($method);
+
+				if ($reflectionMethod->isPublic())
+				{
+					return $reflectionMethod->invoke($this);
+				}
 			}
 		}
 
