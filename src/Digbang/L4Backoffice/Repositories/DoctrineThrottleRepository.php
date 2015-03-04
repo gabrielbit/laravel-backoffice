@@ -33,6 +33,11 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
 	 */
 	private $entityName;
 
+	/**
+	 * @type string
+	 */
+	private $userEntityName;
+
     public function __construct(EntityManagerInterface $em, Repository $config)
     {
         parent::__construct($em, $em->getClassMetadata(
@@ -40,6 +45,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
         ));
 
         $this->expr = Criteria::expr();
+	    $this->userEntityName = $config->get('security::auth.users.model', User::class);
     }
 
     /**
@@ -52,16 +58,15 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     public function findByUser(UserInterface $user, $ipAddress = null)
     {
-        $criteria = [
-            $this->expr->eq('user', $user)
-        ];
+        $criteria = (new Criteria)
+            ->where($this->expr->eq('user', $user));
 
         if ($ipAddress)
         {
-            $criteria[] = $this->orIpAddressCriteria($ipAddress);
+            $criteria->andWhere($this->orIpAddressCriteria($ipAddress));
         }
 
-        $throttle = $this->findOneBy($criteria);
+        $throttle = $this->createQueryBuilder('t')->addCriteria($criteria)->getFirstResult();
 
         if (! $throttle)
         {
@@ -84,11 +89,11 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     public function findByUserId($id, $ipAddress = null)
     {
-        $user = $this->_em->getPartialReference(User::class, $id);
+        $user = $this->_em->getPartialReference($this->userEntityName, $id);
 
         if ($user === null)
         {
-            throw new UserNotFoundException("A user could not be found with ID [$id].");
+            throw new UserNotFoundException("A {$this->userEntityName} could not be found with ID [$id].");
         }
 
         return $this->findByUser($user, $ipAddress);
@@ -104,7 +109,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     public function findByUserLogin($login, $ipAddress = null)
     {
-        $user = $this->_em->getPartialReference(User::class, ['email' => $login]);
+        $user = $this->_em->getPartialReference($this->userEntityName, ['email' => $login]);
 
         if ($user === null)
         {

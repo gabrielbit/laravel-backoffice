@@ -1,12 +1,16 @@
 <?php namespace Digbang\L4Backoffice;
 
-use Digbang\L4Backoffice\Repositories\DoctrineGroupRepository;
-use Digbang\L4Backoffice\Repositories\DoctrineThrottleRepository;
-use Digbang\L4Backoffice\Repositories\DoctrineUserRepository;
-use Illuminate\Support\ServiceProvider;
-use Cartalyst\Sentry\Users\ProviderInterface      as UserProvider;
-use Cartalyst\Sentry\Groups\ProviderInterface     as GroupProvider;
+use Cartalyst\Sentry\Users\ProviderInterface as UserProvider;
+use Cartalyst\Sentry\Groups\ProviderInterface as GroupProvider;
 use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
+use Digbang\FontAwesome\FontAwesomeServiceProvider;
+use Digbang\Security\Filters\Auth;
+use Digbang\Security\SecurityServiceProvider;
+use Illuminate\Config\Repository;
+use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\ExcelServiceProvider;
 
 /**
  * Class BackofficeServiceProvider
@@ -16,18 +20,30 @@ class BackofficeServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
+		/** @type Repository $config */
+		$config = $this->app->make('config');
+
+		/** @type Router $router */
+		$router = $this->app->make(Router::class);
+
+		$this->postRegister($config);
+
 		$this->package('digbang/l4-backoffice');
 
-		$this->stringMacros();
+		$this->stringMacros(
+			$this->app->make(Str::class),
+			$this->app->make(Support\Str::class)
+		);
 
 		$this->registerCommands();
-		$this->registerAuthRoutes();
-		$this->registerAuthFilters();
-		$this->registerUserGroupRoutes();
 
-		if (\Config::get('app.debug'))
+		$this->registerAuthRoutes($router);
+		$this->registerAuthFilters($router);
+		$this->registerUserGroupRoutes($router);
+
+		if ($config->get('app.debug'))
 		{
-			$this->registerGenRoutes();
+			$this->registerGenRoutes($router);
 		}
 
 		require_once 'composers.php';
@@ -40,56 +56,49 @@ class BackofficeServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->app->singleton('menuFactory', \Digbang\L4Backoffice\Support\MenuFactory::class);
-		$this->app->bind('linkMaker', \Digbang\L4Backoffice\Support\LinkMaker::class);
+		$this->app->register(FontAwesomeServiceProvider::class);
+		$this->app->register(ExcelServiceProvider::class);
 
-		$this->app->register(\Digbang\FontAwesome\FontAwesomeServiceProvider::class);
-		$this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
-
+		$this->app->singleton('menuFactory', Support\MenuFactory::class);
+		$this->app->bind('linkMaker', Support\LinkMaker::class);
 		$this->app->bind('Mustache_Engine', function(){
 			return new \Mustache_Engine([
 				'cache' => new \Mustache_Cache_FilesystemCache(storage_path('cache'))
 			]);
 		});
+	}
 
-        /** @type \Illuminate\Config\Repository $config */
-        $config = $this->app['config'];
+	protected function postRegister(Repository $config)
+	{
+		$this->app->register(SecurityServiceProvider::class);
 
         if ($config->get('security::auth.driver') == 'custom')
         {
             if (! isset($this->app[UserProvider::class]))
             {
-                $this->app->bind(UserProvider::class, DoctrineUserRepository::class, true);
+                $this->app->bind(UserProvider::class, Repositories\DoctrineUserRepository::class, true);
             }
 
             if (! isset($this->app[GroupProvider::class]))
             {
-                $this->app->bind(GroupProvider::class, DoctrineGroupRepository::class, true);
+                $this->app->bind(GroupProvider::class, Repositories\DoctrineGroupRepository::class, true);
             }
+
             if (! isset($this->app[ThrottleProvider::class]))
             {
-                $this->app->bind(ThrottleProvider::class, DoctrineThrottleRepository::class, true);
+                $this->app->bind(ThrottleProvider::class, Repositories\DoctrineThrottleRepository::class, true);
             }
         }
-
-		$this->app->register(\Digbang\Security\SecurityServiceProvider::class);
 	}
 
-	protected function stringMacros()
+	protected function stringMacros(Str $str, Support\Str $myStr)
 	{
-		/* @var $str \Illuminate\Support\Str */
-		$str   = $this->app->make('Illuminate\Support\Str');
-		$myStr = $this->app->make('Digbang\L4Backoffice\Support\Str');
-
 		$str->macro('titleFromSlug', [$myStr, 'titleFromSlug']);
 		$str->macro('parse', [$myStr, 'parse']);
 	}
 
-	protected function registerGenRoutes()
+	protected function registerGenRoutes(Router $router)
 	{
-		/* @var $router \Illuminate\Routing\Router */
-		$router = $this->app['router'];
-
 		$router->group(['prefix' => 'backoffice'], function() use ($router){
 			$router->get( 'gen',           'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection');
 			$router->post('gen/customize', 'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@customization');
@@ -98,11 +107,8 @@ class BackofficeServiceProvider extends ServiceProvider
 		});
 	}
 
-	protected function registerAuthRoutes()
+	protected function registerAuthRoutes(Router $router)
 	{
-		/* @var $router \Illuminate\Routing\Router */
-		$router = $this->app['router'];
-
 		$router->group(['prefix' => 'backoffice/auth'], function() use ($router){
 			$authRoute      = 'backoffice.auth';
 			$authController = 'Digbang\\L4Backoffice\\Auth\\AuthController';
@@ -119,29 +125,22 @@ class BackofficeServiceProvider extends ServiceProvider
 		});
 	}
 
-	protected function registerAuthFilters()
+	protected function registerAuthFilters(Router $router)
 	{
-		/* @var $router \Illuminate\Routing\Router */
-		$router = $this->app['router'];
-
-		$router->filter('backoffice.auth.logged', 'Digbang\Security\Filters\Auth@logged');
-		$router->filter('backoffice.auth.withPermissions', 'Digbang\Security\Filters\Auth@withPermissions');
+		$router->filter('backoffice.auth.logged',          Auth::class . '@logged');
+		$router->filter('backoffice.auth.withPermissions', Auth::class . '@withPermissions');
 	}
 
 	protected function registerCommands()
 	{
-		$ns = 'Digbang\L4Backoffice\Commands';
 		$this->commands([
-			"$ns\\AuthGenerationCommand",
-			"$ns\\InstallCommand"
+			Commands\AuthGenerationCommand::class,
+			Commands\InstallCommand::class
 		]);
 	}
 
-	protected function registerUserGroupRoutes()
+	protected function registerUserGroupRoutes(Router $router)
 	{
-		/* @var $router \Illuminate\Routing\Router */
-		$router = $this->app['router'];
-
 		$router->group(['prefix' => 'backoffice', 'before' => 'backoffice.auth.withPermissions'], function() use ($router){
 			$bkNamespace = "Digbang\\L4Backoffice\\Auth";
 

@@ -668,4 +668,12 @@ trait UserTrait
 	{
 		return $this->lastName;
 	}
+
+	/**
+	 * @param string $newPassword (hashed)
+	 */
+	public function changePassword($newPassword)
+	{
+		$this->password = $newPassword;
+	}
 }

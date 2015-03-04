@@ -11,4 +11,11 @@ interface User extends UserInterface
 	 * @return User
 	 */
 	public static function createFromCredentials($email, $password);
+
+	/**
+	 * @param string $newPassword The hashed password
+	 *
+	 * @return void
+	 */
+	public function changePassword($newPassword);
 }

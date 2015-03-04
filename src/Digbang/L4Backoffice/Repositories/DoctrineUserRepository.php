@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
 use Cartalyst\Sentry\Hashing\HasherInterface;
+use Cartalyst\Sentry\Users\WrongPasswordException;
 use Digbang\L4Backoffice\Auth\Contracts\User as UserInterface;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
@@ -86,12 +87,30 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
      */
     public function findByCredentials(array $credentials)
     {
-        $user = $this->findOneBy($credentials);
+        $user = $this->findByLogin($credentials['email']);
 
         if (! $user)
         {
             throw new UserNotFoundException("User " . $credentials['email'] . " not found.");
         }
+
+	    if (! $this->checkHash($credentials['password'], $user->getPassword()))
+	    {
+		    throw new WrongPasswordException(
+			    "A user was found, but passwords did not match."
+		    );
+	    }
+
+	    if (
+		    method_exists($this->hasher, 'needsRehashed') &&
+		    $this->hasher->needsRehashed($user->getPassword())
+	    )
+	    {
+		    // The algorithm used to create the hash is outdated and insecure.
+		    // Rehash the password and save.
+		    $user->changePassword($this->hasher->hash($credentials['password']));
+		    $user->save();
+	    }
 
         return $this->user($user);
     }
@@ -217,7 +236,10 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
     {
 	    $entityName = $this->entityName;
 
-	    $user = $entityName::createFromCredentials($credentials['email'], $credentials['password']);
+	    $user = $entityName::createFromCredentials(
+		    $credentials['email'],
+		    $this->hasher->hash($credentials['password'])
+	    );
 
         $this->save($user);
 
