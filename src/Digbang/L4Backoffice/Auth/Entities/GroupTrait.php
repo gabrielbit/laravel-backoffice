@@ -2,11 +2,13 @@
 
 use Digbang\Doctrine\TimestampsTrait;
 use Digbang\L4Backoffice\Repositories\DoctrineGroupRepository;
+use Digbang\L4Backoffice\Support\MagicPropertyTrait;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 trait GroupTrait
 {
 	use TimestampsTrait;
+	use MagicPropertyTrait;
 
 	/**
 	 * @type int
@@ -80,6 +82,22 @@ trait GroupTrait
 		$this->groupRepository->delete($this);
 
 		return true;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
 	}
 
 	/**

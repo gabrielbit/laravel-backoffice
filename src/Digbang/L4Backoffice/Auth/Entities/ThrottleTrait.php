@@ -4,10 +4,13 @@ use Carbon\Carbon;
 use Cartalyst\Sentry\Throttling\UserBannedException;
 use Cartalyst\Sentry\Throttling\UserSuspendedException;
 use Digbang\L4Backoffice\Repositories\DoctrineThrottleRepository;
+use Digbang\L4Backoffice\Support\MagicPropertyTrait;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 trait ThrottleTrait
 {
+	use MagicPropertyTrait;
+
 	/**
 	 * Attempt limit.
 	 *
@@ -330,5 +333,61 @@ trait ThrottleTrait
 		unset($suspended);
 		unset($unsuspendedAt);
 		unset($now);
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getAttempts()
+	{
+		return $this->attempts;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getIpAddress()
+	{
+		return $this->ipAddress;
+	}
+
+	/**
+	 * @return Carbon
+	 */
+	public function getLastAttemptAt()
+	{
+		return $this->lastAttemptAt;
+	}
+
+	/**
+	 * @return Carbon
+	 */
+	public function getSuspendedAt()
+	{
+		return $this->suspendedAt;
+	}
+
+	/**
+	 * @return Carbon
+	 */
+	public function getBannedAt()
+	{
+		return $this->bannedAt;
+	}
+
+	/**
+	 * @return DoctrineThrottleRepository
+	 */
+	public function getThrottleRepository()
+	{
+		return $this->throttleRepository;
 	}
 }

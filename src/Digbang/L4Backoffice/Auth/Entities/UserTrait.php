@@ -1,18 +1,17 @@
 <?php namespace Digbang\L4Backoffice\Auth\Entities;
 
 use Cartalyst\Sentry\Groups\GroupInterface;
-use Cartalyst\Sentry\Users\LoginRequiredException;
-use Cartalyst\Sentry\Users\PasswordRequiredException;
-use Cartalyst\Sentry\Users\UserAlreadyActivatedException;
-use Cartalyst\Sentry\Users\UserExistsException;
+use Cartalyst\Sentry\Users as Exceptions;
 use Digbang\Doctrine\TimestampsTrait;
 use Digbang\L4Backoffice\Repositories\DoctrineUserRepository;
+use Digbang\L4Backoffice\Support\MagicPropertyTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 trait UserTrait
 {
 	use TimestampsTrait;
+	use MagicPropertyTrait;
 
 	/**
 	 * @type int
@@ -108,7 +107,7 @@ trait UserTrait
 	/**
 	 * Returns the user's ID.
 	 *
-	 * @return mixed
+	 * @return int
 	 */
 	public function getId()
 	{
@@ -198,12 +197,12 @@ trait UserTrait
 	{
 		if (! $this->email)
 		{
-			throw new LoginRequiredException("A login is required for a user, none given.");
+			throw new Exceptions\LoginRequiredException("A login is required for a user, none given.");
 		}
 
 		if (! $this->getPassword())
 		{
-			throw new PasswordRequiredException("A password is required for user [$this->email], none given.");
+			throw new Exceptions\PasswordRequiredException("A password is required for user [$this->email], none given.");
 		}
 
 		// Check if the user already exists
@@ -211,7 +210,7 @@ trait UserTrait
 
 		if ($persistedUser && $persistedUser->getId() != $this->getId())
 		{
-			throw new UserExistsException(
+			throw new Exceptions\UserExistsException(
 				"A user already exists with login [$this->email], logins must be unique for users."
 			);
 		}
@@ -295,7 +294,7 @@ trait UserTrait
 	{
 		if ($this->isActivated())
 		{
-			throw new UserAlreadyActivatedException;
+			throw new Exceptions\UserAlreadyActivatedException;
 		}
 
 		if ($this->activationCode != $activationCode)
@@ -669,11 +668,56 @@ trait UserTrait
 		return $this->lastName;
 	}
 
+	public function getName()
+	{
+		return $this->firstName . ' ' . $this->lastName;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getEmail()
+	{
+		return $this->email;
+	}
+
+	/**
+	 * @return \DateTimeInterface
+	 */
+	public function getLastLogin()
+	{
+		return $this->lastLogin;
+	}
+
+	/**
+	 * @return \DateTimeInterface
+	 */
+	public function getActivatedAt()
+	{
+		return $this->activatedAt;
+	}
+
 	/**
 	 * @param string $newPassword (hashed)
 	 */
 	public function changePassword($newPassword)
 	{
 		$this->password = $newPassword;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	/**
+	 * @return \Carbon\Carbon
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updatedAt;
 	}
 }
