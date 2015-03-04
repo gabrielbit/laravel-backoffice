@@ -90,20 +90,20 @@ trait UserTrait
 	private $mergedPermissions;
 
 	/**
-	 * @param DoctrineUserRepository $userRepository
-	 */
-	public function setRepository(ObjectRepository $userRepository)
-	{
-		$this->userRepository = $userRepository;
-	}
-
-	/**
 	 * This is needed to emulate an AR behavior.
 	 * Sentry uses AR to save/delete entities...
 	 *
 	 * @type DoctrineUserRepository
 	 */
 	private $userRepository;
+
+	/**
+	 * @param DoctrineUserRepository $userRepository
+	 */
+	public function setRepository(ObjectRepository $userRepository)
+	{
+		$this->userRepository = $userRepository;
+	}
 
 	/**
 	 * Returns the user's ID.
