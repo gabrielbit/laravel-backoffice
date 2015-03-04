@@ -40,12 +40,11 @@ class BackofficeServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
-		$this->app->singleton('menuFactory', 'Digbang\L4Backoffice\Support\MenuFactory');
-		$this->app->bind('linkMaker', 'Digbang\L4Backoffice\Support\LinkMaker');
+		$this->app->singleton('menuFactory', \Digbang\L4Backoffice\Support\MenuFactory::class);
+		$this->app->bind('linkMaker', \Digbang\L4Backoffice\Support\LinkMaker::class);
 
-		$this->app->register('Digbang\FontAwesome\FontAwesomeServiceProvider');
-        $this->app->register('Digbang\Security\SecurityServiceProvider');
-		$this->app->register('Maatwebsite\Excel\ExcelServiceProvider');
+		$this->app->register(\Digbang\FontAwesome\FontAwesomeServiceProvider::class);
+		$this->app->register(\Maatwebsite\Excel\ExcelServiceProvider::class);
 
 		$this->app->bind('Mustache_Engine', function(){
 			return new \Mustache_Engine([
@@ -72,6 +71,8 @@ class BackofficeServiceProvider extends ServiceProvider
                 $this->app->bind(ThrottleProvider::class, DoctrineThrottleRepository::class, true);
             }
         }
+
+		$this->app->register(\Digbang\Security\SecurityServiceProvider::class);
 	}
 
 	protected function stringMacros()
