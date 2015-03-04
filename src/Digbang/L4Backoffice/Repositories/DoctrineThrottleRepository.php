@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Repositories;
 
 use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
+use Cartalyst\Sentry\Users\ProviderInterface as UserProvider;
 use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
 use Digbang\L4Backoffice\Auth\Contracts\Throttle as ThrottleInterface;
 use Cartalyst\Sentry\Users\UserInterface;
@@ -34,18 +35,18 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
 	private $entityName;
 
 	/**
-	 * @type string
+	 * @type \Cartalyst\Sentry\Users\ProviderInterface
 	 */
-	private $userEntityName;
+	private $userProvider;
 
-    public function __construct(EntityManagerInterface $em, Repository $config)
+	public function __construct(EntityManagerInterface $em, Repository $config, UserProvider $userProvider)
     {
         parent::__construct($em, $em->getClassMetadata(
 	        $this->entityName = $config->get('security::auth.throttling.model', Throttle::class)
         ));
 
         $this->expr = Criteria::expr();
-	    $this->userEntityName = $config->get('security::auth.users.model', User::class);
+	    $this->userProvider = $userProvider;
     }
 
     /**
@@ -89,12 +90,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     public function findByUserId($id, $ipAddress = null)
     {
-        $user = $this->_em->getPartialReference($this->userEntityName, $id);
-
-        if ($user === null)
-        {
-            throw new UserNotFoundException("A {$this->userEntityName} could not be found with ID [$id].");
-        }
+        $user = $this->userProvider->findById($id);
 
         return $this->findByUser($user, $ipAddress);
     }
@@ -109,12 +105,7 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
      */
     public function findByUserLogin($login, $ipAddress = null)
     {
-        $user = $this->_em->getPartialReference($this->userEntityName, ['email' => $login]);
-
-        if ($user === null)
-        {
-            throw new UserNotFoundException("A user could not be found with a login value of [$login].");
-        }
+        $user = $this->userProvider->findByLogin($login);
 
         return $this->findByUser($user, $ipAddress);
     }
