@@ -82,8 +82,10 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
         $this->shouldThrow(UserNotFoundException::class)->duringFindByLogin('guiwoda@gmail.com');
     }
 
-    function it_should_find_users_by_its_credentials()
+    function it_should_find_users_by_its_credentials(HasherInterface $hasher)
     {
+	    $hasher->checkhash('asd', Argument::any())->willReturn(true);
+
         $this->findByCredentials([
             'email' => 'testing',
             'password' => 'asd'
