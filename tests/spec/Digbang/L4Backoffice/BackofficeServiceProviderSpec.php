@@ -54,5 +54,6 @@ class BackofficeServiceProviderSpec extends ObjectBehavior
         $config->get('security::auth.driver')->willReturn('custom');
 
         $this->register();
+	    $this->postRegister($config);
     }
 }

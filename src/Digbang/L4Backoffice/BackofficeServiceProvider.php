@@ -68,7 +68,7 @@ class BackofficeServiceProvider extends ServiceProvider
 		});
 	}
 
-	protected function postRegister(Repository $config)
+	public function postRegister(Repository $config)
 	{
 		$this->app->register(SecurityServiceProvider::class);
 
