@@ -1,8 +1,5 @@
 <?php namespace Digbang\L4Backoffice;
 
-use Cartalyst\Sentry\Users\ProviderInterface as UserProvider;
-use Cartalyst\Sentry\Groups\ProviderInterface as GroupProvider;
-use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
 use Digbang\FontAwesome\FontAwesomeServiceProvider;
 use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\GenRouteBinder;
@@ -10,6 +7,7 @@ use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
 use Digbang\Security\Filters\Auth;
 use Digbang\Security\SecurityServiceProvider;
+use Digbang\Security\SentryWithDoctrineServiceProvider;
 use Illuminate\Config\Repository;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -24,15 +22,13 @@ class BackofficeServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
+		$this->package('digbang/l4-backoffice');
+
 		/** @type Repository $config */
 		$config = $this->app->make('config');
 
 		/** @type Router $router */
 		$router = $this->app->make(Router::class);
-
-		$this->postRegister($config);
-
-		$this->package('digbang/l4-backoffice');
 
 		$this->stringMacros(
 			$this->app->make(Str::class),
@@ -62,6 +58,8 @@ class BackofficeServiceProvider extends ServiceProvider
 	{
 		$this->app->register(FontAwesomeServiceProvider::class);
 		$this->app->register(ExcelServiceProvider::class);
+		$this->app->register(SecurityServiceProvider::class);
+		$this->app->register(SentryWithDoctrineServiceProvider::class);
 
 		$this->app->singleton('menuFactory', Support\MenuFactory::class);
 		$this->app->bind('linkMaker', Support\LinkMaker::class);
