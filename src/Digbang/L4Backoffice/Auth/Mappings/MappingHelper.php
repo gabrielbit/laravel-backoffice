@@ -21,7 +21,7 @@ trait MappingHelper
 
 	protected function foreignKey($groupClass)
 	{
-		return snake_case(str_singular(class_basename($groupClass)));
+		return snake_case(str_singular(class_basename($groupClass))) . '_id';
 	}
 
 	protected function orphanRemovalHack(Relation $relation)
