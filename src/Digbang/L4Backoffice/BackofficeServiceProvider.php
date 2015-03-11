@@ -72,29 +72,6 @@ class BackofficeServiceProvider extends ServiceProvider
 		});
 	}
 
-	public function postRegister(Repository $config)
-	{
-		$this->app->register(SecurityServiceProvider::class);
-
-        if ($config->get('security::auth.driver') == 'custom')
-        {
-            if (! isset($this->app[UserProvider::class]))
-            {
-                $this->app->bind(UserProvider::class, Repositories\DoctrineUserRepository::class, true);
-            }
-
-            if (! isset($this->app[GroupProvider::class]))
-            {
-                $this->app->bind(GroupProvider::class, Repositories\DoctrineGroupRepository::class, true);
-            }
-
-            if (! isset($this->app[ThrottleProvider::class]))
-            {
-                $this->app->bind(ThrottleProvider::class, Repositories\DoctrineThrottleRepository::class, true);
-            }
-        }
-	}
-
 	protected function stringMacros(Str $str, Support\Str $myStr)
 	{
 		$str->macro('titleFromSlug', [$myStr, 'titleFromSlug']);

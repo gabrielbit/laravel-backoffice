@@ -1,23 +1,22 @@
 <?php namespace Digbang\L4Backoffice\Auth;
 
-use App\Domain\Entities\Permission;
-use Digbang\L4Backoffice\Auth\Contracts\Group;
+use Digbang\FontAwesome\Facade as FontAwesome;
 use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
-use Digbang\L4Backoffice\Auth\Services\UserService;
-use Digbang\L4Backoffice\Auth\Services\GroupService;
 use Digbang\L4Backoffice\Backoffice;
-use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
+use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Support\PermissionParser;
 use Digbang\Security\Auth\Emailer;
+use Digbang\Security\Contracts\Group;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
+use Digbang\Security\Services\UserService;
+use Digbang\Security\Services\GroupService;
 use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
-use Digbang\FontAwesome\Facade as FontAwesome;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
