@@ -51,12 +51,12 @@ class UserController extends Controller
 	protected $secureUrl;
 
 	/**
-	 * @type \Digbang\L4Backoffice\Auth\Services\UserService
+	 * @type \Digbang\Security\Services\UserService
 	 */
 	protected $userService;
 
 	/**
-	 * @type \Digbang\L4Backoffice\Auth\Services\GroupService
+	 * @type \Digbang\Security\Services\GroupService
 	 */
 	protected $groupService;
 
@@ -188,7 +188,7 @@ class UserController extends Controller
 
 	public function show($id)
 	{
-		/* @var $user \Digbang\L4Backoffice\Auth\Contracts\User */
+		/* @var $user \Digbang\Security\Contracts\User */
 		$user = $this->userService->find($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -243,7 +243,7 @@ class UserController extends Controller
 
 	public function edit($id)
 	{
-		/* @var $user \Digbang\L4Backoffice\Auth\Contracts\User */
+		/* @var $user \Digbang\Security\Contracts\User */
 		$user = $this->userService->find($id);
 
 		$label = trans('l4-backoffice::default.edit');
@@ -289,7 +289,7 @@ class UserController extends Controller
 
 	public function update($id)
 	{
-		/* @var $user \Digbang\L4Backoffice\Auth\Contracts\User */
+		/* @var $user \Digbang\Security\Contracts\User */
 		$user = $this->userService->find($id);
 
 		// Get the input

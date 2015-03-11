@@ -1,8 +1,8 @@
 <?php namespace Digbang\L4Backoffice\Commands;
 
-use Digbang\L4Backoffice\Auth\ValueObjects\Permission;
-use Digbang\L4Backoffice\Auth\Services\GroupService;
-use Digbang\L4Backoffice\Auth\Services\UserService;
+use Digbang\Security\Entities\Permission;
+use Digbang\Security\Services\GroupService;
+use Digbang\Security\Services\UserService;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -178,7 +178,7 @@ class InstallCommand extends Command
 			foreach ($permissions as $permission)
 			{
 				/** @type Permission $permission */
-				if (preg_match('/\.backoffice\-(users|groups)\./', (string)$permission))
+				if (preg_match('/\.backoffice\-(users|groups)\./', (string) $permission))
 				{
 					$permissions->removeElement($permission);
 				}
