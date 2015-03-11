@@ -1,11 +1,11 @@
 <?php
 return [
 	'system-defaults' => [
-		'index'   => 'List',
-		'show'    => 'View',
+		'list'    => 'List',
+		'read'    => 'View',
 		'create'  => 'Create',
-		'edit'    => 'Edit',
-		'destroy' => 'Delete',
+		'update'  => 'Edit',
+		'delete'  => 'Delete',
 		'export'  => 'Export to Excel'
 	],
 	'index' => 'Backoffice Homepage'

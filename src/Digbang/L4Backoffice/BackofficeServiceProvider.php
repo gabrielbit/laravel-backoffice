@@ -4,6 +4,10 @@ use Cartalyst\Sentry\Users\ProviderInterface as UserProvider;
 use Cartalyst\Sentry\Groups\ProviderInterface as GroupProvider;
 use Cartalyst\Sentry\Throttling\ProviderInterface as ThrottleProvider;
 use Digbang\FontAwesome\FontAwesomeServiceProvider;
+use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
+use Digbang\L4Backoffice\Auth\Routes\GenRouteBinder;
+use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
+use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
 use Digbang\Security\Filters\Auth;
 use Digbang\Security\SecurityServiceProvider;
 use Illuminate\Config\Repository;
@@ -99,30 +103,12 @@ class BackofficeServiceProvider extends ServiceProvider
 
 	protected function registerGenRoutes(Router $router)
 	{
-		$router->group(['prefix' => 'backoffice'], function() use ($router){
-			$router->get( 'gen',           'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection');
-			$router->post('gen/customize', 'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@customization');
-			$router->post('gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@generation');
-			$router->get( 'gen/generate',  'Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@testGenerationPage');
-		});
+		$this->app->make(GenRouteBinder::class)->bind($router);
 	}
 
 	protected function registerAuthRoutes(Router $router)
 	{
-		$router->group(['prefix' => 'backoffice/auth'], function() use ($router){
-			$authRoute      = 'backoffice.auth';
-			$authController = 'Digbang\\L4Backoffice\\Auth\\AuthController';
-
-			$router->get('login',                      ['as' => "$authRoute.login",                   'uses' => "$authController@login"]);
-			$router->get('password/forgot',            ['as' => "$authRoute.password.forgot",         'uses' => "$authController@forgotPassword"]);
-			$router->get('password/reset/{id}/{code}', ['as' => "$authRoute.password.reset",          'uses' => "$authController@resetPassword"]);
-			$router->get('logout',                     ['as' => "$authRoute.logout",                  'uses' => "$authController@logout"]);
-			$router->get('activate/{code}',            ['as' => "$authRoute.activate",                'uses' => "$authController@activate"]);
-
-			$router->post('login',                     ['as' => "$authRoute.authenticate",            'uses' => "$authController@authenticate"]);
-			$router->post('password/forgot',           ['as' => "$authRoute.password.forgot-request", 'uses' => "$authController@forgotPasswordRequest"]);
-			$router->post('password/reset/{code}',     ['as' => "$authRoute.password.reset-request",  'uses' => "$authController@resetPasswordRequest"]);
-		});
+		$this->app->make(AuthRouteBinder::class)->bind($router);
 	}
 
 	protected function registerAuthFilters(Router $router)
@@ -141,29 +127,7 @@ class BackofficeServiceProvider extends ServiceProvider
 
 	protected function registerUserGroupRoutes(Router $router)
 	{
-		$router->group(['prefix' => 'backoffice', 'before' => 'backoffice.auth.withPermissions'], function() use ($router){
-			$bkNamespace = "Digbang\\L4Backoffice\\Auth";
-
-			foreach (['users' => 'User', 'groups' => 'Group'] as $path => $name)
-			{
-				$fullPath = "backoffice-$path";
-
-				$router->group(['prefix' => $fullPath], function() use ($router, $name, $path, $fullPath, $bkNamespace) {
-					$router->get("export",         ['as' => "backoffice.$fullPath.export",  "uses" => "$bkNamespace\\{$name}Controller@export",  "permission" => "backoffice.$fullPath.list"]);
-
-					$router->get("/",              ["as" => "backoffice.$fullPath.index",   "uses" => "$bkNamespace\\{$name}Controller@index",   "permission" => "backoffice.$fullPath.list"]);
-					$router->get("create",         ["as" => "backoffice.$fullPath.create",  "uses" => "$bkNamespace\\{$name}Controller@create",  "permission" => "backoffice.$fullPath.create"]);
-					$router->post("/",             ["as" => "backoffice.$fullPath.store",   "uses" => "$bkNamespace\\{$name}Controller@store",   "permission" => "backoffice.$fullPath.create"]);
-					$router->get("{{$path}}",      ["as" => "backoffice.$fullPath.show",    "uses" => "$bkNamespace\\{$name}Controller@show",    "permission" => "backoffice.$fullPath.read"]);
-					$router->get("{{$path}}/edit", ["as" => "backoffice.$fullPath.edit",    "uses" => "$bkNamespace\\{$name}Controller@edit",    "permission" => "backoffice.$fullPath.update"]);
-					$router->match(['PUT',
-						  'PATCH'], "{{$path}}",   ["as" => "backoffice.$fullPath.update",  "uses" => "$bkNamespace\\{$name}Controller@update",  "permission" => "backoffice.$fullPath.update"]);
-					$router->delete("{{$path}}",   ["as" => "backoffice.$fullPath.destroy", "uses" => "$bkNamespace\\{$name}Controller@destroy", "permission" => "backoffice.$fullPath.delete"]);
-				});
-			}
-
-			$router->post('backoffice-users/{id}/resend-activation', ['as' => 'backoffice.backoffice-users.resend-activation', 'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resendActivation", 'permission' => 'backoffice.backoffice-users.update']);
-			$router->post('backoffice-users/{id}/reset-password',    ['as' => 'backoffice.backoffice-users.reset-password',    'uses' => "Digbang\\L4Backoffice\\Auth\\UserController@resetPassword",    'permission' => 'backoffice.backoffice-users.update']);
-		});
+		$this->app->make(UsersRouteBinder::class)->bind($router);
+		$this->app->make(GroupsRouteBinder::class)->bind($router);
 	}
 }

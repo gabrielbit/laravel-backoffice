@@ -4,7 +4,6 @@ use Digbang\Doctrine\Metadata\Builder;
 use Digbang\Doctrine\Metadata\Relations\BelongsTo;
 use Digbang\L4Backoffice\Auth\Entities\User;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
-use Illuminate\Support\Str;
 
 final class ThrottleMappingHelper
 {

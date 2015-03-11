@@ -28,9 +28,10 @@ class PermissionParser
 	public function toDropdownArray(array $permissions)
 	{
 		$output = [];
+
 		foreach ($permissions as $permission)
 		{
-			list($prefix, $resource, $method) = array_pad(explode('.', $permission, 3), 3, null);
+			list($prefix, $resource, $method) = array_pad(explode('.', (string) $permission, 3), 3, null);
 
 			if (!$method)
 			{
@@ -44,7 +45,7 @@ class PermissionParser
 				$output[$title] = [];
 			}
 
-			$output[$title][$permission] = $this->trans($resource, $method);
+			$output[$title][(string) $permission] = $this->trans($resource, $method);
 		}
 
 		return $output;

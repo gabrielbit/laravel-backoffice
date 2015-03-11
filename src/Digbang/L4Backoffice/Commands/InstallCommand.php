@@ -1,10 +1,13 @@
 <?php namespace Digbang\L4Backoffice\Commands;
 
-use Digbang\Security\Entities\Group;
+use Digbang\L4Backoffice\Auth\ValueObjects\Permission;
+use Digbang\L4Backoffice\Auth\Services\GroupService;
+use Digbang\L4Backoffice\Auth\Services\UserService;
 use Cartalyst\Sentry\Users\UserNotFoundException;
 use Digbang\Security\Permissions\PermissionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Illuminate\Console\Command;
-use Illuminate\Container\Container;
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
 
 class InstallCommand extends Command
@@ -23,21 +26,42 @@ class InstallCommand extends Command
 	 */
 	protected $description = 'Install the backoffice interactively.';
 
-	protected $sentry;
+	/**
+	 * @type PermissionRepository
+	 */
 	protected $permissionRepository;
 
-	protected $files;
+	/**
+	 * @type Filesystem
+	 */
+	protected $filesystem;
+
+	/**
+	 * @type UserService
+	 */
+	private $userService;
+
+	/**
+	 * @type GroupService
+	 */
+	private $groupService;
 
 	/**
 	 * Create a new command instance.
+	 *
+	 * @param Filesystem           $filesystem
+	 * @param PermissionRepository $permissionRepository
+	 * @param UserService          $userService
+	 * @param GroupService         $groupService
 	 */
-	public function __construct(Container $app, PermissionRepository $permissionRepository)
+	public function __construct(Filesystem $filesystem, PermissionRepository $permissionRepository, UserService $userService, GroupService $groupService)
 	{
 		parent::__construct();
 
-		$this->sentry = $app['sentry'];
+		$this->filesystem = $filesystem;
 		$this->permissionRepository = $permissionRepository;
-		$this->files = $app['files'];
+		$this->userService = $userService;
+		$this->groupService = $groupService;
 	}
 
 	/**
@@ -47,96 +71,56 @@ class InstallCommand extends Command
 	 */
 	public function fire()
 	{
-		// Run the security migrations
-		if (! $this->option('no-migrations'))
-		{
-			$this->info("Installing digbang/security migrations...");
-			$this->call('security:migrations');
-		}
-
 		if (! $this->option('no-groups'))
 		{
-			if (Group::count() == 0)
-			{
-				$permissions = $this->permissionRepository->all();
-				if (!empty($permissions))
-				{
-					$permissions = array_combine($permissions, array_fill(0, count($permissions), 1));
-				}
-
-				$this->info("Creating Administrators backoffice group...");
-				Group::create([
-					'name' => 'Administrators',
-					'permissions' => $permissions
-				]);
-
-				foreach ($permissions as $permission => $aOne)
-				{
-					if (strpos($permission, 'backoffice-users') !== false ||
-						strpos($permission, 'backoffice-groups') !== false)
-					{
-						unset($permissions[$permission]);
-					}
-				}
-
-				$this->info("Creating Operators backoffice group...");
-				Group::create([
-					'name' => 'Operators',
-					'permissions' => $permissions
-				]);
-			}
+			$this->fireGroupCreation($this->groupService);
 		}
 
 		if (! $this->option('no-superuser'))
 		{
-			$this->info("Creating backoffice superuser...");
-			try
-			{
-				$this->sentry->findUserByLogin('admin@digbang.com');
-				$this->info("User already exists.");
-			}
-			catch (UserNotFoundException $e)
-			{
-				$this->createSuperuser();
-			}
+			$this->fireSuperUserCreation($this->userService);
 		}
 
 		if (! $this->option('no-configs'))
 		{
-			$this->info("Publishing backoffice and security configuration files...");
-			$this->call('config:publish', ['digbang/l4-backoffice']);
-			$this->call('config:publish', ['digbang/security']);
+			$this->fireConfigPublishing();
 		}
 
 		if (! $this->option('no-lang-files'))
 		{
-			$this->info('Publishing backoffice language files...');
-
-			$this->copyLanguageFiles();
+			$this->fireLangPublishing($this->filesystem);
 		}
 	}
 
-	protected function copyLanguageFiles()
+	protected function copyLanguageFiles(Filesystem $filesystem)
 	{
 		$myLangPath = realpath(__DIR__ . '/../../../lang');
 		$projectLangPath = app_path('lang/packages');
 
-		if (! $this->files->isDirectory($projectLangPath))
+		if (! $filesystem->isDirectory($projectLangPath))
 		{
-			$this->files->makeDirectory($projectLangPath, 2775, true);
+			$filesystem->makeDirectory($projectLangPath, 2775, true);
 		}
 
 		foreach (new \FilesystemIterator($myLangPath, \FilesystemIterator::SKIP_DOTS) as $languageDir) /* @type $languageDir \DirectoryIterator */
 		{
-			$this->info(
-				'Copying ' . $languageDir->getPathname() . ' to ' .
-				$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
-			);
+			$targetDir = $projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice';
 
-			$this->files->copyDirectory(
-				$languageDir->getPathname(),
-				$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
-			);
+			$dooEet = true;
+			if ($filesystem->exists($targetDir))
+			{
+				$dooEet = $this->confirm("</question><error>Files already detected at $targetDir.</error>" . PHP_EOL . "<question>Do you want to overwrite them?", false);
+			}
+
+			if ($dooEet)
+			{
+				$this->info(
+					'Copying ' . $languageDir->getPathname() . ' to ' .
+					$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
+				);
+
+				$filesystem->copyDirectory($languageDir->getPathname(), $targetDir);
+			}
 		}
 	}
 
@@ -147,8 +131,7 @@ class InstallCommand extends Command
 	 */
 	protected function getArguments()
 	{
-		return [
-		];
+		return [];
 	}
 
 	/**
@@ -159,7 +142,6 @@ class InstallCommand extends Command
 	protected function getOptions()
 	{
 		return [
-			['no-migrations', 'M', InputOption::VALUE_NONE, 'Run without security migrations'],
 			['no-configs',    'C', InputOption::VALUE_NONE, 'Run without configuration publishing'],
 			['no-groups',     'G', InputOption::VALUE_NONE, 'Run without admin group creation'],
 			['no-superuser',  'S', InputOption::VALUE_NONE, 'Run without superuser creation'],
@@ -167,17 +149,70 @@ class InstallCommand extends Command
 		];
 	}
 
-	protected function createSuperuser()
+	private function createSuperuser(UserService $userService)
 	{
 		$password = $this->secret('Please insert the superuser password: ');
 
-		$this->sentry->createUser([
-			'email'       => 'admin@digbang.com',
-			'password'    => $password,
-			'activated'   => true,
-			'permissions' => ['superuser' => 1],
-			'first_name'  => 'Admin',
-			'last_name'   => 'Digbang'
-		]);
+		return $userService->create(
+			'admin@digbang.com',
+			$password,
+			'Admin',
+			'Digbang',
+			true,
+			[],
+			[],
+			true
+		);
+	}
+
+	private function fireGroupCreation(GroupService $groupService)
+	{
+		$groups = $groupService->all();
+		if (count($groups) == 0)
+		{
+			$permissions = new ArrayCollection(array_unique($this->permissionRepository->all()));
+			$this->info("Creating Administrators backoffice group...");
+
+			$groupService->create('Administrators', $permissions->toArray());
+
+			foreach ($permissions as $permission)
+			{
+				/** @type Permission $permission */
+				if (preg_match('/\.backoffice\-(users|groups)\./', (string)$permission))
+				{
+					$permissions->removeElement($permission);
+				}
+			}
+
+			$this->info("Creating Operators backoffice group...");
+			$groupService->create('Operators', $permissions->toArray());
+		}
+	}
+
+	private function fireSuperUserCreation(UserService $userService)
+	{
+		$this->info("Creating backoffice superuser...");
+		try
+		{
+			$userService->findByLogin('admin@digbang.com');
+			$this->info("User already exists.");
+		}
+		catch (UserNotFoundException $e)
+		{
+			$this->createSuperuser($userService);
+		}
+	}
+
+	private function fireConfigPublishing()
+	{
+		$this->info("Publishing backoffice and security configuration files...");
+		$this->call('config:publish', ['digbang/l4-backoffice']);
+		$this->call('config:publish', ['digbang/security']);
+	}
+
+	private function fireLangPublishing(Filesystem $files)
+	{
+		$this->info('Publishing backoffice language files...');
+		$this->copyLanguageFiles($files);
 	}
 }

@@ -13,6 +13,7 @@ return [
 	'activation' => [
 		'title' => 'Reenviar correo de activación',
 		'success' => '¡Has activado tu cuenta! Por favor, elige una contraseña.',
+		'email-sent' => 'Un correo ha sido enviado a :email con el vínculo de activación.',
 		'expired' => [
 			'title' => 'El vínculo de activación es incorrecto o ha expirado.',
 			'link' => 'Por favor, <a href="mailto::email">contacte al administrador</a> para obtener uno nuevo.'

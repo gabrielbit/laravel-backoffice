@@ -77,7 +77,7 @@ class DoctrineGroupRepositorySpec extends ObjectBehavior
     {
         /** @type Double $em */
         $em->persist(Argument::type(Group::class))->shouldBeCalled();
-        $em->flush(Argument::type(Group::class))->shouldBeCalled();
+        $em->flush()->shouldBeCalled();
 
         $this->create([
             'name' => 'Ninjas'
@@ -90,7 +90,7 @@ class DoctrineGroupRepositorySpec extends ObjectBehavior
 
         /** @type Double $em */
         $em->persist($group)->shouldBeCalled();
-        $em->flush($group)->shouldBeCalled();
+        $em->flush()->shouldBeCalled();
 
         $this->save($group);
     }

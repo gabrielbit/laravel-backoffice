@@ -13,6 +13,7 @@ return [
 	'activation' => [
 		'title' => 'Resend Activation Email',
 		'success' => 'You have activated your account! Please choose your new password.',
+		'email-sent' => 'An email was sent to :email with the activation link.',
 		'expired' => [
 			'title' => 'The activation link is incorrect or has expired.',
 			'link' => 'Please, <a href="mailto::email">contact the administrator</a> to get a new one.'

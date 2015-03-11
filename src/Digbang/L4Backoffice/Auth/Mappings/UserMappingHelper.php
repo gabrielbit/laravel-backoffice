@@ -1,11 +1,16 @@
 <?php namespace Digbang\L4Backoffice\Auth\Mappings;
 
 use Digbang\Doctrine\Metadata\Builder;
+use Digbang\Doctrine\Metadata\Relations\BelongsToMany;
+use Digbang\Doctrine\Metadata\Relations\HasMany;
 use Digbang\L4Backoffice\Auth\Entities\Group;
+use Digbang\L4Backoffice\Auth\Entities\UserPermission;
 use Doctrine\ORM\Mapping\Builder\FieldBuilder;
 
 final class UserMappingHelper
 {
+	use MappingHelper;
+
 	/**
 	 * @type string
 	 */
@@ -14,19 +19,36 @@ final class UserMappingHelper
 	/**
 	 * @type string
 	 */
-	private $groupField;
+	private $userPermissionClass;
 
 	/**
 	 * @param string $groupClassName
-	 * @param string $groupField
+	 * @param string $userPermissionClass
 	 */
-	public function __construct($groupClassName = Group::class, $groupField = 'groups')
+	public function __construct($groupClassName = Group::class, $userPermissionClass = UserPermission::class)
 	{
-		$this->groupClassName = $groupClassName;
-		$this->groupField = $groupField;
+		$this->groupClassName      = $groupClassName;
+		$this->userPermissionClass = $userPermissionClass;
 	}
 
+	/**
+	 * Adds all mappings: properties, relations and indexes
+	 *
+	 * @param Builder $builder
+	 */
 	public function addMappings(Builder $builder)
+	{
+		$this->addProperties($builder);
+		$this->addRelations($builder);
+		$this->addIndexes($builder);
+	}
+
+	/**
+	 * Adds only properties
+	 *
+	 * @param Builder $builder
+	 */
+	public function addProperties(Builder $builder)
 	{
 		$builder->primary();
 		$builder->string('email', function (FieldBuilder $fieldBuilder){
@@ -34,6 +56,7 @@ final class UserMappingHelper
 		});
 		$builder->string('password');
 		$builder->boolean('activated');
+		$builder->boolean('superUser');
 		$builder->string('activationCode', function (FieldBuilder $fieldBuilder){
 			$fieldBuilder->nullable();
 		});
@@ -57,9 +80,36 @@ final class UserMappingHelper
 		});
 
 		$builder->timestamps();
+	}
 
-		$builder->belongsToMany($this->groupClassName, $this->groupField);
+	/**
+	 * Adds only relations
+	 *
+	 * @param Builder $builder
+	 */
+	public function addRelations(Builder $builder)
+	{
+		$builder->belongsToMany($this->groupClassName, 'groups', function(BelongsToMany $belongsToMany){
+			$belongsToMany->inversedBy('users');
+			$belongsToMany->cascadePersist();
 
+		});
+
+		$builder->hasMany($this->userPermissionClass, 'permissions', function(HasMany $hasMany){
+			$hasMany->mappedBy('user');
+			$hasMany->cascadeAll();
+
+			$this->orphanRemovalHack($hasMany);
+		});
+	}
+
+	/**
+	 * Adds only indexes
+	 *
+	 * @param Builder $builder
+	 */
+	public function addIndexes(Builder $builder)
+	{
 		$builder->addIndex(['activation_code'], 'backoffice_users_activation_code_index');
 		$builder->addIndex(['reset_password_code'], 'backoffice_users_reset_password_code_index');
 	}

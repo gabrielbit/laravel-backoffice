@@ -148,7 +148,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
     {
         /** @type Double $em */
         $em->persist(Argument::type(User::class))->shouldBeCalled();
-        $em->flush(Argument::type(User::class))->shouldBeCalled();
+        $em->flush()->shouldBeCalled();
 
         $user = $this->create([
             'email' => 'guiwoda@gmail.com',
@@ -170,7 +170,7 @@ class DoctrineUserRepositorySpec extends ObjectBehavior
 
         /** @type Double $em */
         $em->persist($user)->shouldBeCalled();
-        $em->flush($user)->shouldBeCalled();
+        $em->flush()->shouldBeCalled();
 
         $this->save($user);
     }

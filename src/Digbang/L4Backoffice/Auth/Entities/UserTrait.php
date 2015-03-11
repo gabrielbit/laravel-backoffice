@@ -1,8 +1,10 @@
 <?php namespace Digbang\L4Backoffice\Auth\Entities;
 
+use Carbon\Carbon;
 use Cartalyst\Sentry\Groups\GroupInterface;
 use Cartalyst\Sentry\Users as Exceptions;
 use Digbang\Doctrine\TimestampsTrait;
+use Digbang\L4Backoffice\Auth\Contracts\Permission as PermissionInterface;
 use Digbang\L4Backoffice\Repositories\DoctrineUserRepository;
 use Digbang\L4Backoffice\Support\MagicPropertyTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -61,7 +63,7 @@ trait UserTrait
 	/**
 	 * @type bool
 	 */
-	private $isSuperUser = false;
+	private $superUser = false;
 
 	/**
 	 * @type string
@@ -182,7 +184,7 @@ trait UserTrait
 	 */
 	public function isSuperUser()
 	{
-		return $this->isSuperUser;
+		return $this->superUser;
 	}
 
 	/**
@@ -302,9 +304,7 @@ trait UserTrait
 			return false;
 		}
 
-		$this->activationCode = null;
-		$this->activated    = true;
-		$this->activatedAt    = new \DateTimeImmutable;
+		$this->forceActivation();
 
 		return $this->save();
 	}
@@ -361,7 +361,7 @@ trait UserTrait
 	{
 		if ($this->checkResetPasswordCode($resetCode))
 		{
-			$this->password          = $newPassword;
+			$this->password          = $this->userRepository->hash($newPassword);
 			$this->resetPasswordCode = null;
 
 			return $this->save();
@@ -433,10 +433,9 @@ trait UserTrait
 	}
 
 	/**
-	 * Returns an array of merged permissions for each
-	 * group the user is in.
+	 * Returns an array of valid permissions for the user.
 	 *
-	 * @return array
+	 * @return ArrayCollection
 	 */
 	public function getMergedPermissions()
 	{
@@ -447,10 +446,27 @@ trait UserTrait
 			foreach ($this->getGroups() as $group)
 			{
 				/** @type GroupInterface $group */
-				$permissions = array_merge($permissions, $group->getPermissions());
+				foreach ($group->getPermissions() as $permission)
+				{
+					$permissions[(string) $permission] = $permission;
+				}
 			}
 
-			$this->mergedPermissions = array_merge($permissions, $this->getPermissions());
+			foreach ($this->permissions as $permission)
+			{
+				$key = (string) $permission;
+
+				if ($permission->isAllowed())
+				{
+					$permissions[$key] = $permission;
+				}
+				elseif (array_key_exists($key, $permissions))
+				{
+					unset($permissions[$key]);
+				}
+			}
+
+			$this->mergedPermissions = new ArrayCollection(array_values($permissions));
 		}
 
 		return $this->mergedPermissions;
@@ -500,121 +516,22 @@ trait UserTrait
 	 */
 	public function hasPermission($permissions, $all = true)
 	{
-		$mergedPermissions = $this->getMergedPermissions();
-
-		if (! is_array($permissions))
-		{
-			$permissions = (array) $permissions;
-		}
-
-		foreach ($permissions as $permission)
-		{
-			// We will set a flag now for whether this permission was
-			// matched at all.
-			$matched = true;
-
-			// Now, let's check if the permission ends in a wildcard "*" symbol.
-			// If it does, we'll check through all the merged permissions to see
-			// if a permission exists which matches the wildcard.
-			if ((strlen($permission) > 1) && ends_with($permission, '*'))
-			{
-				$matched = false;
-
-				foreach ($mergedPermissions as $mergedPermission => $value)
-				{
-					// Strip the '*' off the end of the permission.
-					$checkPermission = substr($permission, 0, -1);
-
-					// We will make sure that the merged permission does not
-					// exactly match our permission, but starts with it.
-					if ($checkPermission != $mergedPermission &&
-						starts_with($mergedPermission, $checkPermission) &&
-						$value == 1
-					)
-					{
-						$matched = true;
-						break;
-					}
-				}
+		return array_reduce((array) $permissions, function($carry, $permission) use ($all) {
+			if ($all) {
+				return $carry && $this->hasSinglePermission($permission);
 			}
 
-			elseif ((strlen($permission) > 1) && starts_with($permission, '*'))
-			{
-				$matched = false;
+			return $carry || $this->hasSinglePermission($permission);
+		}, $all);
+	}
 
-				foreach ($mergedPermissions as $mergedPermission => $value)
-				{
-					// Strip the '*' off the beginning of the permission.
-					$checkPermission = substr($permission, 1);
-
-					// We will make sure that the merged permission does not
-					// exactly match our permission, but ends with it.
-					if ($checkPermission != $mergedPermission &&
-						ends_with($mergedPermission, $checkPermission) &&
-						$value == 1
-					)
-					{
-						$matched = true;
-						break;
-					}
-				}
-			}
-
-			else
-			{
-				$matched = false;
-
-				foreach ($mergedPermissions as $mergedPermission => $value)
-				{
-					// This time check if the mergedPermission ends in wildcard "*" symbol.
-					if ((strlen($mergedPermission) > 1) && ends_with($mergedPermission, '*'))
-					{
-						$matched = false;
-
-						// Strip the '*' off the end of the permission.
-						$checkMergedPermission = substr($mergedPermission, 0, -1);
-
-						// We will make sure that the merged permission does not
-						// exactly match our permission, but starts with it.
-						if ($checkMergedPermission != $permission &&
-							starts_with($permission, $checkMergedPermission) &&
-							$value == 1
-						)
-						{
-							$matched = true;
-							break;
-						}
-					}
-
-					// Otherwise, we'll fallback to standard permissions checking where
-					// we match that permissions explicitly exist.
-					elseif ($permission == $mergedPermission && $mergedPermissions[$permission] == 1)
-					{
-						$matched = true;
-						break;
-					}
-				}
-			}
-
-			// Now, we will check if we have to match all
-			// permissions or any permission && return
-			// accordingly.
-			if ($all === true && $matched === false)
-			{
-				return false;
-			}
-			elseif ($all === false && $matched === true)
-			{
-				return true;
-			}
-		}
-
-		if ($all === false)
-		{
-			return false;
-		}
-
-		return true;
+	protected function hasSinglePermission($aPermission)
+	{
+		return $this
+			->getMergedPermissions()
+			->exists(function($key, PermissionInterface $permission) use ($aPermission) {
+				return $permission->allows($aPermission);
+			});
 	}
 
 	/**
@@ -719,5 +636,165 @@ trait UserTrait
 	public function getUpdatedAt()
 	{
 		return $this->updatedAt;
+	}
+
+	/**
+	 * @param string $firstName
+	 * @param string $lastName
+	 *
+	 * @return void
+	 */
+	public function named($firstName, $lastName)
+	{
+		$this->firstName = $firstName;
+		$this->lastName  = $lastName;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function forceActivation()
+	{
+		$this->activated      = true;
+		$this->activatedAt    = new Carbon;
+		$this->activationCode = null;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function deactivate()
+	{
+		$this->activated      = false;
+		$this->activatedAt    = null;
+		$this->activationCode = null;
+	}
+
+	/**
+	 * @param $permissions
+	 *
+	 * @return void
+	 */
+	public function setAllPermissions($permissions)
+	{
+		// Denials: Group permissions missing from the given permissions array
+		$denials = [];
+
+		foreach ($this->getGroupPermissions() as $groupPermission)
+		{
+			$key = array_search((string) $groupPermission, $permissions);
+
+			if ($key !== false)
+			{
+				// Remove all permissions already granted by group
+				unset($permissions[$key]);
+			}
+			else
+			{
+				// Deny missing group permission
+				$denials[] = (string) $groupPermission;
+			}
+		}
+
+		foreach ($this->permissions as $userPermission)
+		{
+			/** @type UserPermission $userPermission */
+			if (! in_array((string) $userPermission, $permissions))
+			{
+				if (($key = array_search($userPermission, $denials)) !== false)
+				{
+					/**
+					 * Edge case:
+					 * 1. first it was given to the user
+					 * 2. then it was given to the group
+					 * 3. finally, it was denied to the user
+					 */
+					$userPermission->deny();
+
+					unset($denials[$key]);
+				}
+				else
+				{
+					// Not passed, remove it from current relations
+					$this->permissions->removeElement($userPermission);
+				}
+			}
+			else
+			{
+				// Already there, unset it
+				unset($permissions[(string) $userPermission]);
+			}
+		}
+
+		foreach ($denials as $newPermission)
+		{
+			$this->permissions->add($this->createUserPermission($newPermission, false));
+		}
+
+		foreach ($permissions as $newPermission)
+		{
+			$this->permissions->add($this->createUserPermission($newPermission));
+		}
+	}
+
+	/**
+	 * @return ArrayCollection
+	 */
+	public function getGroupPermissions()
+	{
+		$permissions = new ArrayCollection;
+
+		foreach ($this->groups as $group)
+		{
+			foreach ($group->getPermissions() as $permission)
+			{
+				if (! $permissions->contains($permission))
+				{
+					$permissions->add($permission);
+				}
+			}
+		}
+
+		return $permissions;
+	}
+
+	/**
+	 * @param string $email
+	 *
+	 * @return void
+	 */
+	public function changeEmail($email)
+	{
+		if (! filter_var($email, FILTER_VALIDATE_EMAIL))
+		{
+			throw new \UnexpectedValueException("Expected valid email, got $email");
+		}
+
+		$this->email = $email;
+	}
+
+	/**
+	 * @param array $groups
+	 *
+	 * @return void
+	 */
+	public function setAllGroups($groups)
+	{
+		$this->groups->clear();
+
+		array_map([$this->groups, 'add'], $groups);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function promoteToSuperUser()
+	{
+		$this->superUser = true;
+	}
+
+	protected function createUserPermission($permission, $allowed = true)
+	{
+		return new UserPermission($this, $permission, $allowed);
 	}
 }

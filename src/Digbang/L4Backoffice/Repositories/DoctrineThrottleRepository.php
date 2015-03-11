@@ -13,6 +13,7 @@ use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
+use Doctrine\ORM\NoResultException;
 use Illuminate\Config\Repository;
 
 class DoctrineThrottleRepository extends EntityRepository implements ThrottleProvider
@@ -67,9 +68,13 @@ class DoctrineThrottleRepository extends EntityRepository implements ThrottlePro
             $criteria->andWhere($this->orIpAddressCriteria($ipAddress));
         }
 
-        $throttle = $this->createQueryBuilder('t')->addCriteria($criteria)->getFirstResult();
+	    $queryBuilder = $this->createQueryBuilder('t')->addCriteria($criteria)->setMaxResults(1);
 
-        if (! $throttle)
+	    try
+	    {
+	        $throttle = $queryBuilder->getQuery()->getSingleResult();
+	    }
+        catch (NoResultException $e)
         {
 	        $entityName = $this->entityName;
             $throttle = $entityName::create($user, $ipAddress);

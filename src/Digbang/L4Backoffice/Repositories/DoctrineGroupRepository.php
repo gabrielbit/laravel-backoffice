@@ -5,6 +5,7 @@ use Cartalyst\Sentry\Groups\ProviderInterface as GroupProviderInterface;
 use Digbang\L4Backoffice\Auth\Contracts\Group as GroupInterface;
 use Digbang\L4Backoffice\Auth\Contracts\RepositoryAware;
 use Digbang\L4Backoffice\Auth\Entities\Group;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping;
@@ -20,7 +21,6 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
 	 */
     public function __construct(EntityManagerInterface $em, Repository $config)
     {
-
         parent::__construct(
 	        $em,
 	        $em->getClassMetadata(
@@ -97,7 +97,7 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
         $em = $this->getEntityManager();
 
         $em->persist($group);
-        $em->flush($group);
+        $em->flush();
     }
 
     /**
@@ -125,4 +125,46 @@ class DoctrineGroupRepository extends EntityRepository implements GroupProviderI
 
         return $group;
     }
+
+	public function search($name = null, $permission = null, $orderBy = null, $orderSense = 'asc', $limit = 10, $offset = 0)
+	{
+		$queryBuilder = $this->createQueryBuilder('g');
+		$expressionBuilder = Criteria::expr();
+
+		$filters = [];
+
+		if ($name)
+		{
+			$filters[] = $expressionBuilder->contains('name', $name);
+		}
+
+		$criteria = Criteria::create();
+
+		if (!empty($filters))
+		{
+			$criteria->where($expressionBuilder->andX(...$filters));
+		}
+
+		if ($orderBy && $orderSense)
+		{
+			$criteria->orderBy([$orderBy => $orderSense]);
+		}
+
+		$criteria->setMaxResults($limit);
+		$criteria->setFirstResult($offset);
+
+		$queryBuilder->addCriteria($criteria);
+
+		if ($permission !== null)
+		{
+			$permissionClass = $this->getClassMetadata()->getAssociationMapping('permissions')['targetEntity'];
+			$queryBuilder->andWhere($queryBuilder->expr()->exists(
+				"SELECT 1 FROM $permissionClass p WHERE p.permission LIKE :permission AND p.group = g.id"
+			));
+
+			$queryBuilder->setParameter('permission', "%$permission%");
+		}
+
+		return $queryBuilder->getQuery()->getResult();
+	}
 }

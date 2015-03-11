@@ -11,4 +11,18 @@ interface Group extends GroupInterface
 	 * @return Group
 	 */
 	public static function create($name, array $permissions = []);
+
+	/**
+	 * @param string $name
+	 *
+	 * @return void
+	 */
+	public function changeName($name);
+
+	/**
+	 * @param array $permissions
+	 *
+	 * @return void
+	 */
+	public function setPermissions(array $permissions);
 }

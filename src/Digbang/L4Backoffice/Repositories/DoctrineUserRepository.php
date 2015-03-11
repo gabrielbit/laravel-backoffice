@@ -266,7 +266,7 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
         $em = $this->getEntityManager();
 
         $em->persist($user);
-        $em->flush($user);
+        $em->flush();
     }
 
     /**
@@ -307,4 +307,14 @@ class DoctrineUserRepository extends EntityRepository implements ProviderInterfa
             return $this->user($user);
         });
     }
+
+	/**
+	 * @param string $string
+	 *
+	 * @return string
+	 */
+	public function hash($string)
+	{
+		return $this->hasher->hash($string);
+	}
 }

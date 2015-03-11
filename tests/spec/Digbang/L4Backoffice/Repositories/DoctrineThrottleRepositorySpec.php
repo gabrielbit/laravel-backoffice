@@ -9,7 +9,9 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Persisters\Entity\EntityPersister;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\UnitOfWork;
 use Illuminate\Config\Repository;
@@ -35,7 +37,8 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
         EntityPersister $ep,
 		Repository $config,
 		UserProvider $userProvider,
-		QueryBuilder $qb
+		QueryBuilder $qb,
+	    AbstractQuery $query
     )
     {
 	    $config->get('security::auth.throttling.model', Throttle::class)->willReturn(Throttle::class);
@@ -54,7 +57,9 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
 	    $qb->where(Argument::cetera())->willReturn($qb);
 	    $qb->andWhere(Argument::cetera())->willReturn($qb);
 	    $qb->addCriteria(Argument::cetera())->willReturn($qb);
-	    $qb->getFirstResult()->willReturn($this->throttle);
+	    $qb->setMaxResults(Argument::cetera())->willReturn($qb);
+	    $qb->getQuery()->willReturn($query);
+	    $query->getSingleResult()->willReturn($this->throttle);
 
         // Successful find by ID
         $em->find(Throttle::class, 1, Argument::cetera())->willReturn($this->throttle);
@@ -89,23 +94,19 @@ class DoctrineThrottleRepositorySpec extends ObjectBehavior
         $this->shouldHaveType(ProviderInterface::class);
     }
 
-    function it_should_find_throttles_by_user(QueryBuilder $qb)
+    function it_should_find_throttles_by_user(AbstractQuery $query)
     {
-	    $qb->getFirstResult()->willReturn($this->throttle);
-
         $this->findByUser($this->user)->shouldBeAnInstanceOf(Throttle::class);
     }
 
-    function it_should_find_throttles_by_user_and_ip_address(QueryBuilder $qb)
+    function it_should_find_throttles_by_user_and_ip_address(AbstractQuery $query)
     {
-	    $qb->getFirstResult()->willReturn($this->throttle);
-
         $this->findByUser($this->user, '127.0.0.1')->shouldBeAnInstanceOf(Throttle::class);
     }
 
-    function it_should_create_and_save_a_throttle_if_it_doesnt_exist(EntityManagerInterface $em, QueryBuilder $qb)
+    function it_should_create_and_save_a_throttle_if_it_doesnt_exist(EntityManagerInterface $em, AbstractQuery $query)
     {
-	    $qb->getFirstResult()->willReturn(null);
+	    $query->getSingleResult()->willThrow(NoResultException::class);
 
         /** @type Double $em */
         $em->persist(Argument::type(Throttle::class))->shouldBeCalled();

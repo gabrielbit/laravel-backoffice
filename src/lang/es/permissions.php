@@ -1,11 +1,11 @@
 <?php
 return [
 	'system-defaults' => [
-		'index'   => 'Lista',
-		'show'    => 'Ver',
+		'list'    => 'Lista',
+		'read'    => 'Ver',
 		'create'  => 'Crear',
-		'edit'    => 'Editar',
-		'destroy' => 'Eliminar',
+		'update'  => 'Editar',
+		'delete'  => 'Eliminar',
 		'export'  => 'Exportar a Excel'
 	],
 	'index' => 'Índice del panel de administración'

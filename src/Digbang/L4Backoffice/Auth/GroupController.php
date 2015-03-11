@@ -1,18 +1,22 @@
 <?php namespace Digbang\L4Backoffice\Auth;
 
-use Digbang\Security\Entities\Group;
+use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
+use Digbang\L4Backoffice\Auth\Services\GroupService;
 use Digbang\L4Backoffice\Backoffice;
-use Digbang\L4Backoffice\Repositories\BackofficeRepositoryFactory;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Digbang\L4Backoffice\Support\PermissionParser;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Urls\SecureUrl;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
 use Digbang\FontAwesome\Facade as FontAwesome;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Excel;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Redirect;
 
 class GroupController extends Controller
 {
@@ -21,35 +25,75 @@ class GroupController extends Controller
      */
     protected $backoffice;
 
-    /**
-     * @var \Digbang\L4Backoffice\Repositories\BackofficeRepository
-     */
-    protected $groupsRepository;
-
+	/**
+	 * @type PermissionRepository
+	 */
 	protected $permissionsRepository;
 
 	/**
      * @var \Maatwebsite\Excel\Excel
      */
     protected $excelExporter;
+
+	/**
+	 * @type PermissionParser
+	 */
 	protected $permissionParser;
+
+	/**
+	 * @type SecureUrl
+	 */
 	protected $secureUrl;
 
+	/**
+	 * @type GroupService
+	 */
+	private $groupService;
+
+	/**
+	 * @type string
+	 */
     protected $title;
+
+	/**
+	 * @type string
+	 */
     protected $titlePlural;
 
-	function __construct(Backoffice $backoffice, BackofficeRepositoryFactory $repositoryFactory, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, SecureUrl $secureUrl)
+	/**
+	 * @type Request
+	 */
+	private $request;
+
+	/**
+	 * @param Backoffice           $backoffice
+	 * @param Excel                $excelExporter
+	 * @param PermissionRepository $permissionRepository
+	 * @param PermissionParser     $permissionParser
+	 * @param SecureUrl            $secureUrl
+	 * @param GroupService         $groupService
+	 * @param Request              $request
+	 */
+	public function __construct(
+		Backoffice           $backoffice,
+		Excel                $excelExporter,
+		PermissionRepository $permissionRepository,
+		PermissionParser     $permissionParser,
+		SecureUrl            $secureUrl,
+		GroupService         $groupService,
+		Request              $request
+	)
 	{
-		$this->backoffice = $backoffice;
-		$this->groupsRepository = $repositoryFactory->makeForEloquentModel(new Group());
+		$this->backoffice            = $backoffice;
+		$this->excelExporter         = $excelExporter;
 		$this->permissionsRepository = $permissionRepository;
+		$this->permissionParser      = $permissionParser;
+		$this->secureUrl             = $secureUrl;
+		$this->groupService          = $groupService;
+		$this->request               = $request;
 
-		$this->excelExporter = $excelExporter;
-		$this->permissionParser = $permissionParser;
-		$this->secureUrl = $secureUrl;
-
-		$this->title = \Lang::get('l4-backoffice::auth.group');
-		$this->titlePlural = \Lang::get('l4-backoffice::auth.groups');
+		$this->title = trans('l4-backoffice::auth.group');
+		$this->titlePlural = trans('l4-backoffice::auth.groups');
 	}
 
 	public function index()
@@ -63,11 +107,11 @@ class GroupController extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
+			trans('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural
 		]);
 
-		return \View::make('l4-backoffice::index', [
+		return View::make('l4-backoffice::index', [
 			'title'      => $this->titlePlural,
 			'list'       => $list,
 			'breadcrumb' => $breadcrumb
@@ -76,22 +120,22 @@ class GroupController extends Controller
 
 	public function create()
 	{
-		$label = \Lang::get('l4-backoffice::default.new', ['model' => $this->title]);
+		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route('backoffice.backoffice-groups.store'),
+			$this->secureUrl->route(GroupsRouteBinder::STORE),
 			$label,
 			'POST',
-			$this->secureUrl->route('backoffice.backoffice-groups.index')
+			$this->secureUrl->route(GroupsRouteBinder::INDEX)
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
-			$this->titlePlural => 'backoffice.backoffice-groups.index',
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural => GroupsRouteBinder::INDEX,
 			$label
 		]);
 
-		return \View::make('l4-backoffice::create', [
+		return View::make('l4-backoffice::create', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -100,66 +144,53 @@ class GroupController extends Controller
 
 	public function store()
 	{
-		$inputData = array_filter(\Input::only([
-            'name',
-            'permissions',
-        ]), function($input){
-            return !empty($input) && $input !== false;
-        });
+		$input = $this->request->only(['name', 'permissions']);
 
 		try
 		{
-			$this->validate($inputData);
+			$this->validate($input);
 
-			/* @var $groups Group */
-			$groups = $this->groupsRepository->create($inputData);
-
-			$permissions = \Input::get('permissions');
-
-			$allPermissions = $this->permissionsRepository->all();
-			$allPermissions = array_combine($allPermissions, array_map(function($permission) use ($permissions) {
-				return (integer) in_array($permission, $permissions);
-			}, $allPermissions));
-
-			$groups->permissions = $allPermissions;
+			$groups = $this->groupService->create(
+				$input['name'],
+				$input['permissions']
+			);
 
 			$groups->save();
 
-			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-groups.show', $groups->getKey()));
+			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::SHOW, $groups->getId()));
 		}
 		catch (ValidationException $e)
 		{
-			return \Redirect::back()->withInput()->withErrors($e->getErrors());
+			return Redirect::back()->withInput()->withErrors($e->getErrors());
 		}
 	}
 
 	public function show($id)
 	{
-		/* @var $entity Group */
-		$entity = $this->groupsRepository->findById($id);
+		$group = $this->groupService->find($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
-			$this->titlePlural => 'backoffice.backoffice-groups.index',
-			$entity->name
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural => GroupsRouteBinder::INDEX,
+			$group->getName()
 		]);
 
 		$data = [
-			'Name' => $entity->name,
-			'Permissions' => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $entity),
+			'Name' => $group->getName(),
+			'Permissions' => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $group),
 		];
 
 		$actions = $this->backoffice->actions()
-			->link($this->secureUrl->route('backoffice.backoffice-groups.edit', $id), FontAwesome::icon('edit') . ' ' . \Lang::get('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
-			->link($this->secureUrl->route('backoffice.backoffice-groups.index'), \Lang::get('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			->link($this->secureUrl->route(GroupsRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+			->link($this->secureUrl->route(GroupsRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
 
 		$topActions = $this->backoffice->actions()
-			->link($this->secureUrl->route('backoffice.backoffice-groups.index'), FontAwesome::icon('arrow-left') . ' ' . \Lang::get('l4-backoffice::default.back'));
+			->link($this->secureUrl->route(GroupsRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
 
-		return \View::make('l4-backoffice::show', [
+		return View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
-			'label'      => $entity->name,
+			'label'      => $group->getName(),
 			'data'       => $data,
 			'actions'    => $actions,
 			'topActions' => $topActions
@@ -168,31 +199,30 @@ class GroupController extends Controller
 
 	public function edit($id)
 	{
-		/* @var $entity Group */
-		$entity = $this->groupsRepository->findById($id);
+		$group = $this->groupService->find($id);
 
-		$label = \Lang::get('l4-backoffice::default.edit_model', ['model' => $this->title]);
+		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route('backoffice.backoffice-groups.update', $id),
+			$this->secureUrl->route(GroupsRouteBinder::UPDATE, $id),
 			$label,
 			'PUT',
-			$this->secureUrl->route('backoffice.backoffice-groups.show', $id)
+			$this->secureUrl->route(GroupsRouteBinder::SHOW, $id)
 		);
 
 		$form->fill([
-			'name' => $entity->name,
-			'permissions[]' => array_keys($entity->permissions),
+			'name' => $group->getName(),
+			'permissions[]' => $group->getPermissions(),
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			\Lang::get('l4-backoffice::default.home') => 'backoffice.index',
-			$this->titlePlural => 'backoffice.backoffice-groups.index',
-			$entity->name      => ['backoffice.backoffice-groups.show', $id],
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural => GroupsRouteBinder::INDEX,
+			$group->getName()  => [GroupsRouteBinder::SHOW, $id],
 			$label
 		]);
 
-		return \View::make('l4-backoffice::edit', [
+		return View::make('l4-backoffice::edit', [
 			'title'      => $label,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -201,42 +231,29 @@ class GroupController extends Controller
 
 	public function update($id)
 	{
-		/* @var $entity Group */
-        $entity = $this->groupsRepository->findById($id);
-
 		// Get the input
-		$inputData = array_filter(\Input::only([
-            'name'
-        ]), function($value){
-	         return !empty($value) && $value !== false;
-	    });
+		$input = $this->request->only(['name', 'permissions']);
 
 		try
 		{
 			// Validate the input
-			$this->validate($inputData);
+			$this->validate($input);
 
-			$entity->name = \Input::get('name');
+			$group = $this->groupService->find($id);
 
-			$permissions = \Input::get('permissions');
-
-			$allPermissions = $this->permissionsRepository->all();
-			$allPermissions = array_combine($allPermissions, array_map(function($permission) use ($permissions) {
-				return (integer) in_array($permission, $permissions);
-			}, $allPermissions));
-
-			$entity->permissions = $allPermissions;
-
-			// Try to save it
-			$entity->save();
+			$this->groupService->edit(
+				$group,
+				$input['name'],
+				$input['permissions']
+			);
 
 			// Redirect to show
-			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-groups.show', [$entity->getKey()]));
+			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::SHOW, [$group->getId()]));
 		}
 		catch (ValidationException $e)
 		{
 			// Or redirect back with the errors
-			return \Redirect::back()->withInput()->withErrors($e->getErrors());
+			return Redirect::back()->withInput()->withErrors($e->getErrors());
 		}
 	}
 
@@ -245,15 +262,15 @@ class GroupController extends Controller
 		try
 		{
 			// Try to destroy the entity
-			$this->groupsRepository->destroy($id);
+			$this->groupService->delete($id);
 
 			// Redirect to the listing
-			return \Redirect::to($this->secureUrl->route('backoffice.backoffice-groups.index'))
-				->withSuccess(\Lang::get('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
+			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::INDEX))
+				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
 		}
 		catch (ValidationException $e)
 		{
-			return \Redirect::back()->withDanger(implode('<br/>', $e->getErrors()));
+			return Redirect::back()->withDanger(implode('<br/>', $e->getErrors()));
 		}
 	}
 
@@ -284,10 +301,13 @@ class GroupController extends Controller
 
 		$inputs = $form->inputs();
 
-		$inputs->text('name', \Lang::get('l4-backoffice::auth.name'));
-
-		$permissions = $this->permissionsRepository->all();
-		$inputs->dropdown('permissions', \Lang::get('l4-backoffice::auth.permissions'), $this->permissionParser->toDropdownArray($permissions), ['multiple' => 'multiple', 'class' => 'multiselect']);
+		$inputs->text('name', trans('l4-backoffice::auth.name'));
+		$inputs->dropdown(
+			'permissions',
+			trans('l4-backoffice::auth.permissions'),
+			$this->permissionParser->toDropdownArray($this->permissionsRepository->all()),
+			['multiple' => 'multiple', 'class' => 'multiselect']
+		);
 
 		return $form;
 	}
@@ -300,8 +320,13 @@ class GroupController extends Controller
 		$filters = $list->filters();
 
 		// Here we add filters to the list
-		$filters->string('name', \Lang::get('l4-backoffice::auth.name'), ['class' => 'form-control']);
-		$filters->text('permissions', \Lang::get('l4-backoffice::auth.permissions'), ['class' => 'form-control']);
+		$filters->string('name', trans('l4-backoffice::auth.name'), ['class' => 'form-control']);
+		$filters->dropdown(
+			'permission',
+			trans('l4-backoffice::auth.permissions'),
+			$this->permissionParser->toDropdownArray($this->permissionsRepository->all()),
+			['class' => 'form-control']
+		);
 	}
 
 	/**
@@ -310,7 +335,7 @@ class GroupController extends Controller
 	protected function getListing()
 	{
 		$listing = $this->backoffice->listing([
-			'name' => \Lang::get('l4-backoffice::auth.name'),
+			'name' => trans('l4-backoffice::auth.name'),
 			'id'
 		]);
 
@@ -324,8 +349,8 @@ class GroupController extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link($this->secureUrl->route('backoffice.backoffice-groups.create'), FontAwesome::icon('plus') . \Lang::get('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
-				->link($this->secureUrl->route('backoffice.backoffice-groups.export', \Input::all()), FontAwesome::icon('file-excel-o') . ' ' . \Lang::get('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
+				->link($this->secureUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
+				->link($this->secureUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
 		);
 
 		$list->setRowActions(
@@ -333,20 +358,20 @@ class GroupController extends Controller
 				// View icon
 				->link(function(Collection $row) {
 					try {
-						return $this->secureUrl->route('backoffice.backoffice-groups.show', $row['id']);
+						return $this->secureUrl->route(GroupsRouteBinder::SHOW, $row['id']);
 					} catch (PermissionException $e) { return false; }
-				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.show')])
+				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.show')])
 				// Edit icon
 				->link(function(Collection $row){
 					try {
-						return $this->secureUrl->route('backoffice.backoffice-groups.edit', $row['id']);
+						return $this->secureUrl->route(GroupsRouteBinder::EDIT, $row['id']);
 					} catch (PermissionException $e) { return false; }
-				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => \Lang::get('l4-backoffice::default.edit')])
+				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.edit')])
 				// Delete icon
 				->form(
 					function(Collection $row){
 						try {
-							return $this->secureUrl->route('backoffice.backoffice-groups.destroy', $row['id']);
+							return $this->secureUrl->route(GroupsRouteBinder::DESTROY, $row['id']);
 						} catch (PermissionException $e) { return false; }
 					},
 					FontAwesome::icon('times'),
@@ -355,8 +380,8 @@ class GroupController extends Controller
 						'class'          => 'text-danger',
 						'data-toggle'    => 'tooltip',
 						'data-placement' => 'top',
-						'data-confirm'   => \Lang::get('l4-backoffice::default.delete-confirm'),
-						'title'          => \Lang::get('l4-backoffice::default.delete')
+						'data-confirm'   => trans('l4-backoffice::default.delete-confirm'),
+						'title'          => trans('l4-backoffice::default.delete')
 					],
 					true
 				)
@@ -364,30 +389,36 @@ class GroupController extends Controller
 	}
 
 	/**
+	 * @param int $limit
 	 * @return array
 	 */
 	protected function getData($limit = 10)
 	{
-		return $this->groupsRepository->search(
-            \Input::except(['page', 'sort_by', 'sort_sense']),
-            \Input::get('sort_by'),
-            \Input::get('sort_sense'),
+		return $this->groupService->search(
+			$this->request->get('name'),
+			$this->request->get('permission'),
+            camel_case($this->request->get('sort_by')),
+            $this->request->get('sort_sense'),
             $limit,
-            \Input::get('page', 1)
+			($this->request->get('page', 1) - 1) * $limit
         );
 	}
 
-    protected function validate($inputData)
+	/**
+	 * @param array $data
+	 *
+	 * @throws ValidationException
+	 */
+    protected function validate($data)
     {
-        $validationRules = [
-            'name' => 'required',
+        $rules = ['name' => 'required'];
+
+        $messages = [
+            'name.required' => trans('l4-backoffice::auth.validation.group.name'),
         ];
 
-        $validationMsgs = [
-            'name.required' => \Lang::get('l4-backoffice::auth.validation.group.name'),
-        ];
-
-        $validator = \Validator::make($inputData, $validationRules, $validationMsgs);
+	    /** @type \Illuminate\Validation\Validator $validator */
+        $validator = Validator::make($data, $rules, $messages);
 
         if ($validator->fails())
         {

@@ -3,7 +3,7 @@
 	<li>
 		<div class="btn-group">
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-				{{ Lang::get('l4-backoffice::auth.user_name', ['name' => $user->first_name, 'lastname' => $user->last_name]) }}
+				{{ trim(trans('l4-backoffice::auth.user_name', ['name' => $user->first_name, 'lastname' => $user->last_name])) ?: $user->getEmail() }}
 				<span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu dropdown-menu-usermenu pull-right">

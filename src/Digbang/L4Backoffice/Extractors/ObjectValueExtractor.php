@@ -41,7 +41,7 @@ class ObjectValueExtractor implements ValueExtractor
 	{
 		foreach (['get', 'is'] as $prefix)
 		{
-			if (method_exists($this, $method = $prefix . studly_case($key)))
+			if (method_exists($element, $method = $prefix . studly_case($key)))
 			{
 				$reflectionMethod = $this->__getReflectionMethod($element, $method);
 

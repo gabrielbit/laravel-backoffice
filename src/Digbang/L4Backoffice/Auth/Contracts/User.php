@@ -65,11 +65,6 @@ interface User extends UserInterface
 	public function getLastLogin();
 
 	/**
-	 * @return array
-	 */
-	public function getAllPermissions();
-
-	/**
 	 * @param string $email
 	 *
 	 * @return void
@@ -82,4 +77,14 @@ interface User extends UserInterface
 	 * @return void
 	 */
 	public function setAllGroups($groups);
+
+	/**
+	 * @return void
+	 */
+	public function promoteToSuperUser();
+
+	/**
+	 * @return void
+	 */
+	public function deactivate();
 }
