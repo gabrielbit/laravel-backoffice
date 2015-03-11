@@ -395,9 +395,9 @@ class GroupController extends Controller
 	protected function getData($limit = 10)
 	{
 		return $this->groupService->search(
-			$this->request->get('name'),
-			$this->request->get('permission'),
-            camel_case($this->request->get('sort_by')),
+			$this->request->get('name') ?: null,
+			$this->request->get('permission') ?: null,
+            camel_case($this->request->get('sort_by')) ?: null,
             $this->request->get('sort_sense'),
             $limit,
 			($this->request->get('page', 1) - 1) * $limit

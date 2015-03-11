@@ -599,11 +599,11 @@ class UserController extends Controller
 	protected function getData($limit = 10)
 	{
 		return $this->userService->search(
-            $this->request->get('email'),
-			$this->request->get('first_name'),
-			$this->request->get('last_name'),
-			$this->request->get('activated') !== null ? (strtolower($this->request->get('activated')) == 'true') : null,
-            camel_case($this->request->get('sort_by')),
+            $this->request->get('email') ?: null,
+			$this->request->get('first_name') ?: null,
+			$this->request->get('last_name') ?: null,
+			$this->request->get('activated') ? (strtolower($this->request->get('activated')) == 'true') : null,
+            camel_case($this->request->get('sort_by')) ?: null,
             $this->request->get('sort_sense'),
             $limit,
 			($this->request->get('page', 1) - 1) * $limit
