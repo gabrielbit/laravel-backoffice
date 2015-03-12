@@ -2,126 +2,200 @@
 
 use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Generator\Services\ControllerGenerator;
-use Digbang\L4Backoffice\Generator\Services\ModelFinder;
+use Digbang\L4Backoffice\Generator\Services\ApiFinder;
+use Digbang\L4Backoffice\Inputs\InputFactory;
+use Illuminate\Config\Repository;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Session\Store;
+use Illuminate\View\Factory as ViewFactory;
 
 /**
  * Class GenController
  * @package Digbang\L4Backoffice\Generator\Controllers
  */
-class GenController extends \Controller
+class GenController extends Controller
 {
 	protected $backoffice;
-	protected $modelFinder;
+	protected $apiFinder;
 	protected $session;
 	protected $generator;
 
-	function __construct(Backoffice $backoffice, ModelFinder $modelFinder, ControllerGenerator $generator, Store $session)
+	/**
+	 * @type ViewFactory
+	 */
+	private $view;
+	/**
+	 * @type UrlGenerator
+	 */
+	private $url;
+	/**
+	 * @type Repository
+	 */
+	private $config;
+	/**
+	 * @type Request
+	 */
+	private $request;
+	/**
+	 * @type InputFactory
+	 */
+	private $inputFactory;
+
+	public function __construct(Backoffice $backoffice, ApiFinder $apiFinder, ControllerGenerator $generator, Store $session, ViewFactory $view, UrlGenerator $url, Repository $config, Request $request, InputFactory $inputFactory)
 	{
 		$this->backoffice = $backoffice;
-		$this->modelFinder = $modelFinder;
+		$this->apiFinder = $apiFinder;
 		$this->generator = $generator;
 		$this->session = $session;
+		$this->view = $view;
+		$this->url = $url;
+		$this->config = $config;
+		$this->request = $request;
+		$this->inputFactory = $inputFactory;
 	}
 
 	public function modelSelection()
 	{
-		// Grab current database tables
-		$tables = $this->modelFinder->find();
+		// Look for available backoffice APIs
+		$apis = $this->apiFinder->all($this->config->get('l4-backoffice::gen.apis_path'));
 
 		// Build a form with checkboxes for each of them
 		$form = $this->backoffice->form(
-			action('Digbang\L4Backoffice\Generator\Controllers\GenController@customization'),
-			'Choose models',
+			$this->url->action(GenController::class . '@customization'),
+			'Choose APIs',
 			'POST'
 		);
 
-		foreach ($tables as $table)
+		foreach ($apis as $api)
 		{
-			$form->inputs()->checkbox($table, \Str::titleFromSlug($table));
+			$form->inputs()->checkbox($api, $api);
 		}
 
 		$title = 'Gen';
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => route('backoffice.index'),
-			'Gen'
+			'Home' => $this->url->route('backoffice.index'),
+			$title
 		]);
 
-		// Return it
-		return \View::make('l4-backoffice::gen.model-selection', [
-			'title' => $title,
+		return $this->view->make('l4-backoffice::gen.model-selection', [
+			'title'      => $title,
 			'breadcrumb' => $breadcrumb,
-			'form' => $form
+			'form'       => $form
 		]);
 	}
 
 	public function customization()
 	{
-		// Save selected tables in session
-		$this->session->put('backoffice.gen.tables', \Input::except('_token'));
+		// Save selected apis in session
+		$this->session->put('backoffice.gen.apis', $this->request->except('_token'));
 
 		// Build a form with customization options
 		$form = $this->backoffice->form(
-			action('Digbang\L4Backoffice\Generator\Controllers\GenController@generation'),
+			$this->url->action(GenController::class . '@generation'),
 			'Customize generated resources',
 			'POST'
 		);
 
-		$form->inputs()->text('backoffice_namespace', 'Backoffice Namespace');
-		$form->inputs()->text('entities_namespace', 'Entities Namespace');
+		$inputs = $form->inputs();
 
-		$form->inputs()->find('backoffice_namespace')->defaultsTo(\Config::get('l4-backoffice::gen.backoffice.namespace'));
-		$form->inputs()->find('entities_namespace')->defaultsTo(  \Config::get('l4-backoffice::gen.entities.namespace'));
+		$inputs->text('controller_namespace', 'Controllers Namespace');
+		$inputs->find('controller_namespace')->defaultsTo(
+			$this->config->get('l4-backoffice::gen.controllers_namespace')
+		);
+		$inputs->text('controllers_dir', 'Controllers Directory');
+		$inputs->find('controllers_dir')->defaultsTo(
+			$this->config->get('l4-backoffice::gen.controllers_dir')
+		);
+
+		foreach (array_keys($this->request->except('_token')) as $api)
+		{
+			$methods = $this->apiFinder->parseMethods($api);
+
+			$methodsDropdown = ['DO_NOT_CREATE' => 'Do not create'];
+
+			foreach ($methods as $method)
+			{
+				$methodsDropdown[$method] = $api . ' :: ' . $method;
+			}
+
+			$collection = $this->inputFactory->collection();
+
+			foreach (['LIST', 'CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT'] as $crudMethod)
+			{
+				$collection->text($crudMethod);
+				$collection->dropdown("apis[$api][$crudMethod]", $crudMethod . ' Method', $methodsDropdown);
+
+				/** @type \Digbang\L4Backoffice\Inputs\Input $literal */
+				$literal = $collection->find($crudMethod);
+
+				$literal->defaultsTo("Create a $crudMethod page?");
+				$literal->setReadonly();
+			}
+
+			$inputs->composite($api, $collection, $api);
+		}
 
 		$title = 'Customize';
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			'Home' => route('backoffice.index'),
-			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			'Home' => $this->url->route('backoffice.index'),
+			'Gen'  => $this->url->action(GenController::class . '@modelSelection'),
 			$title
 		]);
 
 		// Return it
-		return \View::make('l4-backoffice::gen.customization', [
-			'title' => $title,
+		return $this->view->make('l4-backoffice::gen.customization', [
+			'title'      => $title,
 			'breadcrumb' => $breadcrumb,
-			'form' => $form
+			'form'       => $form
 		]);
 	}
 
 	public function generation()
 	{
-		// Iterate over each model
-		$tables = $this->session->get('backoffice.gen.tables');
+		$controllerNamespace = trim($this->request->get('controller_namespace'), ' \\');
+		$controllersDir      = trim($this->request->get('controllers_dir'));
+		$templatePath        = realpath(__DIR__ . '/../controller.mustache');
 
-		$backofficeNamespace = trim(\Input::get('backoffice_namespace'), ' \\');
-		$entityNamespace = trim(\Input::get('entities_namespace'), ' \\');
+		$this->generator
+			->fromTemplate($templatePath)
+			->toDir($controllersDir)
+			->inNamespace($controllerNamespace);
 
-		$controllersDirPath = app_path() . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $backofficeNamespace);
-		$templatePath = realpath(
-			dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'controller.mustache'
-		);
-
-		foreach ($tables as $tableName => $on)
+		foreach ($this->request->get('apis') as $api => $methods)
 		{
-			$this->generator->generate($tableName, $templatePath, $controllersDirPath, $backofficeNamespace, $entityNamespace);
+			$this->generator->withApi($api);
+
+			foreach ($methods as $method => $apiMethod)
+			{
+				if ($apiMethod == 'DO_NOT_CREATE')
+				{
+					continue;
+				}
+
+				$params = $this->apiFinder->getParamsFor($api, $apiMethod);
+
+				$this->generator->addMethod($method, $apiMethod, $params);
+			}
+
+			$this->generator->generate();
 		}
 
 		$title = 'Gen complete';
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => route('backoffice.index'),
-			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			'Gen'  => action(GenController::class . '@modelSelection'),
 			$title
 		]);
 
 		// Return
-		return \View::make('l4-backoffice::gen.generation', [
+		return $this->view->make('l4-backoffice::gen.generation', [
 			'title' => $title,
-			'breadcrumb' => $breadcrumb,
-			'tables' => array_keys($tables),
-			'backofficeNamespace' => str_replace('\\', '\\\\', $backofficeNamespace)
+			'breadcrumb' => $breadcrumb
 		]);
 	}
 

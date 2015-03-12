@@ -1,0 +1,516 @@
+<?php namespace {{ namespace }};
+
+use {{ api.fqcn }};
+use Digbang\FontAwesome\Facade as FontAwesome;
+use Digbang\L4Backoffice\Backoffice;
+use Digbang\L4Backoffice\Exceptions\ValidationException;
+use Digbang\Security\Permissions\Exceptions\PermissionException;
+use Digbang\Security\Urls\SecureUrl;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+{{# methods.hasExport }}
+use Maatwebsite\Excel\Excel;
+{{/ methods.hasExport }}
+
+class {{ className.studly }}Controller extends Controller
+{
+	/**
+     * @type \Digbang\L4Backoffice\Backoffice
+     */
+    private $backoffice;
+
+{{# methods.hasExport }}
+	/**
+     * @type \Maatwebsite\Excel\Excel
+     */
+    private $excel;
+
+{{/ methods.hasExport }}
+    /**
+     * @type \Digbang\Security\Urls\SecureUrl
+     */
+    private $secureUrl;
+
+    /**
+     * @type Request
+     */
+    private $request;
+
+    /**
+     * @type {{ api.basename }}
+    private $api;
+
+	/**
+	 * @type string
+	 */
+    private $title = '{{ className.title }}';
+
+	/**
+	 * @type string
+	 */
+    private $titlePlural = '{{ className.title.plural }}';
+
+    /**
+     * @param Backoffice $backoffice
+{{# methods.hasExport }}
+	 * @param Excel $excel,
+{{/ methods.hasExport }}
+     * @param SecureUrl $secureUrl
+     * @param Request $request
+     * @param {{ api.basename }} $api
+     */
+	public function __construct(
+		Backoffice $backoffice,
+{{# methods.hasExport }}
+		Excel $excel,
+{{/ methods.hasExport }}
+		SecureUrl $secureUrl,
+		Request $request,
+		{{ api.basename }} $api
+	)
+	{
+		$this->backoffice = $backoffice;
+{{# methods.hasExport }}
+		$this->excel      = $excel;
+{{/ methods.hasExport }}
+		$this->secureUrl  = $secureUrl;
+		$this->request    = $request;
+		$this->api        = $api;
+	}
+
+	{{# methods.hasList }}
+	/**
+	 * @return \Illuminate\View\View
+	 */
+	public function index()
+	{
+		$listing = $this->backoffice->listing([
+			{{# methods.list.params }}
+			'{{ name }}' => '{{ name.title }}',
+			{{/ methods.list.params }}
+		]);
+
+		$columns = $listing->columns();
+		$columns
+			->hide([])
+			->sortable([
+				{{# methods.list.params }}
+				'{{ name }}',
+				{{/ methods.list.params }}
+			]);
+
+		$filters = $listing->filters();
+
+		// Here we add filters to the list
+		{{# methods.list.params }}
+		$filters->{{ input }}('{{ name }}', '{{ name.title }}', ['class' => 'form-control']);
+		{{/ methods.list.params }}
+
+		// List actions appear at the top left corner of the listing's box
+		$listActions = $this->backoffice->actions();
+		{{# methods.hasCreate }}
+
+		try {
+            $listActions->link(
+				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.create'),
+				FontAwesome::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]),
+				[
+					'class' => 'btn btn-primary'
+				]
+			);
+        } catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		{{/ methods.hasCreate }}
+		{{# methods.hasExport }}
+
+        try {
+            $listActions->link(
+                $this->secureUrl->route('backoffice.{{ className.snake.plural }}.export', $this->request->all()),
+                FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'),
+                [
+                    'class' => 'btn btn-success'
+                ]
+            );
+        } catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+        {{/ methods.hasExport }}
+
+		$listing->setActions($listActions);
+
+		// Row actions are actions that will be rendered on each of the listing's rows
+		$rowActions = $this->backoffice->actions();
+		{{# methods.hasRead }}
+
+		// Link to the READ route
+		$rowActions->link(
+			function(\Illuminate\Support\Collection $row) {
+				try {
+					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('eye'),
+			[
+				'data-toggle'    => 'tooltip',
+				'data-placement' => 'top',
+				'title'          => trans('l4-backoffice::default.show')
+			]
+		);
+		{{/ methods.hasRead }}
+		{{# methods.hasUpdate }}
+
+		// Link to the EDIT route
+		$rowActions->link(
+			function(\Illuminate\Support\Collection $row){
+				try {
+					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.edit', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('edit'),
+			[
+				'class'          => 'text-success',
+				'data-toggle'    => 'tooltip',
+				'data-placement' => 'top',
+				'title'          => trans('l4-backoffice::default.edit')
+			]
+		);
+		{{/ methods.hasUpdate }}
+		{{# methods.hasDelete }}
+
+		// Form (link) to the DELETE route
+		$rowActions->form(
+			function(\Illuminate\Support\Collection $row){
+				try {
+					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.destroy', $row['id']);
+				} catch (PermissionException $e) { return false; }
+			},
+			FontAwesome::icon('times'),
+			'DELETE',
+			[
+				'class'          => 'text-danger',
+				'data-toggle'    => 'tooltip',
+				'data-placement' => 'top',
+				'data-confirm'   => trans('l4-backoffice::default.delete-confirm'),
+				'title'          => trans('l4-backoffice::default.delete')
+			]
+		);
+		{{/ methods.hasDelete }}
+
+		$listing->setRowActions($rowActions);
+
+		$results = $this->api->{{ methods.list.apiMethod }}(...$this->request->only([
+			{{# methods.list.params }}
+			'{{ name }}',
+			{{/ methods.list.params }}
+		]));
+
+		$listing->fill($results);
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural
+		]);
+
+		return View::make('l4-backoffice::index', [
+			'title'      => $this->titlePlural,
+			'list'       => $listing,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+	{{/ methods.hasList }}
+
+	{{# methods.hasCreate }}
+	/**
+	 * @return \Illuminate\View\View
+	 */
+	public function create()
+	{
+		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
+
+		$form = $this->backoffice->form(
+			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.store'),
+			$label,
+			'POST',
+			$this->secureUrl->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
+		);
+
+		$inputs = $form->inputs();
+
+		// TODO: fill dropdowns with corresponding options
+		{{# methods.create.params }}
+		$inputs->{{ input }}('{{ name }}', '{{ name.title }}', []);
+		{{/ methods.create.params }}
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
+			$label
+		]);
+
+		return View::make('l4-backoffice::create', [
+			'title'      => $this->titlePlural,
+			'form'       => $form,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+
+	public function store()
+	{
+		$data = $this->request->only([
+        {{# methods.create.params }}
+            '{{ name }}',
+        {{/ methods.create.params }}
+        ]);
+
+		try
+		{
+			$this->validate($data);
+
+			${{ className.camel }} = $this->api->{{ methods.create.apiMethod }}(...$data);
+
+			// TODO: Gen has assumed a getId() method on your entity. Change it as needed.
+			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', ${{ className.camel }}->getId()));
+		}
+		catch (ValidationException $e)
+		{
+			return Redirect::back()->withInput()->withErrors($e->getErrors());
+		}
+	}
+	{{/ methods.hasCreate }}
+
+	{{# methods.hasRead }}
+	/**
+	 * @return \Illuminate\View\View
+	 */
+	public function show($id)
+	{
+		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
+			$id
+		]);
+
+		$data = [
+		{{# methods.hasList }}
+		{{# methods.list.params }}
+			'{{ name.title }}' => ${{ className.camel }}->get{{ name.studly }}(),
+		{{/ methods.list.params }}
+		{{/ methods.hasList }}
+		];
+
+		$actions    = $this->backoffice->actions();
+		$topActions = $this->backoffice->actions();
+		{{# methods.hasEdit }}
+
+		try {
+			$actions->link(
+				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.edit', $id),
+				FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'),
+				[
+					'class' => 'btn btn-success'
+				]
+			);
+		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		{{/ methods.hasEdit }}
+		{{# methods.hasList }}
+
+		try {
+			$actions->link(
+				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'),
+				trans('l4-backoffice::default.back'),
+				[
+					'class' => 'btn btn-default'
+				]
+			);
+		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+
+		try {
+			$topActions->link(
+				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'),
+				FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back')
+			);
+		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		{{/ methods.hasList }}
+
+		return View::make('l4-backoffice::show', [
+			'title'      => $this->titlePlural,
+			'breadcrumb' => $breadcrumb,
+			'label'      => $id,
+			'data'       => $data,
+			'actions'    => $actions,
+			'topActions' => $topActions
+		]);
+	}
+	{{/ methods.hasRead }}
+
+	{{# methods.hasUpdate }}
+	/**
+	 * @return \Illuminate\View\View
+	 */
+	public function edit($id)
+	{
+		{{# methods.hasRead }}
+		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+		{{/ methods.hasRead }}
+		{{^ methods.hasRead }}
+		// TODO: The gen assumed a find method here. Change it to whatever suits you.
+		${{ className.camel }} = $this->api->find($id);
+		{{/ methods.hasRead }}
+
+		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
+
+		$form = $this->buildForm(
+			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.update', $id),
+			$label,
+			'PUT',
+			$this->secureUrl->bestRoute([
+				['backoffice.{{ className.snake.plural }}.show', $id],
+				'backoffice.{{ className.snake.plural }}.index',
+				'backoffice.index'
+			])
+		);
+
+		$form->fill([
+		{{# methods.update.params }}
+			'{{ name }}' => ${{ className.camel }}->get{{ name.studly }}(),
+		{{/methods.update.params}}
+		]);
+
+		$breadcrumb = $this->backoffice->breadcrumb([
+			trans('l4-backoffice::default.home') => 'backoffice.index',
+			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
+			$id                                  => ['backoffice.{{ className.snake.plural }}.show', $id],
+			trans('l4-backoffice::default.edit')
+		]);
+
+		return View::make('l4-backoffice::edit', [
+			'title'      => $label,
+			'form'       => $form,
+			'breadcrumb' => $breadcrumb
+		]);
+	}
+
+	public function update($id)
+	{
+		{{# methods.hasRead }}
+		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+		{{/ methods.hasRead }}
+		{{^ methods.hasRead }}
+		// TODO: The gen assumed a find method here. Change it to whatever suits you.
+		${{ className.camel }} = $this->api->find($id);
+		{{/ methods.hasRead }}
+
+		$data = $this->request->only([
+        {{# methods.update.params }}
+			'{{ name }}',
+		{{/methods.update.params}}
+        ]);
+
+		try
+		{
+			// Validate the input
+			$this->validate($data);
+
+			$this->api->{{ methods.update.apiMethod }}(...$data);
+
+			// Redirect to show
+			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', [$id]));
+		}
+		catch (ValidationException $e)
+		{
+			// Or redirect back with the errors
+			return Redirect::back()->withInput()->withErrors($e->getErrors());
+		}
+		catch (PermissionException $e)
+		{
+			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+		}
+	}
+	{{/ methods.hasUpdate }}
+
+	{{# methods.hasDelete }}
+	public function destroy($id)
+	{
+		try
+		{
+			// Try to destroy the entity
+			$this->api->{{ methods.delete.apiMethod }}($id);
+
+			// Redirect to the listing
+			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'))
+				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
+		}
+		catch (ValidationException $e)
+		{
+			return Redirect::back()->withDanger(implode('<br/>', $e->getErrors()));
+		}
+		catch (PermissionException $e)
+		{
+			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+		}
+	}
+	{{/ methods.hasDelete }}
+
+	{{# methods.hasExport }}
+	/**
+	 * @return void
+	 */
+	public function export()
+	{
+		$listing = $this->backoffice->listing([
+			{{# methods.export.params }}
+			'{{ name }}' => '{{ name.title }}',
+			{{/ methods.export.params }}
+		]);
+
+		$columns = $listing->columns();
+		$columns->hide([])->sortable([]);
+
+		$results = $this->api->{{ methods.export.apiMethod }}(...$this->request->only([
+			{{# methods.export.params }}
+			'{{ name }}',
+			{{/ methods.export.params }}
+		]);
+
+		$listing->fill($results);
+
+		$rows = $listing->rows();
+
+		$this->excel->create(\Str::slug($this->titlePlural), function($excel) use ($columns, $rows) {
+			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
+				$sheet->loadView('l4-backoffice::lists.list', [
+					'bulkActions' => [],
+					'rowActions' => [],
+					'columns' => $columns->visible(),
+					'items' => $rows
+				]);
+			});
+		})->download('xls');
+	}
+	{{/ methods.hasExport }}
+
+	protected function buildForm($target, $label, $method = 'POST', $cancelAction = '', $options = [])
+	{
+		$form = $this->backoffice->form($target, $label, $method, $cancelAction, $options);
+
+		$inputs = $form->inputs();
+
+		{{# dependencies }}
+		${{ camelCase }} = ['' => ''] + $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id');
+		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }}, ['placeholder' => '{{ title }}']);
+		{{/ dependencies }}
+		{{# inputs }}
+		$inputs->{{ type }}('{{ name }}', '{{ title }}');
+		{{/ inputs }}
+
+		return $form;
+	}
+
+    protected function validate($data)
+    {
+		// TODO: apply custom validation here.
+        return true;
+    }
+}

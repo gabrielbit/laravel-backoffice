@@ -1,0 +1,2 @@
+I'm not a PHP file.
+I'm here to make sure that the API finder doesn't end up parsing non-php files.

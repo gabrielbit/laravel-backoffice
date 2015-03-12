@@ -1,7 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Generator\Services;
+
 use Digbang\L4Backoffice\Generator\Model\ControllerInput;
-use Digbang\L4Backoffice\Support\Collection;
-use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 
 /**
  * Class ControllerGenerator
@@ -9,58 +8,154 @@ use Doctrine\DBAL\Schema\ForeignKeyConstraint;
  */
 class ControllerGenerator
 {
-	protected $generator;
-	protected $modelFinder;
+	/**
+	 * @type array
+	 */
+	private $validMethods = [
+		'list', 'create', 'read', 'update', 'delete', 'export'
+	];
 
-	function __construct(Generator $generator, ModelFinder $modelFinder)
+	/**
+	 * @type Generator
+	 */
+	private $generator;
+
+	/**
+	 * @type string
+	 */
+	private $templatePath;
+
+	/**
+	 * @type string
+	 */
+	private $controllerDir;
+
+	/**
+	 * @type string
+	 */
+	private $controllerNamespace;
+
+	/**
+	 * @type string
+	 */
+	private $api;
+
+	/**
+	 * @type array
+	 */
+	private $methods = [];
+
+	/**
+	 * @type ControllerInput
+	 */
+	private $controllerInput;
+
+	/**
+	 * @param Generator       $generator
+	 * @param ControllerInput $controllerInput
+	 */
+	public function __construct(Generator $generator, ControllerInput $controllerInput)
 	{
 		$this->generator = $generator;
-		$this->modelFinder = $modelFinder;
+		$this->controllerInput = $controllerInput;
 	}
 
-	public function generate($tableName, $templatePath, $controllersDirPath, $namespace, $entityNamespace)
+	/**
+	 * @param string $templatePath
+	 *
+	 * @return $this
+	 */
+	public function fromTemplate($templatePath)
 	{
-		$className = \Str::studly(\Str::singular($tableName));
-		$dependencies = [];
-
-		$columns = $this->modelFinder->columns($tableName);
-		$foreignKeys = $this->modelFinder->foreignKeys($tableName);
-
-		foreach ($columns as $columnDecorator)
+		if (! file_exists($templatePath))
 		{
-			/* @var $column \Doctrine\DBAL\Schema\Column */
-			$column = $columnDecorator->getColumn();
-
-			/* @var $foreignKey \Doctrine\DBAL\Schema\ForeignKeyConstraint */
-			$foreignKey = $foreignKeys->first(function($key, ForeignKeyConstraint $foreignKey) use ($column){
-				return in_array($column->getName(), $foreignKey->getLocalColumns());
-			});
-
-			if ($foreignKey)
-			{
-				foreach ($foreignKey->getLocalColumns() as $localColumn)
-				{
-					$dependencies[$localColumn] = [
-						'columns' => new Collection($this->modelFinder->columns($foreignKey->getForeignTableName())),
-						'table' => $foreignKey->getForeignTableName()
-					];
-				}
-			}
+			throw new \UnexpectedValueException("Given template file $templatePath does not exist.");
 		}
 
-		$destinationPath = $controllersDirPath . DIRECTORY_SEPARATOR . $className . 'Controller.php';
+		$this->templatePath = $templatePath;
+
+		return $this;
+	}
+
+	/**
+	 * @param string $controllerDir
+	 *
+	 * @return $this
+	 */
+	public function toDir($controllerDir)
+	{
+		if (! is_dir($controllerDir))
+		{
+			throw new \UnexpectedValueException("Given directory $controllerDir is not a directory.");
+		}
+
+		$this->controllerDir = $controllerDir;
+
+		return $this;
+	}
+
+	public function inNamespace($controllerNamespace)
+	{
+		$this->controllerNamespace = $controllerNamespace;
+
+		return $this;
+	}
+
+	/**
+	 * @param string $api
+	 *
+	 * @return $this
+	 */
+	public function withApi($api)
+	{
+		$this->api = $api;
+		$this->methods = [];
+
+		return $this;
+	}
+
+	/**
+	 * @param string $method
+	 * @param string $apiMethod
+	 * @param array  $params
+	 *
+	 * @return $this
+	 */
+	public function addMethod($method, $apiMethod, array $params = [])
+	{
+		$method = strtolower($method);
+		if (! in_array($method, $this->validMethods))
+		{
+			throw new \UnexpectedValueException("Method $method does not exist.");
+		}
+
+		$this->methods[$method] = [$apiMethod, $params];
+
+		return $this;
+	}
+
+	public function generate()
+	{
+		$this->controllerInput->reset();
+
+		$className = preg_replace('/BackofficeApi$/', '', class_basename($this->api));
+
+		$destinationPath = $this->controllerDir . DIRECTORY_SEPARATOR . $className . 'Controller.php';
+
+		$this->controllerInput->setClassName($className);
+		$this->controllerInput->setApi($this->api);
+		$this->controllerInput->setNamespace($this->controllerNamespace);
+
+		foreach ($this->methods as $method => $data)
+		{
+			list($apiMethod, $params) = $data;
+			$this->controllerInput->addMethod($method, $apiMethod, $params);
+		}
 
 		$this->generator->make(
-			$templatePath,
+			$this->templatePath,
 			$destinationPath,
-			new ControllerInput(
-				$namespace,
-				$tableName,
-				$entityNamespace,
-				$className,
-				$columns,
-				$dependencies
-			)
+			$this->controllerInput
 		);
 	}
 }
