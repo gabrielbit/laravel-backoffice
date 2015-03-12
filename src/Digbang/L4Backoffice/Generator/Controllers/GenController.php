@@ -123,7 +123,7 @@ class GenController extends Controller
 
 			$collection = $this->inputFactory->collection();
 
-			foreach (['LIST', 'CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT'] as $crudMethod)
+			foreach (['index', 'create', 'read', 'update', 'delete', 'export'] as $crudMethod)
 			{
 				$collection->text($crudMethod);
 				$collection->dropdown("apis[$api][$crudMethod]", $crudMethod . ' Method', $methodsDropdown);
@@ -165,7 +165,12 @@ class GenController extends Controller
 			->toDir($controllersDir)
 			->inNamespace($controllerNamespace);
 
-		foreach ($this->request->get('apis') as $api => $methods)
+		$apis = $this->request->get('apis');
+
+		$controllers = [];
+		$apisInControllers = [];
+
+		foreach ($apis as $api => $methods)
 		{
 			$this->generator->withApi($api);
 
@@ -181,7 +186,9 @@ class GenController extends Controller
 				$this->generator->addMethod($method, $apiMethod, $params);
 			}
 
-			$this->generator->generate();
+			$controller = $this->generator->generate();
+			$controllers[$controller] = array_keys($methods);
+			$apisInControllers[$controller] = $api;
 		}
 
 		$title = 'Gen complete';
@@ -195,7 +202,9 @@ class GenController extends Controller
 		// Return
 		return $this->view->make('l4-backoffice::gen.generation', [
 			'title' => $title,
-			'breadcrumb' => $breadcrumb
+			'breadcrumb' => $breadcrumb,
+			'controllers' => $controllers,
+			'apis' => $apisInControllers
 		]);
 	}
 
@@ -205,11 +214,11 @@ class GenController extends Controller
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			'Home' => route('backoffice.index'),
-			'Gen' => action('Digbang\\L4Backoffice\\Generator\\Controllers\\GenController@modelSelection'),
+			'Gen' => action(GenController::class . '@modelSelection'),
 			$title
 		]);
 
-		return \View::make('l4-backoffice::gen.generation', [
+		return View::make('l4-backoffice::gen.generation', [
 			'title' => $title,
 			'breadcrumb' => $breadcrumb,
 			'tables' => ['foos', 'bars', 'bazes', 'a_really_long_tables'],

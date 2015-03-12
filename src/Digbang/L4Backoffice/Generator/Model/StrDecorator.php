@@ -58,6 +58,14 @@ class StrDecorator
 	}
 
 	/**
+	 * @return static
+	 */
+	public function camel()
+	{
+		return new static(Str::camel($this->string));
+	}
+
+	/**
 	 * @return string
 	 */
 	public function __toString()

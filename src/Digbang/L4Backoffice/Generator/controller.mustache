@@ -1,4 +1,4 @@
-<?php namespace {{ namespace }};
+<?php namespace {{ theNamespace }};
 
 use {{ api.fqcn }};
 use Digbang\FontAwesome\Facade as FontAwesome;
@@ -41,6 +41,7 @@ class {{ className.studly }}Controller extends Controller
 
     /**
      * @type {{ api.basename }}
+     */
     private $api;
 
 	/**
@@ -82,32 +83,33 @@ class {{ className.studly }}Controller extends Controller
 	}
 
 	{{# methods.hasList }}
+	{{# methods.list }}
 	/**
 	 * @return \Illuminate\View\View
 	 */
 	public function index()
 	{
 		$listing = $this->backoffice->listing([
-			{{# methods.list.params }}
+			{{# params }}
 			'{{ name }}' => '{{ name.title }}',
-			{{/ methods.list.params }}
+			{{/ params }}
 		]);
 
 		$columns = $listing->columns();
 		$columns
 			->hide([])
 			->sortable([
-				{{# methods.list.params }}
+				{{# params }}
 				'{{ name }}',
-				{{/ methods.list.params }}
+				{{/ params }}
 			]);
 
 		$filters = $listing->filters();
 
 		// Here we add filters to the list
-		{{# methods.list.params }}
+		{{# params }}
 		$filters->{{ input }}('{{ name }}', '{{ name.title }}', ['class' => 'form-control']);
-		{{/ methods.list.params }}
+		{{/ params }}
 
 		// List actions appear at the top left corner of the listing's box
 		$listActions = $this->backoffice->actions();
@@ -198,10 +200,10 @@ class {{ className.studly }}Controller extends Controller
 
 		$listing->setRowActions($rowActions);
 
-		$results = $this->api->{{ methods.list.apiMethod }}(...$this->request->only([
-			{{# methods.list.params }}
+		$results = $this->api->{{ apiMethod }}(...$this->request->only([
+			{{# params }}
 			'{{ name }}',
-			{{/ methods.list.params }}
+			{{/ params }}
 		]));
 
 		$listing->fill($results);
@@ -217,9 +219,11 @@ class {{ className.studly }}Controller extends Controller
 			'breadcrumb' => $breadcrumb
 		]);
 	}
+	{{/ methods.list }}
 	{{/ methods.hasList }}
 
 	{{# methods.hasCreate }}
+	{{# methods.create }}
 	/**
 	 * @return \Illuminate\View\View
 	 */
@@ -237,9 +241,9 @@ class {{ className.studly }}Controller extends Controller
 		$inputs = $form->inputs();
 
 		// TODO: fill dropdowns with corresponding options
-		{{# methods.create.params }}
+		{{# params }}
 		$inputs->{{ input }}('{{ name }}', '{{ name.title }}', []);
-		{{/ methods.create.params }}
+		{{/ params }}
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			trans('l4-backoffice::default.home') => 'backoffice.index',
@@ -257,16 +261,16 @@ class {{ className.studly }}Controller extends Controller
 	public function store()
 	{
 		$data = $this->request->only([
-        {{# methods.create.params }}
+        {{# params }}
             '{{ name }}',
-        {{/ methods.create.params }}
+        {{/ params }}
         ]);
 
 		try
 		{
 			$this->validate($data);
 
-			${{ className.camel }} = $this->api->{{ methods.create.apiMethod }}(...$data);
+			${{ className.camel }} = $this->api->{{ apiMethod }}(...$data);
 
 			// TODO: Gen has assumed a getId() method on your entity. Change it as needed.
 			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', ${{ className.camel }}->getId()));
@@ -276,15 +280,17 @@ class {{ className.studly }}Controller extends Controller
 			return Redirect::back()->withInput()->withErrors($e->getErrors());
 		}
 	}
+	{{/ methods.create }}
 	{{/ methods.hasCreate }}
 
 	{{# methods.hasRead }}
+	{{# methods.read }}
 	/**
 	 * @return \Illuminate\View\View
 	 */
 	public function show($id)
 	{
-		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+		${{ className.camel }} = $this->api->{{ apiMethod }}($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
 			trans('l4-backoffice::default.home') => 'backoffice.index',
@@ -294,9 +300,14 @@ class {{ className.studly }}Controller extends Controller
 
 		$data = [
 		{{# methods.hasList }}
-		{{# methods.list.params }}
+		{{# methods.list }}
+		{{# params }}
 			'{{ name.title }}' => ${{ className.camel }}->get{{ name.studly }}(),
-		{{/ methods.list.params }}
+		{{/ params }}
+		{{/ methods.list }}
+		{{/ methods.hasList }}
+		{{^ methods.hasList }}
+			// TODO: Fill this with your entity's data as Label => value
 		{{/ methods.hasList }}
 		];
 
@@ -343,16 +354,20 @@ class {{ className.studly }}Controller extends Controller
 			'topActions' => $topActions
 		]);
 	}
+	{{/ methods.read }}
 	{{/ methods.hasRead }}
 
 	{{# methods.hasUpdate }}
+	{{# methods.update }}
 	/**
 	 * @return \Illuminate\View\View
 	 */
 	public function edit($id)
 	{
 		{{# methods.hasRead }}
-		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+		{{# methods.read }}
+		${{ className.camel }} = $this->api->{{ apiMethod }}($id);
+		{{/ methods.read }}
 		{{/ methods.hasRead }}
 		{{^ methods.hasRead }}
 		// TODO: The gen assumed a find method here. Change it to whatever suits you.
@@ -361,21 +376,24 @@ class {{ className.studly }}Controller extends Controller
 
 		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
 
-		$form = $this->buildForm(
-			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.update', $id),
+		$form = $this->backoffice->form(
+			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.store'),
 			$label,
-			'PUT',
-			$this->secureUrl->bestRoute([
-				['backoffice.{{ className.snake.plural }}.show', $id],
-				'backoffice.{{ className.snake.plural }}.index',
-				'backoffice.index'
-			])
+			'POST',
+			$this->secureUrl->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
 		);
 
+		$inputs = $form->inputs();
+
+		// TODO: fill dropdowns with corresponding options
+		{{# params }}
+		$inputs->{{ input }}('{{ name }}', '{{ name.title }}', []);
+		{{/ params }}
+
 		$form->fill([
-		{{# methods.update.params }}
+		{{# params }}
 			'{{ name }}' => ${{ className.camel }}->get{{ name.studly }}(),
-		{{/methods.update.params}}
+		{{/ params }}
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -395,7 +413,9 @@ class {{ className.studly }}Controller extends Controller
 	public function update($id)
 	{
 		{{# methods.hasRead }}
-		${{ className.camel }} = $this->api->{{ methods.read.apiMethod }}($id);
+		{{# methods.read }}
+		${{ className.camel }} = $this->api->{{ apiMethod }}($id);
+		{{/ methods.read }}
 		{{/ methods.hasRead }}
 		{{^ methods.hasRead }}
 		// TODO: The gen assumed a find method here. Change it to whatever suits you.
@@ -403,9 +423,9 @@ class {{ className.studly }}Controller extends Controller
 		{{/ methods.hasRead }}
 
 		$data = $this->request->only([
-        {{# methods.update.params }}
+        {{# params }}
 			'{{ name }}',
-		{{/methods.update.params}}
+		{{/ params }}
         ]);
 
 		try
@@ -413,7 +433,7 @@ class {{ className.studly }}Controller extends Controller
 			// Validate the input
 			$this->validate($data);
 
-			$this->api->{{ methods.update.apiMethod }}(...$data);
+			$this->api->{{ apiMethod }}(...$data);
 
 			// Redirect to show
 			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', [$id]));
@@ -428,15 +448,17 @@ class {{ className.studly }}Controller extends Controller
 			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
 		}
 	}
+	{{/ methods.update }}
 	{{/ methods.hasUpdate }}
 
 	{{# methods.hasDelete }}
+	{{# methods.delete }}
 	public function destroy($id)
 	{
 		try
 		{
 			// Try to destroy the entity
-			$this->api->{{ methods.delete.apiMethod }}($id);
+			$this->api->{{ apiMethod }}($id);
 
 			// Redirect to the listing
 			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'))
@@ -451,28 +473,30 @@ class {{ className.studly }}Controller extends Controller
 			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
 		}
 	}
+	{{/ methods.delete }}
 	{{/ methods.hasDelete }}
 
 	{{# methods.hasExport }}
+	{{# methods.export }}
 	/**
 	 * @return void
 	 */
 	public function export()
 	{
 		$listing = $this->backoffice->listing([
-			{{# methods.export.params }}
+			{{# params }}
 			'{{ name }}' => '{{ name.title }}',
-			{{/ methods.export.params }}
+			{{/params}}
 		]);
 
 		$columns = $listing->columns();
 		$columns->hide([])->sortable([]);
 
-		$results = $this->api->{{ methods.export.apiMethod }}(...$this->request->only([
-			{{# methods.export.params }}
+		$results = $this->api->{{ apiMethod }}(...$this->request->only([
+			{{# params }}
 			'{{ name }}',
-			{{/ methods.export.params }}
-		]);
+			{{/ params }}
+		]));
 
 		$listing->fill($results);
 
@@ -489,28 +513,14 @@ class {{ className.studly }}Controller extends Controller
 			});
 		})->download('xls');
 	}
+	{{/ methods.export }}
 	{{/ methods.hasExport }}
 
-	protected function buildForm($target, $label, $method = 'POST', $cancelAction = '', $options = [])
-	{
-		$form = $this->backoffice->form($target, $label, $method, $cancelAction, $options);
-
-		$inputs = $form->inputs();
-
-		{{# dependencies }}
-		${{ camelCase }} = ['' => ''] + $this->{{ camelCase }}Repository->all()->lists('{{ titleGetter }}', 'id');
-		$inputs->dropdown('{{ column }}', '{{ title }}', ${{ camelCase }}, ['placeholder' => '{{ title }}']);
-		{{/ dependencies }}
-		{{# inputs }}
-		$inputs->{{ type }}('{{ name }}', '{{ title }}');
-		{{/ inputs }}
-
-		return $form;
-	}
-
-    protected function validate($data)
+	/**
+	 * @throws ValidationException
+     */
+    private function validate($data)
     {
 		// TODO: apply custom validation here.
-        return true;
     }
 }

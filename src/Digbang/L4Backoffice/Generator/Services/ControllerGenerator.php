@@ -12,7 +12,7 @@ class ControllerGenerator
 	 * @type array
 	 */
 	private $validMethods = [
-		'list', 'create', 'read', 'update', 'delete', 'export'
+		'index', 'create', 'read', 'update', 'delete', 'export'
 	];
 
 	/**
@@ -157,5 +157,7 @@ class ControllerGenerator
 			$destinationPath,
 			$this->controllerInput
 		);
+
+		return trim($this->controllerNamespace, ' \\') . '\\' . $className . 'Controller';
 	}
 }

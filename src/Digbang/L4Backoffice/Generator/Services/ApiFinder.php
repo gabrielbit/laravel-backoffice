@@ -83,7 +83,7 @@ class ApiFinder
 				    if (strpos($annotation, '$' . $parameter->getName()) !== false)
 				    {
 					    $annotation = trim(preg_replace('/ +/', ' ', $annotation));
-	                    list($type, $name) = explode(' ', $annotation, 2);
+	                    list($type, $name) = array_pad(explode(' ', $annotation, 2), 2, null);
 
 	                    if (strpos($type, '$') === false)
 	                    {

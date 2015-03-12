@@ -16,12 +16,12 @@ class ControllerInput
 	 */
 	private $data = [];
 
-	public function __construct(Methods $methods, StrDecorator $str, ClassName $api)
+	public function __construct(MethodCollection $methods, StrDecorator $str, ClassName $api)
 	{
 		$this->prototypes = [
-			'methods' => $methods,
-			'str'     => $str,
-			'api'     => $api
+			'methods'   => $methods,
+			'className' => $str,
+			'api'       => $api
 		];
 
 		$this->reset();
@@ -54,13 +54,23 @@ class ControllerInput
 		$this->data['namespace'] = $namespace;
 	}
 
-	public function __call($func, $args)
+	public function api()
 	{
-		if (array_key_exists($func, $this->data))
-		{
-			return $this->data[$func];
-		}
+		return $this->data['api'];
+	}
 
-		throw new \BadMethodCallException("Method $func does not exist.");
+	public function methods()
+	{
+		return $this->data['methods'];
+	}
+
+	public function theNamespace()
+	{
+		return $this->data['namespace'];
+	}
+
+	public function className()
+	{
+		return $this->data['className'];
 	}
 }

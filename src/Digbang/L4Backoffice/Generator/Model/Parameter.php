@@ -12,7 +12,7 @@ class Parameter
 	 */
 	private $name;
 
-	public function __construct($type, StrDecorator $name)
+	public function __construct(StrDecorator $name, $type)
 	{
 		$this->type = $type;
 		$this->name = $name;
