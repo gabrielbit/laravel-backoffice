@@ -57,19 +57,19 @@ class ControllerGeneratorSpec extends ObjectBehavior
 
 	function it_should_be_fluent_with_adding_methods()
 	{
-		$this->addMethod('list', 'search', ['a', 'b', 'c'])->shouldReturn($this);
+		$this->addMethod('index', 'search', ['a', 'b', 'c'])->shouldReturn($this);
 	}
 
 	/**
-	 * CRUDLE: Create, Read, Update, Delete, List and Export
+	 * CRUDIE: Create, Read, Update, Delete, Index and Export
 	 */
-	function it_should_validate_crudle_methods()
+	function it_should_validate_crudie_methods()
 	{
 		$this->addMethod('create', 'build',   ['a', 'b', 'c'])->shouldReturn($this);
 		$this->addMethod('read',   'find',    ['a', 'b', 'c'])->shouldReturn($this);
 		$this->addMethod('UPDATE', 'save',    ['a', 'b', 'c'])->shouldReturn($this);
 		$this->addMethod('DelEtE', 'destroy', ['a', 'b', 'c'])->shouldReturn($this);
-		$this->addMethod('list',   'search',  ['a', 'b', 'c'])->shouldReturn($this);
+		$this->addMethod('index',   'search',  ['a', 'b', 'c'])->shouldReturn($this);
 		$this->addMethod('eXpOrT', 'search',  ['a', 'b', 'c'])->shouldReturn($this);
 
 		$this->shouldThrow(\UnexpectedValueException::class)

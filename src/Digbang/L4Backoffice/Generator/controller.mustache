@@ -82,27 +82,21 @@ class {{ className.studly }}Controller extends Controller
 		$this->api        = $api;
 	}
 
-	{{# methods.hasList }}
-	{{# methods.list }}
+	{{# methods.hasIndex }}
+	{{# methods.index }}
 	/**
 	 * @return \Illuminate\View\View
 	 */
 	public function index()
 	{
 		$listing = $this->backoffice->listing([
-			{{# params }}
-			'{{ name }}' => '{{ name.title }}',
-			{{/ params }}
+			// TODO: Fill this with columns as key => Label
 		]);
 
 		$columns = $listing->columns();
 		$columns
-			->hide([])
-			->sortable([
-				{{# params }}
-				'{{ name }}',
-				{{/ params }}
-			]);
+			->hide([ /* array of keys to hide */ ])
+			->sortable([ /* array of keys that can be sorted */ ]);
 
 		$filters = $listing->filters();
 
@@ -219,8 +213,8 @@ class {{ className.studly }}Controller extends Controller
 			'breadcrumb' => $breadcrumb
 		]);
 	}
-	{{/ methods.list }}
-	{{/ methods.hasList }}
+	{{/ methods.index }}
+	{{/ methods.hasIndex }}
 
 	{{# methods.hasCreate }}
 	{{# methods.create }}
@@ -299,16 +293,7 @@ class {{ className.studly }}Controller extends Controller
 		]);
 
 		$data = [
-		{{# methods.hasList }}
-		{{# methods.list }}
-		{{# params }}
-			'{{ name.title }}' => ${{ className.camel }}->get{{ name.studly }}(),
-		{{/ params }}
-		{{/ methods.list }}
-		{{/ methods.hasList }}
-		{{^ methods.hasList }}
 			// TODO: Fill this with your entity's data as Label => value
-		{{/ methods.hasList }}
 		];
 
 		$actions    = $this->backoffice->actions();
@@ -325,7 +310,7 @@ class {{ className.studly }}Controller extends Controller
 			);
 		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 		{{/ methods.hasEdit }}
-		{{# methods.hasList }}
+		{{# methods.hasIndex }}
 
 		try {
 			$actions->link(
@@ -343,7 +328,7 @@ class {{ className.studly }}Controller extends Controller
 				FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back')
 			);
 		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
-		{{/ methods.hasList }}
+		{{/ methods.hasIndex }}
 
 		return View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
