@@ -1,5 +1,6 @@
 <?php namespace spec\Digbang\L4Backoffice\Actions;
 
+use Digbang\L4Backoffice\Actions\ActionBuilderWrapper;
 use Digbang\L4Backoffice\Actions\ActionFactory;
 use Digbang\L4Backoffice\Controls\ControlFactory;
 use Illuminate\Support\Collection;
@@ -22,5 +23,10 @@ class CollectionSpec extends ObjectBehavior
 	function it_should_be_traversable()
 	{
 		$this->shouldHaveType('Traversable');
+	}
+
+	function it_should_let_me_build_actions()
+	{
+		$this->build()->shouldBeAnInstanceOf(ActionBuilderWrapper::class);
 	}
 }

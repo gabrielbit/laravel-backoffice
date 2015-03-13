@@ -71,4 +71,15 @@ class Collection implements \IteratorAggregate, \Countable
 	{
 		return $this->collection->count();
 	}
+
+	/**
+	 * @return ActionBuilderWrapper
+	 */
+	public function build()
+	{
+		return new ActionBuilderWrapper(
+			new ActionBuilder($this->factory),
+			$this
+		);
+	}
 }

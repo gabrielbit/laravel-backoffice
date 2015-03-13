@@ -15,8 +15,9 @@ class ActionFactory
 		$this->request = $request;
 	}
 
-	public function link($target, $label = null, $options = [], $view = 'l4-backoffice::actions.link', $icon = null)
+	public function link($target, $label = null, $options = [], $view = null, $icon = null)
     {
+	    $view = $view ?: 'l4-backoffice::actions.link';
         $action = new Action($this->controlFactory->make($view, $label, $options), $target, $icon);
 
 	    if ($this->request && ! $target instanceof \Closure)
@@ -45,7 +46,6 @@ class ActionFactory
 			$icon
 		);
 	}
-
 
 	public function collection()
 	{
