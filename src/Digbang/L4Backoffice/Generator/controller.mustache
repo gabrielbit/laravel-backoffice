@@ -1,13 +1,14 @@
 <?php namespace {{ theNamespace }};
 
 use {{ api.fqcn }};
-use Digbang\FontAwesome\Facade as FontAwesome;
+use Digbang\FontAwesome\Facade as fa;
 use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -32,7 +33,7 @@ class {{ className.studly }}Controller extends Controller
     /**
      * @type \Digbang\Security\Urls\SecureUrl
      */
-    private $secureUrl;
+    private $url;
 
     /**
      * @type Request
@@ -59,7 +60,7 @@ class {{ className.studly }}Controller extends Controller
 {{# methods.hasExport }}
 	 * @param Excel $excel,
 {{/ methods.hasExport }}
-     * @param SecureUrl $secureUrl
+     * @param SecureUrl $url
      * @param Request $request
      * @param {{ api.basename }} $api
      */
@@ -68,7 +69,7 @@ class {{ className.studly }}Controller extends Controller
 {{# methods.hasExport }}
 		Excel $excel,
 {{/ methods.hasExport }}
-		SecureUrl $secureUrl,
+		SecureUrl $url,
 		Request $request,
 		{{ api.basename }} $api
 	)
@@ -77,7 +78,7 @@ class {{ className.studly }}Controller extends Controller
 {{# methods.hasExport }}
 		$this->excel      = $excel;
 {{/ methods.hasExport }}
-		$this->secureUrl  = $secureUrl;
+		$this->url        = $url;
 		$this->request    = $request;
 		$this->api        = $api;
 	}
@@ -109,27 +110,27 @@ class {{ className.studly }}Controller extends Controller
 		$listActions = $this->backoffice->actions();
 		{{# methods.hasCreate }}
 
-		try {
-            $listActions->link(
-				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.create'),
-				FontAwesome::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]),
-				[
-					'class' => 'btn btn-primary'
-				]
-			);
-        } catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		try
+		{
+			$listActions->build()
+                ->to($this->url->route('backoffice.{{ className.snake.plural }}.create'))
+				->labeled(fa::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]))
+				->addClass('btn btn-primary')
+				->asLink();
+        }
+		catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 		{{/ methods.hasCreate }}
 		{{# methods.hasExport }}
 
-        try {
-            $listActions->link(
-                $this->secureUrl->route('backoffice.{{ className.snake.plural }}.export', $this->request->all()),
-                FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'),
-                [
-                    'class' => 'btn btn-success'
-                ]
-            );
-        } catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+        try
+        {
+            $listActions->build()
+                ->to($this->url->route('backoffice.{{ className.snake.plural }}.export', $this->request->all()))
+                ->labeled(fa::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'))
+                ->addClass('btn btn-success')
+                ->asLink();
+        }
+        catch (PermissionException $e) { /* User doesn't have permission to do this */ }
         {{/ methods.hasExport }}
 
 		$listing->setActions($listActions);
@@ -139,66 +140,51 @@ class {{ className.studly }}Controller extends Controller
 		{{# methods.hasRead }}
 
 		// Link to the READ route
-		$rowActions->link(
-			function(\Illuminate\Support\Collection $row) {
-				try {
-					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', $row['id']);
-				} catch (PermissionException $e) { return false; }
-			},
-			FontAwesome::icon('eye'),
-			[
-				'data-toggle'    => 'tooltip',
-				'data-placement' => 'top',
-				'title'          => trans('l4-backoffice::default.show')
-			]
-		);
+		$rowActions->build()
+			->to(function(Collection $row) {
+				return $this->url->route('backoffice.{{ className.snake.plural }}.show', $row['id']);
+			})
+			->labeled(fa::icon('eye'))
+			->addDataToggle('tooltip')
+			->addDataPlacement('top')
+			->addTitle(trans('l4-backoffice::default.show'))
+			->asLink();
 		{{/ methods.hasRead }}
 		{{# methods.hasUpdate }}
 
 		// Link to the EDIT route
-		$rowActions->link(
-			function(\Illuminate\Support\Collection $row){
-				try {
-					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.edit', $row['id']);
-				} catch (PermissionException $e) { return false; }
-			},
-			FontAwesome::icon('edit'),
-			[
-				'class'          => 'text-success',
-				'data-toggle'    => 'tooltip',
-				'data-placement' => 'top',
-				'title'          => trans('l4-backoffice::default.edit')
-			]
-		);
+		$rowActions->build()
+			->to(function(\Illuminate\Support\Collection $row) {
+				return $this->url->route('backoffice.{{ className.snake.plural }}.edit', $row['id']);
+			})
+			->labeled(fa::icon('edit'))
+			->addClass('text-success')
+			->addDataToggle('tooltip')
+			->addDataPlacement('top')
+			->addTitle(trans('l4-backoffice::default.edit'))
+			->asLink();
 		{{/ methods.hasUpdate }}
 		{{# methods.hasDelete }}
 
 		// Form (link) to the DELETE route
-		$rowActions->form(
-			function(\Illuminate\Support\Collection $row){
-				try {
-					return $this->secureUrl->route('backoffice.{{ className.snake.plural }}.destroy', $row['id']);
-				} catch (PermissionException $e) { return false; }
-			},
-			FontAwesome::icon('times'),
-			'DELETE',
-			[
-				'class'          => 'text-danger',
-				'data-toggle'    => 'tooltip',
-				'data-placement' => 'top',
-				'data-confirm'   => trans('l4-backoffice::default.delete-confirm'),
-				'title'          => trans('l4-backoffice::default.delete')
-			]
-		);
+		$rowActions->build()
+			->to(function(\Illuminate\Support\Collection $row){
+				return $this->url->route('backoffice.{{ className.snake.plural }}.destroy', $row['id']);
+			})
+			->labeled(fa::icon('times'))
+			->addClass('text-danger')
+			->addDataToggle('tooltip')
+			->addDataPlacement('top')
+			->addDataConfirm(trans('l4-backoffice::default.delete-confirm'))
+			->addTitle(trans('l4-backoffice::default.delete'))
+			->asForm('DELETE');
 		{{/ methods.hasDelete }}
 
 		$listing->setRowActions($rowActions);
 
-		$results = $this->api->{{ apiMethod }}(...$this->request->only([
-			{{# params }}
-			'{{ name }}',
-			{{/ params }}
-		]));
+		$results = $this->api->{{ apiMethod }}(
+			// TODO: Fill in with your parameters
+		);
 
 		$listing->fill($results);
 
@@ -226,10 +212,10 @@ class {{ className.studly }}Controller extends Controller
 		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->backoffice->form(
-			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.store'),
+			$this->url->route('backoffice.{{ className.snake.plural }}.store'),
 			$label,
 			'POST',
-			$this->secureUrl->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
+			$this->url->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
 		);
 
 		$inputs = $form->inputs();
@@ -267,7 +253,7 @@ class {{ className.studly }}Controller extends Controller
 			${{ className.camel }} = $this->api->{{ apiMethod }}(...$data);
 
 			// TODO: Gen has assumed a getId() method on your entity. Change it as needed.
-			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', ${{ className.camel }}->getId()));
+			return Redirect::to($this->url->route('backoffice.{{ className.snake.plural }}.show', ${{ className.camel }}->getId()));
 		}
 		catch (ValidationException $e)
 		{
@@ -300,34 +286,36 @@ class {{ className.studly }}Controller extends Controller
 		$topActions = $this->backoffice->actions();
 		{{# methods.hasEdit }}
 
-		try {
-			$actions->link(
-				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.edit', $id),
-				FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'),
-				[
-					'class' => 'btn btn-success'
-				]
-			);
-		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		try
+		{
+			$actions->build()
+				->to($this->url->route('backoffice.{{ className.snake.plural }}.edit', $id))
+				->labeled(fa::icon('edit') . ' ' . trans('l4-backoffice::default.edit'))
+				->addClass('btn btn-success')
+				->asLink();
+		}
+		catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 		{{/ methods.hasEdit }}
 		{{# methods.hasIndex }}
 
-		try {
-			$actions->link(
-				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'),
-				trans('l4-backoffice::default.back'),
-				[
-					'class' => 'btn btn-default'
-				]
-			);
-		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		try
+		{
+			$actions->build()
+				->to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
+				->labeled(trans('l4-backoffice::default.back'))
+				->addClass('btn btn-default')
+				->asLink();
+		}
+		catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 
-		try {
-			$topActions->link(
-				$this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'),
-				FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back')
-			);
-		} catch (PermissionException $e) { /* User doesn't have permission to do this */ }
+		try
+		{
+			$topActions->build()
+				->to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
+				->labeled(fa::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'))
+				->asLink();
+		}
+		catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 		{{/ methods.hasIndex }}
 
 		return View::make('l4-backoffice::show', [
@@ -362,10 +350,10 @@ class {{ className.studly }}Controller extends Controller
 		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
 
 		$form = $this->backoffice->form(
-			$this->secureUrl->route('backoffice.{{ className.snake.plural }}.store'),
+			$this->url->route('backoffice.{{ className.snake.plural }}.store'),
 			$label,
 			'POST',
-			$this->secureUrl->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
+			$this->url->bestRoute(['backoffice.{{ className.snake.plural }}.index', 'backoffice.index'])
 		);
 
 		$inputs = $form->inputs();
@@ -421,7 +409,7 @@ class {{ className.studly }}Controller extends Controller
 			$this->api->{{ apiMethod }}(...$data);
 
 			// Redirect to show
-			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.show', [$id]));
+			return Redirect::to($this->url->route('backoffice.{{ className.snake.plural }}.show', [$id]));
 		}
 		catch (ValidationException $e)
 		{
@@ -430,7 +418,7 @@ class {{ className.studly }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
 		}
 	}
 	{{/ methods.update }}
@@ -446,7 +434,7 @@ class {{ className.studly }}Controller extends Controller
 			$this->api->{{ apiMethod }}($id);
 
 			// Redirect to the listing
-			return Redirect::to($this->secureUrl->route('backoffice.{{ className.snake.plural }}.index'))
+			return Redirect::to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
 				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
 		}
 		catch (ValidationException $e)
@@ -455,7 +443,7 @@ class {{ className.studly }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
 		}
 	}
 	{{/ methods.delete }}
