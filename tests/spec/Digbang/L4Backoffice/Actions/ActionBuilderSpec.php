@@ -89,13 +89,14 @@ class ActionBuilderSpec extends ObjectBehavior
 		$target = 'some/url';
 		$label = 'Go, go, go!';
 		$method = 'PUT';
+		$view = 'my_form_view';
 		$options = [
 			'class' => 'form-control',
 			'rel' => 'link',
 			'data-confirm' => 'Really?'
 		];
 
-		$actionFactory->form($target, $label, $method, $options)
+		$actionFactory->form($target, $label, $method, $options, $view)
 			->shouldBeCalled()
 			->willReturn($action);
 
@@ -103,6 +104,7 @@ class ActionBuilderSpec extends ObjectBehavior
 		$link = $this
 			->to($target)
 			->labeled($label)
+			->view($view)
 			->addClass($options['class'])
 			->addRel($options['rel'])
 			->addDataConfirm($options['data-confirm'])

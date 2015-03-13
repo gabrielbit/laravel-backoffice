@@ -28,12 +28,13 @@ class ActionFactory
 	    return $action;
     }
 
-    public function form($target, $label, $method = 'POST', $options = [])
+    public function form($target, $label, $method = 'POST', $options = [], $view = null)
     {
+	    $view = $view ?: 'l4-backoffice::actions.form';
 	    $options['class'] = $this->uniqueClasses(array_get($options, 'class', ''), ['btn-action']);
 
 	    return new Form(
-		    $this->controlFactory->make('l4-backoffice::actions.form', $label, $options),
+		    $this->controlFactory->make($view, $label, $options),
 		    $target,
 		    $method);
     }

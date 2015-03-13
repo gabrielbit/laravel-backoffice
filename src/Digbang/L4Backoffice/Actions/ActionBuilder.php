@@ -135,7 +135,8 @@ class ActionBuilder implements ActionBuilderInterface
 			$this->target,
 			$this->label,
 			$method,
-			$this->options
+			$this->options,
+			$this->view
 		);
 	}
 
