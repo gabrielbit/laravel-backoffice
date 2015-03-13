@@ -1,6 +1,4 @@
-<?php
-
-namespace Digbang\L4Backoffice\Actions;
+<?php namespace Digbang\L4Backoffice\Actions;
 
 /**
  * Class ActionBuilder
