@@ -53,4 +53,10 @@ interface ActionBuilderInterface
 	 * @return Action
 	 */
 	public function asLink();
+
+	/**
+	 * @param string $method
+	 * @return Action
+	 */
+	public function asForm($method = 'POST');
 }

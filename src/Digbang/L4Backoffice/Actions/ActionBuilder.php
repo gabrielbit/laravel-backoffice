@@ -125,6 +125,21 @@ class ActionBuilder implements ActionBuilderInterface
 	}
 
 	/**
+	 * @param string $method
+	 *
+	 * @return Action
+	 */
+	public function asForm($method = 'POST')
+	{
+		return $this->factory->form(
+			$this->target,
+			$this->label,
+			$method,
+			$this->options
+		);
+	}
+
+	/**
 	 * @param string $func
 	 * @param array $args
 	 *

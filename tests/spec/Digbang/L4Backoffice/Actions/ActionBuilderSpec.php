@@ -83,4 +83,31 @@ class ActionBuilderSpec extends ObjectBehavior
 
 		$link->shouldBe($action);
 	}
+
+	function it_should_let_me_build_forms(ActionFactory $actionFactory, ActionInterface $action)
+	{
+		$target = 'some/url';
+		$label = 'Go, go, go!';
+		$method = 'PUT';
+		$options = [
+			'class' => 'form-control',
+			'rel' => 'link',
+			'data-confirm' => 'Really?'
+		];
+
+		$actionFactory->form($target, $label, $method, $options)
+			->shouldBeCalled()
+			->willReturn($action);
+
+
+		$link = $this
+			->to($target)
+			->labeled($label)
+			->addClass($options['class'])
+			->addRel($options['rel'])
+			->addDataConfirm($options['data-confirm'])
+			->asForm($method);
+
+		$link->shouldBe($action);
+	}
 }

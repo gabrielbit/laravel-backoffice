@@ -113,4 +113,18 @@ class ActionBuilderWrapper implements ActionBuilderInterface
 
 		return $this;
 	}
+
+	/**
+	 * @param string $method
+	 *
+	 * @return Action
+	 */
+	public function asForm($method = 'POST')
+	{
+		$form = $this->actionBuilder->asForm($method);
+
+		$this->actionCollection->add($form);
+
+		return $form;
+	}
 }
