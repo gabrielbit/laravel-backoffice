@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Support\Collection as LaravelCollection;
 
 class Action implements ActionInterface, ControlInterface
@@ -110,7 +111,15 @@ class Action implements ActionInterface, ControlInterface
 
 		if ($target instanceof \Closure)
 		{
-			$target = $target(new LaravelCollection($row));
+			try
+			{
+				$target = $target(new LaravelCollection($row));
+			}
+			catch (PermissionException $e)
+			{
+				// We'll assume that actions may be subject to permissions here
+				$target = false;
+			}
 
 			if ($target === false)
 			{
