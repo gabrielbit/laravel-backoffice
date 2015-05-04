@@ -38,6 +38,13 @@ class ActionBuilderSpec extends ObjectBehavior
 		$this->add('rel', 'nav')->shouldReturn($this);
 	}
 
+	function it_should_allow_callback_while_accumulating_html_attributes()
+	{
+		$this->add('onsubmit', function($row){
+			return 'alert(' . $row['message'] . '); return false;';
+		})->shouldReturn($this);
+	}
+
 	function it_should_accumulate_html_attributes_magically()
 	{
 		$this->addClass('form-control')->shouldReturn($this);

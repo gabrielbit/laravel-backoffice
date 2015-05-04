@@ -128,6 +128,15 @@ class Action implements ActionInterface, ControlInterface
 			}
 		}
 
+		$options = $this->options();
+		foreach ($options as $key => $option)
+		{
+			if ($option instanceof \Closure)
+			{
+				$options->put($key, $option(new LaravelCollection($row)));
+			}
+		}
+
 		return $this->renderTarget($target);
 	}
 
