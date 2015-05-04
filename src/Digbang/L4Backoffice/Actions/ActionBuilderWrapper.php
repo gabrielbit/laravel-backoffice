@@ -88,6 +88,8 @@ class ActionBuilderWrapper implements ActionBuilderInterface
 	public function add($attribute, $value)
 	{
 		$this->actionBuilder->add($attribute, $value);
+
+		return $this;
 	}
 
 	/**
