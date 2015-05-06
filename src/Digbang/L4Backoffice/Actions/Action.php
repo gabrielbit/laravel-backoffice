@@ -115,6 +115,11 @@ class Action implements ActionInterface, ControlInterface
 
 	protected function renderTarget(ControlInterface $control, $target, $icon, $isActive)
 	{
+		if ($target === false)
+		{
+			return '';
+		}
+
 		return $control->render()->with([
 			'target'   => $target,
 			'icon'     => $icon,
