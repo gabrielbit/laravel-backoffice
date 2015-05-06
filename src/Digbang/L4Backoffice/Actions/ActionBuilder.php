@@ -1,5 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Actions;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Collection as LaravelCollection;
 use Digbang\L4Backoffice\Support\EvaluatorTrait;
 
 /**
@@ -121,7 +121,7 @@ class ActionBuilder implements ActionBuilderInterface
 	{
 		if ($previous instanceof \Closure || $value instanceof \Closure)
 		{
-			return function(Collection $row) use ($previous, $value) {
+			return function(LaravelCollection $row) use ($previous, $value) {
 				return $this->evaluate($previous, $row) . ' ' . $this->evaluate($value, $row);
 			};
 		}
