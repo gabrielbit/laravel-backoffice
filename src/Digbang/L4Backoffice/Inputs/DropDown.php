@@ -1,4 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Inputs;
+
 use Digbang\L4Backoffice\Controls\ControlInterface;
 
 /**
@@ -15,7 +16,6 @@ class DropDown extends Input implements InputInterface
 
 		$this->setData($data);
 	}
-
 
 	/**
 	 * @param mixed $data

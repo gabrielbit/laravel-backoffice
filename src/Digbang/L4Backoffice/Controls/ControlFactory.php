@@ -13,12 +13,11 @@ class ControlFactory
 
 	public function make($view, $label, $options = [])
 	{
-		$control = new Control($this->viewFactory);
-
-		$control->setView($view);
-		$control->setLabel($label);
-		$control->setOptions($options);
-
-		return $control;
+		return new Control(
+			$this->viewFactory,
+			$view,
+			$label,
+			$options
+		);
 	}
 } 

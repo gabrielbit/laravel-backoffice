@@ -13,6 +13,9 @@ use Doctrine\DBAL\Types\Type;
  */
 class Collection implements \IteratorAggregate
 {
+	/**
+	 * @type \Illuminate\Support\Collection
+	 */
 	protected $collection;
 	protected $factory;
 
@@ -153,11 +156,17 @@ class Collection implements \IteratorAggregate
 		throw new \BadMethodCallException("Method $name not found.");
 	}
 
+	/**
+	 * @return array
+	 */
 	public function all()
 	{
 		return $this->collection;
 	}
 
+	/**
+	 * @return \Illuminate\Support\Collection
+	 */
 	public function getVisible()
 	{
 		return $this->collection->filter(function(Input $input){
@@ -165,6 +174,9 @@ class Collection implements \IteratorAggregate
 		});
 	}
 
+	/**
+	 * @return \Illuminate\Support\Collection
+	 */
 	public function getHidden()
 	{
 		return $this->collection->filter(function(Input $input){
@@ -180,6 +192,6 @@ class Collection implements \IteratorAggregate
 	 */
 	public function getIterator()
 	{
-		return $this->collection;
+		return $this->collection->getIterator();
 	}
 }

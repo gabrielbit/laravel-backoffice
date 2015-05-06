@@ -1,4 +1,5 @@
 <?php namespace Digbang\L4Backoffice\Inputs;
+
 use Digbang\L4Backoffice\Controls\ControlInterface;
 
 /**
@@ -89,7 +90,7 @@ class Composite extends Input implements InputInterface
 
 	public function isVisible()
 	{
-		return count($this->inputCollection->getVisible()) > 0;
+		return $this->inputCollection->getVisible()->count() > 0;
 	}
 
 	public function hide()

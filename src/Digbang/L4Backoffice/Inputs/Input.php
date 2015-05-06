@@ -1,5 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Inputs;
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Digbang\L4Backoffice\Controls\ControlWrapperTrait;
 
 /**
  * Class Input
@@ -7,30 +8,53 @@ use Digbang\L4Backoffice\Controls\ControlInterface;
  */
 class Input implements InputInterface
 {
+	use ControlWrapperTrait;
+
 	/**
-	 * @var ControlInterface
+	 * @type string
 	 */
-	protected $control;
 	protected $name;
+
+	/**
+	 * @type mixed
+	 */
 	protected $value;
+
+	/**
+	 * @type mixed
+	 */
 	protected $defaultsTo;
+
+	/**
+	 * @type bool
+	 */
 	protected $readonly = false;
+
+	/**
+	 * @type bool
+	 */
 	protected $visible = true;
 
-	function __construct(ControlInterface $control, $name, $value = null)
+	/**
+	 * @param ControlInterface $control
+	 * @param string           $name
+	 * @param mixed            $value
+	 */
+	public function __construct(ControlInterface $control, $name, $value = null)
 	{
-		$this->control = $control;
 		$this->setName($name);
 		$this->setValue($name, $value);
 
-		if (! $control->options('id'))
+		if (! $control->option('id'))
 		{
-			$control->options()->put('id', $name);
+			$control = $control->changeOption('id', $name);
 		}
+
+		$this->control = $control;
 	}
 
 	/**
-	 * @param mixed $name
+	 * @param string $name
 	 */
 	public function setName($name)
 	{
@@ -38,23 +62,11 @@ class Input implements InputInterface
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function name()
 	{
 		return $this->name;
-	}
-
-	/**
-	 * Check if the given class name exists on the control
-	 *
-	 * @param $className
-	 *
-	 * @return boolean
-	 */
-	public function hasClass($className)
-	{
-		return $this->control->hasClass($className);
 	}
 
 	/**
@@ -80,34 +92,6 @@ class Input implements InputInterface
 	public function defaultsTo($value)
 	{
 		$this->defaultsTo = $value;
-	}
-
-	/**
-	 * A text that will be printed to the user.
-	 * @return string
-	 */
-	public function label()
-	{
-		return $this->control->label();
-	}
-
-	/**
-	 * The control HTML options. May access a specific one through parameter, null should return all of them.
-	 * @param string $name
-	 * @return \Illuminate\Support\Collection
-	 */
-	public function options($name = null)
-	{
-		return $this->control->options($name);
-	}
-
-	/**
-	 * The view that will be rendered. Controls always render a view of some sort.
-	 * @return string
-	 */
-	public function view()
-	{
-		return $this->control->view();
 	}
 
 	public function setReadonly()

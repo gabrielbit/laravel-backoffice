@@ -30,7 +30,10 @@ class ModalSpec extends ObjectBehavior
 
 	function it_should_be_renderable_with_a_row(ControlInterface $control)
 	{
-		$control->options(null)->willReturn(new Collection());
-		$this->renderWith(new Collection(['some' => 'items']))->shouldBeAnInstanceOf('Illuminate\View\View');
+		$control->options()->willReturn(new Collection());
+		$control->label()->willReturn('A Label');
+		$control->view()->willReturn('a-view');
+
+		$this->renderWith(['some' => 'items'])->shouldBeAnInstanceOf('Illuminate\View\View');
 	}
 }

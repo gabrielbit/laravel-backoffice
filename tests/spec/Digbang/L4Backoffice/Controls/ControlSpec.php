@@ -11,7 +11,7 @@ class ControlSpec extends ObjectBehavior
 	{
 		$factory->make(Argument::cetera())->willReturn($view);
 
-		$this->beConstructedWith($factory);
+		$this->beConstructedWith($factory, 'a-view', 'A Label', ['some' => 'options']);
 	}
 
     function it_is_initializable()

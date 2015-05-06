@@ -16,8 +16,13 @@ use Prophecy\Argument;
  */
 class ActionSpec extends ObjectBehavior
 {
-	function let(ControlInterface $control)
+	function let(ControlInterface $control, Collection $options, View $view)
 	{
+		$control->options()->willReturn($options);
+		$control->label()->willReturn('A Label');
+		$control->view()->willReturn('a-view');
+		$control->render()->willReturn($view);
+
 		$this->beConstructedWith($control, 'foo', null);
 	}
 
@@ -26,37 +31,65 @@ class ActionSpec extends ObjectBehavior
         $this->shouldHaveType('Digbang\L4Backoffice\Actions\Action');
     }
 
-	function it_should_render_with_callable_options(ControlInterface $control, Collection $options, View $view)
+	function it_should_render_with_callable_options(ControlInterface $control, Collection $options)
 	{
-		$control->render()->shouldBeCalled()->willReturn($view);
-		$control->options(null)->willReturn($options);
+		$control->render()->shouldBeCalled();
 
-		$options->put('onclick', Argument::any())->shouldBeCalled();
-		$options->getIterator()->willReturn(
-			new Collection(['onclick' => function(Collection $row){
+		$options->getIterator()->willReturn(new Collection([
+			'onclick' => function(Collection $row) {
 				return $row['id'];
-			}])
-		);
+			}
+		]));
+
+		$control->changeOption('onclick', 2)->shouldBeCalled()->willReturn($control);
 
 		$this->renderWith([
 			'id' => 2
 		]);
-
-		$options->put('onclick', 2)->shouldHaveBeenCalled();
 	}
 
-	function it_should_render_with_no_callable_options(ControlInterface $control, Collection $options, View $view)
+	function it_should_render_properly_multiple_callable_options(ControlInterface $control, Collection $options)
 	{
-		$control->render()->shouldBeCalled()->willReturn($view);
-		$control->options(null)->willReturn($options);
+		$control->render()->shouldBeCalled();
+
+		$options->getIterator()->willReturn(new Collection([
+			'onclick' => function(Collection $row) {
+				return $row['id'];
+			},
+			'onfoo' => function(Collection $row) {
+				return $row['name'];
+			}
+		]));
+
+		$control->changeOption('onclick', 2)->shouldBeCalled()->willReturn($control);
+		$control->changeOption('onfoo', 'John')->shouldBeCalled()->willReturn($control);
+
+		$this->renderWith([
+			'id' => 2,
+			'name' => 'John'
+		]);
+
+		$control->changeOption('onclick', 3)->shouldBeCalled()->willReturn($control);
+		$control->changeOption('onfoo', 'Mary')->shouldBeCalled()->willReturn($control);
+
+		$this->renderWith([
+			'id' => 3,
+			'name' => 'Mary'
+		]);
+	}
+
+	function it_should_render_with_no_callable_options(ControlInterface $control, Collection $options)
+	{
 		$options->getIterator()->willReturn(
 			new Collection(['onclick' => 'return false;'])
 		);
 
+		$control->render()->shouldBeCalled();
+
 		$this->renderWith([
 			'id' => 2
 		]);
 
-		$options->put('onclick', Argument::any())->shouldNotHaveBeenCalled();
+		$control->changeOption('onclick', Argument::any())->shouldNotHaveBeenCalled();
 	}
 }

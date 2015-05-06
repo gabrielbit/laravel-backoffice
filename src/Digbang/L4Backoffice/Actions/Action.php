@@ -1,15 +1,16 @@
 <?php namespace Digbang\L4Backoffice\Actions;
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
+use Digbang\L4Backoffice\Controls\ControlWrapperTrait;
+use Digbang\L4Backoffice\Support\EvaluatorTrait;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Illuminate\Support\Collection as LaravelCollection;
 
 class Action implements ActionInterface, ControlInterface
 {
-	/**
-	 * @var ControlInterface
-	 */
-	protected $control;
+	use ControlWrapperTrait;
+	use EvaluatorTrait;
+
 	protected $target;
 	protected $icon;
 	protected $isActive = false;
@@ -60,92 +61,64 @@ class Action implements ActionInterface, ControlInterface
 		return $this->isActive;
 	}
 
-	/**
-	 * A text that will be printed to the user.
-	 * @return string
-	 */
-	public function label()
-	{
-		return $this->control->label();
-	}
-
-	/**
-	 * The control HTML options. May access a specific one through parameter, null should return all of them.
-	 * @param string $name
-	 * @return \Illuminate\Support\Collection
-	 */
-	public function options($name = null)
-	{
-		return $this->control->options($name);
-	}
-
-	/**
-	 * The view that will be rendered. Controls always render a view of some sort.
-	 * @return string
-	 */
-	public function view()
-	{
-		return $this->control->view();
-	}
-
-	/**
-	 * Check if the given class name exists on the control
-	 *
-	 * @param $className
-	 *
-	 * @return boolean
-	 */
-	public function hasClass($className)
-	{
-		return $this->control->hasClass($className);
-	}
-
 	public function render()
 	{
-		return $this->renderTarget($this->target());
+		return $this->renderTarget(
+			$this->control,
+			$this->target(),
+			$this->icon(),
+			$this->isActive()
+		);
 	}
 
 	public function renderWith($row)
 	{
-		$target = $this->target();
-
-		if ($target instanceof \Closure)
+		try
 		{
-			try
+			/** @type ControlInterface $control */
+			$control = clone $this->control;
+
+			$rowAsCollection = new LaravelCollection($row);
+
+			$target   = $this->evaluate($this->target(),   $rowAsCollection);
+			$icon     = $this->evaluate($this->icon(),     $rowAsCollection);
+			$isActive = $this->evaluate($this->isActive(), $rowAsCollection);
+
+			$label = $control->label();
+			if (($newLabel = $this->evaluate($label, $rowAsCollection)) !== $label)
 			{
-				$target = $target(new LaravelCollection($row));
-			}
-			catch (PermissionException $e)
-			{
-				// We'll assume that actions may be subject to permissions here
-				$target = false;
+				$control = $control->changeLabel($newLabel);
 			}
 
-			if ($target === false)
+			$view = $control->view();
+			if (($newView = $this->evaluate($view, $rowAsCollection)) !== $view)
 			{
-				// If the callback returns false, we don't render!
-				return '';
+				$control = $control->changeView($newView);
 			}
+
+			$options = $control->options();
+			foreach ($options as $key => $option)
+			{
+				if ($option instanceof \Closure)
+				{
+					$control = $control->changeOption($key, $option($rowAsCollection));
+				}
+			}
+
+			return $this->renderTarget($control, $target, $icon, $isActive);
 		}
-
-		$options = $this->options();
-		foreach ($options as $key => $option)
+		catch (PermissionException $e)
 		{
-			if ($option instanceof \Closure)
-			{
-				$options->put($key, $option(new LaravelCollection($row)));
-			}
+			return '';
 		}
-
-		return $this->renderTarget($target);
 	}
 
-	protected function renderTarget($target)
+	protected function renderTarget(ControlInterface $control, $target, $icon, $isActive)
 	{
-		return $this->control->render()->with([
+		return $control->render()->with([
 			'target'   => $target,
-			'icon'     => $this->icon(),
-			'isActive' => $this->isActive()
+			'icon'     => $icon,
+			'isActive' => $isActive
 		]);
 	}
 }

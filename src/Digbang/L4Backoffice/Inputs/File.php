@@ -2,6 +2,7 @@
 
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Uploads\UploadHandlerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class File
@@ -21,7 +22,7 @@ class File extends Input implements InputInterface
 	public function save($to)
 	{
 		$file = $this->value();
-		if (!$file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile)
+		if (!$file instanceof UploadedFile)
 		{
 			throw new \UnexpectedValueException('Cannot move a file without upload');
 		}
@@ -33,4 +34,4 @@ class File extends Input implements InputInterface
 
 		$this->uploadHandler->save($file, $to);
 	}
-} 
+}

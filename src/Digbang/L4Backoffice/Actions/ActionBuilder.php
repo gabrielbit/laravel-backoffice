@@ -1,4 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Actions;
+use Illuminate\Support\Collection;
+use Digbang\L4Backoffice\Support\EvaluatorTrait;
 
 /**
  * Class ActionBuilder
@@ -8,9 +10,14 @@
  * @method $this addRel($rel)
  * @method $this addTarget($target)
  * @method $this addDataConfirm($message)
+ * @method $this addDataToggle($message)
+ * @method $this addDataPlacement($message)
+ * @method $this addTitle($message)
  */
 class ActionBuilder implements ActionBuilderInterface
 {
+	use EvaluatorTrait;
+
 	/**
 	 * @type ActionFactory
 	 */
@@ -102,12 +109,24 @@ class ActionBuilder implements ActionBuilderInterface
 	{
 		if (isset($this->options[$attribute]))
 		{
-			$value = $this->options[$attribute] . " $value";
+			$value = $this->getConcatenatedValue($this->options[$attribute], $value);
 		}
 
 		$this->options[$attribute] = $value;
 
 		return $this;
+	}
+
+	protected function getConcatenatedValue($previous, $value)
+	{
+		if ($previous instanceof \Closure || $value instanceof \Closure)
+		{
+			return function(Collection $row) use ($previous, $value) {
+				return $this->evaluate($previous, $row) . ' ' . $this->evaluate($value, $row);
+			};
+		}
+
+		return "$previous $value";
 	}
 
 	/**
