@@ -205,7 +205,7 @@ class GroupController extends Controller
 
 		$form = $this->buildForm(
 			$this->secureUrl->route(GroupsRouteBinder::UPDATE, $id),
-			$label,
+			$group->getName(),
 			'PUT',
 			$this->secureUrl->route(GroupsRouteBinder::SHOW, $id)
 		);
