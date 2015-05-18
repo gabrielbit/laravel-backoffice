@@ -261,12 +261,14 @@ class GroupController extends Controller
 	{
 		try
 		{
+			$group = $this->groupService->find($id);
+			
 			// Try to destroy the entity
 			$this->groupService->delete($id);
 
 			// Redirect to the listing
 			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::INDEX))
-				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
+				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $group->getName()]));
 		}
 		catch (ValidationException $e)
 		{
