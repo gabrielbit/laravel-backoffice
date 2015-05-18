@@ -152,7 +152,7 @@ class GroupController extends Controller
 
 			$groups = $this->groupService->create(
 				$input['name'],
-				$input['permissions']
+				isset($input['permissions']) ? $input['permissions'] : []
 			);
 
 			$groups->save();
