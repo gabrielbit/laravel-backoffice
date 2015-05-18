@@ -176,8 +176,8 @@ class GroupController extends Controller
 		]);
 
 		$data = [
-			'Name' => $group->getName(),
-			'Permissions' => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $group),
+			trans('l4-backoffice::auth.name') => $group->getName(),
+			trans('l4-backoffice::auth.permissions') => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $group),
 		];
 
 		$actions = $this->backoffice->actions()
