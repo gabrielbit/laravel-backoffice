@@ -372,7 +372,7 @@ class UserController extends Controller
 
 		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
 			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
-				$sheet->loadView('l4-backoffice::lists.list', [
+				$sheet->loadView('l4-backoffice::lists.export', [
 					'bulkActions' => [],
 					'rowActions' => [],
 					'columns' => $columns->visible(),
