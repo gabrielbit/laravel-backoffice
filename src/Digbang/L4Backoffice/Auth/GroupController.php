@@ -324,7 +324,7 @@ class GroupController extends Controller
 		$filters->dropdown(
 			'permission',
 			trans('l4-backoffice::auth.permissions'),
-			$this->permissionParser->toDropdownArray($this->permissionsRepository->all()),
+			$this->permissionParser->toDropdownArray($this->permissionsRepository->all(), true),
 			['class' => 'form-control']
 		);
 	}

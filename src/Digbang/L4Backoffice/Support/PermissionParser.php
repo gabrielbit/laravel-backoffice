@@ -25,9 +25,14 @@ class PermissionParser
 		$this->translator = $translator;
 	}
 
-	public function toDropdownArray(array $permissions)
+	public function toDropdownArray(array $permissions, $addEmptyValue = false)
 	{
 		$output = [];
+
+		if ($addEmptyValue)
+		{
+			$output[''] = '';
+		}
 
 		foreach ($permissions as $permission)
 		{
