@@ -24,5 +24,6 @@ return [
 	'permissions'      => 'Permissions',
 	'cancel'           => 'Cancel',
 	'delete_msg'       => ':model :id deleted',
-	'export'           => 'Export'
+	'export'           => 'Export',
+	'message'		   => 'Message'
 ];

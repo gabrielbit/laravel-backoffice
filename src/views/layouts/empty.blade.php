@@ -21,7 +21,7 @@
 </section>
 @foreach(['info', 'warning', 'danger', 'success', 'primary'] as $message)
 	@if(\Session::has($message))
-		<div class="shoutMe" data-class_name="growl-{{ $message }}">{{ \Session::remove($message) }}</div>
+		<div class="shoutMe" data-title="{{ Lang::get('l4-backoffice::default.message') }}" data-class_name="growl-{{ $message }}">{{ \Session::remove($message) }}</div>
 	@endif
 @endforeach
 {{ HTML::script('packages/digbang/l4-backoffice/js/backoffice.js', ['type' => 'text/javascript']) }}
