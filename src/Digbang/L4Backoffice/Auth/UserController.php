@@ -363,15 +363,17 @@ class UserController extends Controller
 
 		$list->fill($this->getData(null));
 
-		$columns = $list->columns()->hide([])->sortable([]);
+		$columns = $list->columns()->hide(['id', 'first_name', 'last_name'])->sortable([]);
 		$rows = $list->rows();
+		
+		$fileName = (new \DateTime())->format('Y-m-d') . '_' . $this->titlePlural;
 
-		$this->excelExporter->create(\Str::slug($this->titlePlural), function($excel) use ($columns, $rows) {
+		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
 			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
 				$sheet->loadView('l4-backoffice::lists.list', [
 					'bulkActions' => [],
 					'rowActions' => [],
-					'columns' => $columns,
+					'columns' => $columns->visible(),
 					'items' => $rows
 				]);
 			});
