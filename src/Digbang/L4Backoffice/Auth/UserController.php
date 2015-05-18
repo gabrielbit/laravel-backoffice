@@ -337,12 +337,14 @@ class UserController extends Controller
 	{
 		try
 		{
+			$user = $this->userService->find($id);
+			
 			// Try to destroy the entity
 			$this->userService->delete($id);
 
 			// Redirect to the listing
 			return Redirect::to($this->secureUrl->route(UsersRouteBinder::INDEX))->withSuccess(
-				trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id])
+				trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $user->getEmail()])
 			);
 		}
 		catch (ValidationException $e)
