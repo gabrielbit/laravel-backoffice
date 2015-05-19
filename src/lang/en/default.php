@@ -24,7 +24,7 @@ return [
 	'permissions'      => 'Permissions',
 	'cancel'           => 'Cancel',
 	'delete_msg'       => ':model :id deleted',
-	'datetime_format'  => 'm/d/Y H:i'
+	'datetime_format'  => 'm/d/Y H:i',
 	'export'           => 'Export',
-	'message'		   => 'Message'
+	'message'          => 'Message',
 ];
