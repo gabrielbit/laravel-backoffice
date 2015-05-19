@@ -206,8 +206,8 @@ class UserController extends Controller
 			trans('l4-backoffice::auth.email')        => $user->getEmail(),
 			trans('l4-backoffice::auth.permissions')  => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $user),
 			trans('l4-backoffice::auth.activated')    => trans('l4-backoffice::default.' . ($user->isActivated() ? 'yes' : 'no')),
-			trans('l4-backoffice::auth.activated_at') => $user->getActivatedAt(),
-			trans('l4-backoffice::auth.last_login')   => $user->getLastLogin(),
+			trans('l4-backoffice::auth.activated_at') => $user->getActivatedAt() ? $user->getActivatedAt()->format(trans('l4-backoffice::default.datetime_format')) : '-',
+			trans('l4-backoffice::auth.last_login')   => $user->getLastLogin() ? $user->getLastLogin()->format(trans('l4-backoffice::default.datetime_format')) : '-',
 			trans('l4-backoffice::auth.groups')       => implode(' ', array_map(function(Group $group){
 				return $group->getName();
 			}, $user->getGroups()))
@@ -476,6 +476,8 @@ class UserController extends Controller
 	 */
 	protected function getListing()
 	{
+		\Carbon\Carbon::setToStringFormat(trans('l4-backoffice::default.datetime_format'));
+		
 		$listing = $this->backoffice->listing([
 			'email'      => trans('l4-backoffice::auth.email'),
 			'name'       => trans('l4-backoffice::auth.name'),
