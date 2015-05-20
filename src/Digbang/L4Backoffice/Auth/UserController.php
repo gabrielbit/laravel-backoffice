@@ -246,11 +246,9 @@ class UserController extends Controller
 		/* @var $user \Digbang\Security\Contracts\User */
 		$user = $this->userService->find($id);
 
-		$label = trans('l4-backoffice::default.edit');
-
 		$form = $this->buildForm(
 			$this->secureUrl->route(UsersRouteBinder::UPDATE, $id),
-			$label,
+			trans('l4-backoffice::default.edit') . ' ' . trans('l4-backoffice::auth.user_name', ['name' => $user->getFirstName(),'lastname' => $user->getLastName()]),
 			'PUT',
 			$this->secureUrl->route(UsersRouteBinder::SHOW, $id)
 		);
@@ -281,7 +279,7 @@ class UserController extends Controller
 		]);
 
 		return View::make('l4-backoffice::edit', [
-			'title'      => trans('l4-backoffice::default.edit_model', ['model' => $this->title]),
+			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -480,7 +478,7 @@ class UserController extends Controller
 		
 		$listing = $this->backoffice->listing([
 			'email'      => trans('l4-backoffice::auth.email'),
-			'name'       => trans('l4-backoffice::auth.name'),
+			'name'       => trans('l4-backoffice::auth.full_name'),
 			'activated'  => trans('l4-backoffice::auth.activated'),
 			'last_login' => trans('l4-backoffice::auth.last_login'),
 			'id',
@@ -518,7 +516,7 @@ class UserController extends Controller
 		$actions = $this->backoffice->actions();
 
 		try {
-			$actions->link($this->secureUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
+			$actions->link($this->secureUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
 		} catch (PermissionException $e) { /* Do nothing */}
 		try {
 			$actions->link($this->secureUrl->route(UsersRouteBinder::EXPORT, Input::all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success']);
@@ -591,6 +589,7 @@ class UserController extends Controller
 				'class'          => 'text-primary',
 				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
+				'data-confirm'   => trans('l4-backoffice::auth.activation.confirm'),
 				'title'          => trans('l4-backoffice::auth.activation.title')
 			]
 		);
@@ -609,8 +608,8 @@ class UserController extends Controller
 			$this->request->get('first_name') ?: null,
 			$this->request->get('last_name') ?: null,
 			$this->request->get('activated') ? (strtolower($this->request->get('activated')) == 'true') : null,
-            camel_case($this->request->get('sort_by')) ?: null,
-            $this->request->get('sort_sense'),
+            camel_case($this->request->get('sort_by')) ?: 'email',
+            $this->request->get('sort_sense') ?: 'asc',
             $limit,
 			($this->request->get('page', 1) - 1) * $limit
         );

@@ -12,6 +12,7 @@ return [
 	'copyright'        => 'Copyright &copy;' . date('Y') . '. Todos los derechos reservados',
 	'activation' => [
 		'title' => 'Reenviar correo de activación',
+		'confirm' => 'Un vínculo para activar la cuenta será enviado a su correo',
 		'success' => '¡Has activado tu cuenta! Por favor, elige una contraseña.',
 		'email-sent' => 'Un correo ha sido enviado a :email con el vínculo de activación.',
 		'expired' => [
@@ -56,7 +57,8 @@ return [
 	'permission_error' => "No tienes permisos suficientes para hacer esto.",
 	'first_name' => 'Nombre',
 	'last_name' => 'Apellido',
-	'name' => 'Nombre completo',
+	'full_name' => 'Nombre Completo',
+	'name' => 'Nombre',
 	'activated' => 'Activo',
 	'activated_at' => 'Activo desde',
 	'last_login' => 'Ultimo ingreso',

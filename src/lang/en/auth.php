@@ -12,6 +12,7 @@ return [
 	'copyright'        => 'Copyright &copy;' . date('Y') . '. All Rights Reserved',
 	'activation' => [
 		'title' => 'Resend Activation Email',
+		'confirm' => 'An activation link will be sent to the user\'s email address',
 		'success' => 'You have activated your account! Please choose your new password.',
 		'email-sent' => 'An email was sent to :email with the activation link.',
 		'expired' => [
@@ -56,6 +57,7 @@ return [
 	'permission_error' => "You don't have the required permissions to do this.",
 	'first_name' => 'First Name',
 	'last_name' => 'Last Name',
+	'full_name' => 'Fullname',
 	'name' => 'Name',
 	'activated' => 'Activated',
 	'activated_at' => 'Activated At',
