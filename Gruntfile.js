@@ -16,15 +16,14 @@ module.exports = function(grunt) {
 		concat: {
 			backoffice: {
 				src: [
-					"./vendor/digbang/backoffice-template/template/js/jquery-1.10.2.min.js",
-					"./vendor/digbang/backoffice-template/template/js/jquery-migrate-1.2.1.min.js",
+					"./bower_components/jquery/jquery.min.js",
+					"./bower_components/jquery/jquery-migrate.min.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery-ui-1.10.3.min.js",
-					"./vendor/digbang/backoffice-template/template/js/bootstrap.min.js",
+					"./bower_components/bootstrap/dist/js/bootstrap.min.js",
 					"./vendor/digbang/backoffice-template/template/js/modernizr.min.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery.sparkline.min.js",
 					"./vendor/digbang/backoffice-template/template/js/toggles.min.js",
 					"./vendor/digbang/backoffice-template/template/js/retina.min.js",
-					"./vendor/digbang/backoffice-template/template/js/jquery.cookies.js",
 					"./vendor/digbang/backoffice-template/template/js/jquery.autogrow-textarea.js",
 					"./vendor/digbang/backoffice-template/template/js/bootstrap-fileupload.min.js",
 					"./vendor/digbang/backoffice-template/template/js/bootstrap-timepicker.min.js",

@@ -1,4 +1,6 @@
 $(document).ready(function(){
+	bootbox.setDefaults("locale", document.documentElement.getAttribute('lang') || 'en');
+
 	$selects = $('select');
 	// Select2
 	$selects.filter(":not(.multiselect)").each(function(){
