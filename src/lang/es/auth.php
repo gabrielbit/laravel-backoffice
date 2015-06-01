@@ -41,7 +41,8 @@ return [
 			'not-activated'     => 'El usuario no está activo.',
 			'already-active'    => 'Este usuario ya ha sido activado.',
 			'email-required'    => 'El campo correo es requerido.',
-			'password-required' => 'El campo contraseña es requerido.'
+			'password-required' => 'El campo contraseña es requerido.',
+			'user-email-repeated' => 'Este usuario ya ha sido registrado',
 		],
 		'reset-password' => [
 			'email' => 'El campo correo es requerido',

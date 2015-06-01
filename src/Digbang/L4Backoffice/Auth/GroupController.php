@@ -152,7 +152,7 @@ class GroupController extends Controller
 
 			$groups = $this->groupService->create(
 				$input['name'],
-				isset($input['permissions']) ? $input['permissions'] : []
+				(array)$input['permissions']
 			);
 
 			$groups->save();
@@ -242,7 +242,7 @@ class GroupController extends Controller
 			$this->groupService->edit(
 				$group,
 				$input['name'],
-				$input['permissions']
+				(array)$input['permissions']
 			);
 
 			// Redirect to show
