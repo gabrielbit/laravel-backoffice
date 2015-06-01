@@ -8,6 +8,7 @@
  * @method $this addRel($rel)
  * @method $this addTarget($target)
  * @method $this addDataConfirm($message)
+ * @method $this addDataToggle($message)
  */
 class ActionBuilderWrapper implements ActionBuilderInterface
 {
