@@ -201,11 +201,9 @@ class GroupController extends Controller
 	{
 		$group = $this->groupService->find($id);
 
-		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
-
 		$form = $this->buildForm(
 			$this->secureUrl->route(GroupsRouteBinder::UPDATE, $id),
-			$group->getName(),
+			trans('l4-backoffice::default.edit') . ' ' . $group->getName(),
 			'PUT',
 			$this->secureUrl->route(GroupsRouteBinder::SHOW, $id)
 		);
@@ -219,11 +217,11 @@ class GroupController extends Controller
 			trans('l4-backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => GroupsRouteBinder::INDEX,
 			$group->getName()  => [GroupsRouteBinder::SHOW, $id],
-			$label
+			trans('l4-backoffice::default.edit')
 		]);
 
 		return View::make('l4-backoffice::edit', [
-			'title'      => $label,
+			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
 		]);
@@ -353,7 +351,7 @@ class GroupController extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link($this->secureUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
+				->link($this->secureUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
 				->link($this->secureUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
 		);
 
@@ -401,8 +399,8 @@ class GroupController extends Controller
 		return $this->groupService->search(
 			$this->request->get('name') ?: null,
 			$this->request->get('permission') ?: null,
-            camel_case($this->request->get('sort_by')) ?: null,
-            $this->request->get('sort_sense'),
+            camel_case($this->request->get('sort_by')) ?: 'name',
+            $this->request->get('sort_sense') ?: 'asc',
             $limit,
 			($this->request->get('page', 1) - 1) * $limit
         );
