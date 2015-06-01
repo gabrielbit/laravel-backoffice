@@ -1,22 +1,24 @@
 <?php namespace Digbang\L4Backoffice\Listings;
 
+use Countable;
+use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
-use Digbang\L4Backoffice\Support\Collection;
-use Digbang\L4Backoffice\Support\LinkMaker;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Contracts\ArrayableInterface;
-use Illuminate\Support\Contracts\RenderableInterface;
 use Digbang\L4Backoffice\Inputs\Collection as FilterCollection;
-use Digbang\L4Backoffice\Actions\Collection as ActionCollection;
-use Countable;
+use Digbang\L4Backoffice\Support\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Contracts\RenderableInterface;
 
 class Listing implements RenderableInterface, Countable
 {
+	/**
+	 * @type string
+	 */
 	protected $view = 'l4-backoffice::listing';
 
 	/**
-	 * @var \Digbang\L4Backoffice\Inputs\Collection
+	 * @var FilterCollection
 	 */
 	protected $filters;
 
@@ -26,41 +28,64 @@ class Listing implements RenderableInterface, Countable
 	protected $columns;
 
 	/**
-	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 * @var ActionCollection
 	 */
 	protected $actions;
 
 	/**
-	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 * @var ActionCollection
 	 */
 	protected $rowActions;
 
 	/**
-	 * @var \Digbang\L4Backoffice\Actions\Collection
+	 * @var ActionCollection
 	 */
 	protected $bulkActions;
 
 	/**
-	 * @var \Digbang\L4Backoffice\Support\Collection
+	 * @var Collection
 	 */
 	protected $rows;
 
+	/**
+	 * @type ControlInterface
+	 */
 	protected $control;
 
+	/**
+	 * @type Paginator
+	 */
 	protected $paginator;
 
+	/**
+	 * @type ValueExtractorFacade
+	 */
 	protected $valueExtractor;
 
+	/**
+	 * @type string
+	 */
 	protected $resetAction;
 
-	protected $defaultOrder;
+	/**
+	 * @type Request
+	 */
+	protected $request;
 
-	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters, ValueExtractorFacade $valueExtractor)
+	/**
+	 * @param ControlInterface     $control
+	 * @param Collection           $rows
+	 * @param FilterCollection     $filters
+	 * @param ValueExtractorFacade $valueExtractor
+	 * @param Request|null         $request
+	 */
+	public function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters, ValueExtractorFacade $valueExtractor, Request $request = null)
 	{
 		$this->control = $control;
 		$this->rows    = $rows;
 		$this->filters = $filters;
 		$this->valueExtractor = $valueExtractor;
+		$this->request = $request;
 	}
 
 	/**
@@ -85,6 +110,11 @@ class Listing implements RenderableInterface, Countable
 		return $this->rows;
 	}
 
+	/**
+	 * @param string|null $name
+	 *
+	 * @return FilterCollection|\Digbang\L4Backoffice\Inputs\InputInterface|null
+	 */
 	public function filters($name = null)
 	{
 		if (!$name)
@@ -95,6 +125,9 @@ class Listing implements RenderableInterface, Countable
 		return $this->filters->find($name);
 	}
 
+	/**
+	 * @return \Illuminate\View\View
+	 */
 	public function render()
 	{
 		return $this->control->render()->with([
@@ -105,11 +138,15 @@ class Listing implements RenderableInterface, Countable
 			'actions'     => $this->actions(),
 			'rowActions'  => $this->rowActions(),
 			'bulkActions' => $this->bulkActions(),
-			'paginator'   => $this->paginator,
-			'defaultOrder'=> $this->defaultOrder,
+			'paginator'   => $this->paginator
 		]);
 	}
 
+	/**
+	 * @param array|\Traversable $elements
+	 *
+	 * @return $this
+	 */
     public function fill($elements)
     {
         $this->addElements($elements);
@@ -122,83 +159,68 @@ class Listing implements RenderableInterface, Countable
 	    return $this;
     }
 
-	protected function addElements($elements)
-	{
-		foreach ($elements as $element)
-		{
-			$this->rows->push($this->makeRow($element));
-		}
-	}
-
 	/**
-	 * @param $element
-	 * @return array
-	 * @throws \InvalidArgumentException
+	 * @param ActionCollection $actions
 	 */
-	protected function makeRow($element)
-	{
-		$row = [];
-
-		foreach ($this->columns as $column)
-		{
-			/* @var $column \Digbang\L4Backoffice\Listings\Column */
-			$row[$column->getId()] = $this->valueExtractor->extract($element, $column->getId());
-		}
-
-		return $row;
-	}
-
 	public function setActions(ActionCollection $actions)
 	{
 		$this->actions = $actions;
 	}
 
+	/**
+	 * @return ActionCollection
+	 */
 	public function actions()
 	{
 		return $this->actions;
 	}
 
+	/**
+	 * @param ActionCollection $rowActions
+	 */
 	public function setRowActions(ActionCollection $rowActions)
 	{
 		$this->rowActions = $rowActions;
 	}
 
+	/**
+	 * @return ActionCollection
+	 */
 	public function rowActions()
 	{
 		return $this->rowActions;
 	}
 
+	/**
+	 * @param ActionCollection $actions
+	 */
 	public function setBulkActions(ActionCollection $actions)
 	{
 		$this->bulkActions = $actions;
 	}
 
+	/**
+	 * @return ActionCollection
+	 */
 	public function bulkActions()
 	{
 		return $this->bulkActions;
 	}
 
+	/**
+	 * @param string $url
+	 */
 	public function setResetAction($url)
 	{
 		$this->resetAction = $url;
 	}
 
+	/**
+	 * @return null|string
+	 */
 	public function getResetAction()
 	{
-		return $this->resetAction ?: \Request::url();
-	}
-
-	public function setDefaultOrder($by, $sense)
-	{
-		$this->defaultOrder = [
-			'by' => $by,
-			'sense' => $sense
-		];
-	}
-
-	public function defaultOrder()
-	{
-		return $this->defaultOrder;
+		return $this->resetAction ?: (isset($this->request) ? $this->request->url() : null);
 	}
 
 	/**
@@ -218,5 +240,34 @@ class Listing implements RenderableInterface, Countable
 	public function setView($view)
 	{
 		$this->view = $view;
+	}
+
+	/**
+	 * @param array|Collection $elements
+	 */
+	protected function addElements($elements)
+	{
+		foreach ($elements as $element)
+		{
+			$this->rows->push($this->makeRow($element));
+		}
+	}
+
+	/**
+	 * @param mixed $element
+	 * @return array
+	 * @throws \InvalidArgumentException
+	 */
+	protected function makeRow($element)
+	{
+		$row = [];
+
+		foreach ($this->columns as $column)
+		{
+			/* @var $column \Digbang\L4Backoffice\Listings\Column */
+			$row[$column->getId()] = $this->valueExtractor->extract($element, $column->getId());
+		}
+
+		return $row;
 	}
 }

@@ -6,19 +6,19 @@ use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Actions\ActionFactory as ActionFactory;
 use Digbang\L4Backoffice\Inputs\InputFactory;
 use Digbang\L4Backoffice\Listings\ColumnFactory;
+use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ListingFactorySpec extends ObjectBehavior
 {
-	function let(Factory $viewFactory)
+	function let(Factory $viewFactory, Request $request)
 	{
 		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$inputFactory = new InputFactory($controlFactory);
-		$valueExtractor = new ValueExtractorFacade();
 
-		$this->beConstructedWith($inputFactory, $controlFactory, $valueExtractor);
+		$this->beConstructedWith($inputFactory, $controlFactory, $request);
 	}
 
     function it_is_initializable()

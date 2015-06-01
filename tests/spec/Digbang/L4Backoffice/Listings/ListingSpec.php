@@ -6,6 +6,7 @@ use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Inputs\InputFactory as FilterFactory;
 use Digbang\L4Backoffice\Listings\ColumnCollection;
 use Digbang\L4Backoffice\Support\Collection as DigbangCollection;
+use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use Illuminate\View\View;
 use PhpSpec\ObjectBehavior;
@@ -17,7 +18,7 @@ use Prophecy\Argument;
  */
 class ListingSpec extends ObjectBehavior
 {
-	function let(Factory $viewFactory, ControlInterface $control)
+	function let(Factory $viewFactory, ControlInterface $control, Request $request)
 	{
 		$controlFactory = new ControlFactory($viewFactory->getWrappedObject());
 		$filterFactory  = new FilterFactory($controlFactory);
@@ -27,7 +28,8 @@ class ListingSpec extends ObjectBehavior
 			$control,
 			new DigbangCollection(),
 			$filterFactory->collection(),
-			$valueExtractor
+			$valueExtractor,
+			$request
 		);
 
 		$columns = new ColumnCollection(['name' => 'Name', 'address' => 'Address', 'zip_code' => 'Zip Code']);
@@ -129,5 +131,20 @@ class ListingSpec extends ObjectBehavior
 		$this->setBulkActions($actionFactory->collection());
 
 		$this->bulkActions()->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Collection');
+	}
+
+	function it_should_have_a_way_to_reset_the_listing_to_a_default(Request $request)
+	{
+		$request->url()->willReturn('/current_url');
+
+		$this->getResetAction()->shouldBe('/current_url');
+	}
+
+	function it_should_have_a_way_to_reset_the_listing_to_a_specific_url(Request $request)
+	{
+		$request->url()->willReturn('/current_url');
+
+		$this->setResetAction('/somewhere_else');
+		$this->getResetAction()->shouldBe('/somewhere_else');
 	}
 }

@@ -9,7 +9,7 @@
 		@foreach($columns as $column)
 		<th>
 			@if($column->sortable())
-				@include('l4-backoffice::actions.sort', ['column' => $column, 'defaultOrder' => $defaultOrder])
+				@include('l4-backoffice::actions.sort', ['column' => $column])
 			@else
 				{{ $column->getLabel() }}
 			@endif

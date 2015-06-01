@@ -1,1 +1,1 @@
-{{ Digbang\L4Backoffice\Facades\Link::sort($column, (isset($defaultOrder) ? $defaultOrder : null)) }}
+{{ Digbang\L4Backoffice\Facades\Link::sort($column) }}
