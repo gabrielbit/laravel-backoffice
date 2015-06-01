@@ -3,6 +3,7 @@
 use Digbang\L4Backoffice\Controls\ControlInterface;
 use Digbang\L4Backoffice\Extractors\ValueExtractorFacade;
 use Digbang\L4Backoffice\Support\Collection;
+use Digbang\L4Backoffice\Support\LinkMaker;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Support\Contracts\RenderableInterface;
@@ -51,6 +52,8 @@ class Listing implements RenderableInterface, Countable
 	protected $valueExtractor;
 
 	protected $resetAction;
+
+	protected $defaultOrder;
 
 	function __construct(ControlInterface $control, Collection $rows, FilterCollection $filters, ValueExtractorFacade $valueExtractor)
 	{
@@ -102,7 +105,8 @@ class Listing implements RenderableInterface, Countable
 			'actions'     => $this->actions(),
 			'rowActions'  => $this->rowActions(),
 			'bulkActions' => $this->bulkActions(),
-			'paginator'   => $this->paginator
+			'paginator'   => $this->paginator,
+			'defaultOrder'=> $this->defaultOrder,
 		]);
 	}
 
@@ -182,6 +186,19 @@ class Listing implements RenderableInterface, Countable
 	public function getResetAction()
 	{
 		return $this->resetAction ?: \Request::url();
+	}
+
+	public function setDefaultOrder($by, $sense)
+	{
+		$this->defaultOrder = [
+			'by' => $by,
+			'sense' => $sense
+		];
+	}
+
+	public function defaultOrder()
+	{
+		return $this->defaultOrder;
 	}
 
 	/**
