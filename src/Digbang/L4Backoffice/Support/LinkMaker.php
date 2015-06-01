@@ -23,24 +23,33 @@ class LinkMaker
 		$this->fontAwesome = $fontAwesome;
 	}
 
-	public function sort(Column $column)
+	public function sort(Column $column, $defaultOrder = null)
 	{
 		$parameters = $this->getParameters();
 		$by         = $column->getId();
-		$sense      = self::SORT_SENSE_ASC;
 
-		if ($isSortedBy = array_get($parameters, self::SORT_BY) == $by && array_get($parameters, self::SORT_SENSE) == $sense)
+		if (!isset($parameters[self::SORT_BY]) && $defaultOrder !== null)
+		{
+			$parameters[self::SORT_BY] = $defaultOrder['by'];
+			$parameters[self::SORT_SENSE] = strtolower($defaultOrder['sense']);
+		}
+
+		$sortedBy = array_get($parameters, self::SORT_BY);
+		$senseBy = array_get($parameters, self::SORT_SENSE);
+
+		$isSortedBy = $sortedBy == $by;
+
+		$sense = self::SORT_SENSE_ASC;
+		if ($isSortedBy && $senseBy == self::SORT_SENSE_ASC)
 		{
 			$sense = self::SORT_SENSE_DESC;
 		}
 
 		return
 			'<a href="' . $this->to($by, $sense) . '" class="sort-link">' .
-				$column->getLabel() .
-				$this->fontAwesome->icon(
-					$isSortedBy ? "sort-$sense" : 'sort') .
+				($isSortedBy ? sprintf('<strong>%1$s</strong>', $column->getLabel()) : $column->getLabel()) .
+				$this->fontAwesome->icon($isSortedBy ? "sort-$senseBy" : 'sort') .
 			'</a>';
-
 	}
 
 	protected function to($column, $sense = self::SORT_SENSE_ASC)
