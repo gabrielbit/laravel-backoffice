@@ -41,7 +41,8 @@ return [
 			'not-activated'     => 'User is not activated.',
 			'already-active'    => 'This user has already been activated.',
 			'email-required'    => 'The Email field is required.',
-			'password-required' => 'The Password field is required.'
+			'password-required' => 'The Password field is required.',
+			'user-email-repeated' => 'This user has already been registered',
 		],
 		'reset-password' => [
 			'email' => 'The email field is required',

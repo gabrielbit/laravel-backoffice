@@ -1,5 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Auth;
 
+use Cartalyst\Sentry\Users\UserNotFoundException;
 use Digbang\FontAwesome\Facade as FontAwesome;
 use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Excel;
+use Digbang\Security\Contracts\User;
 
 class UserController extends Controller
 {
@@ -306,7 +308,7 @@ class UserController extends Controller
 
 		try
 		{
-			$this->validate($inputData, true);
+			$this->validate($inputData, $user);
 
 			$this->userService->edit(
 				$user,
@@ -617,19 +619,32 @@ class UserController extends Controller
 
 	/**
 	 * @param array $data
-	 * @param bool $update
-	 *
-	 * @throws ValidationException
+	 * @param User $userToUpdate
 	 */
-    protected function validate($data, $update = false)
+    protected function validate($data, User $userToUpdate = null)
     {
         $rules = [
-            'email'    => 'required|email',
-            'password' => ($update ? 'sometimes|' : '') . 'required|min:3'
+            'email'    => 'required|email|user_email_unique',
+            'password' => ($userToUpdate !== null ? 'sometimes|' : '') . 'required|min:3'
         ];
+
+	    $userService = $this->userService;
+	    \Validator::extend('user_email_unique', function($attribute, $value, $parameters) use ($userService, $userToUpdate)
+	    {
+		    try
+		    {
+			    $user = $userService->findByLogin($value);
+			    return $user === null || ($userToUpdate !== null && $userToUpdate->getEmail() == $value);
+		    }
+		    catch (UserNotFoundException $e)
+		    {
+			    return true;
+		    }
+	    });
 
         $messages = [
             'email.required'    => trans('l4-backoffice::auth.validation.user.email-required'),
+	        'email.user_email_unique' => trans('l4-backoffice::auth.validation.user.user-email-repeated'),
             'password.required' => trans('l4-backoffice::auth.validation.user.password-required')
         ];
 
