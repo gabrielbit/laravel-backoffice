@@ -64,9 +64,16 @@ class LinkMaker
 	protected function makeHtmlLink(Column $column, $by, $sense, $isSortedBy)
 	{
 		$href = $this->to($by, $sense);
-		$body = $column->getLabel() . '&nbsp;' . $this->fontAwesome->icon(
-				$isSortedBy? "sort-$sense" : 'sort'
-			);
+		$body = $column->getLabel();
+		$icon = 'sort';
+
+		if ($isSortedBy)
+		{
+			$body = "<strong>$body</strong>";
+			$icon = "sort-$sense";
+		}
+
+		$body .= '&nbsp;' . $this->fontAwesome->icon($icon);
 
 		return "<a href=\"$href\" class=\"sort-link\">$body</a>";
 	}
