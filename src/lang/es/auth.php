@@ -58,7 +58,6 @@ return [
 	'permission_error' => "No tienes permisos suficientes para hacer esto.",
 	'first_name' => 'Nombre',
 	'last_name' => 'Apellido',
-	'full_name' => 'Nombre Completo',
 	'name' => 'Nombre',
 	'activated' => 'Activo',
 	'activated_at' => 'Activo desde',
