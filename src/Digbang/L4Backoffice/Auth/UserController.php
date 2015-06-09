@@ -479,9 +479,9 @@ class UserController extends Controller
 		\Carbon\Carbon::setToStringFormat(trans('l4-backoffice::default.datetime_format'));
 		
 		$listing = $this->backoffice->listing([
-			'email'      => trans('l4-backoffice::auth.email'),
 			'first_name'  => trans('l4-backoffice::auth.first_name'),
 			'last_name' => trans('l4-backoffice::auth.last_name'),
+			'email'      => trans('l4-backoffice::auth.email'),
 			'activated'  => trans('l4-backoffice::auth.activated'),
 			'last_login' => trans('l4-backoffice::auth.last_login'),
 			'id',
