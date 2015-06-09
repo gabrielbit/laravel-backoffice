@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Auth\Routes;
+<?php namespace Digbang\L4Backoffice\Generator\Routes;
 
 use Digbang\L4Backoffice\Generator\Controllers\GenController;
 use GuiWoda\RouteBinder\RouteBinder;

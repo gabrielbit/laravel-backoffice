@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Auth;
+<?php namespace Digbang\L4Backoffice\Auth\Controllers;
 
 use Cartalyst\Sentry\Sentry;
 use Cartalyst\Sentry\Users\LoginRequiredException;

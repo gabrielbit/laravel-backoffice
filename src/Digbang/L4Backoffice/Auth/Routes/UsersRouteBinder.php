@@ -1,6 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Auth\Routes;
 
-use Digbang\L4Backoffice\Auth\UserController;
+use Digbang\L4Backoffice\Auth\Controllers\UserController;
 use Digbang\Security\Entities\Permission;
 use GuiWoda\RouteBinder\RouteBinder;
 use Illuminate\Config\Repository;

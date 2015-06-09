@@ -2,9 +2,9 @@
 
 use Digbang\FontAwesome\FontAwesomeServiceProvider;
 use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
-use Digbang\L4Backoffice\Auth\Routes\GenRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
+use Digbang\L4Backoffice\Generator\Routes\GenRouteBinder;
 use Digbang\Security\Filters\Auth;
 use Digbang\Security\SecurityServiceProvider;
 use Digbang\Security\SentryWithDoctrineServiceProvider;

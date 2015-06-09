@@ -1,4 +1,4 @@
-<?php namespace Digbang\L4Backoffice\Auth;
+<?php namespace Digbang\L4Backoffice\Auth\Controllers;
 
 use Digbang\FontAwesome\Facade as FontAwesome;
 use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
