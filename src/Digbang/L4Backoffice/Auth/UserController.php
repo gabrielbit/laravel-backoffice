@@ -480,35 +480,25 @@ class UserController extends Controller
 		
 		$listing = $this->backoffice->listing([
 			'email'      => trans('l4-backoffice::auth.email'),
-			'name'       => trans('l4-backoffice::auth.full_name'),
+			'first_name'  => trans('l4-backoffice::auth.first_name'),
+			'last_name' => trans('l4-backoffice::auth.last_name'),
 			'activated'  => trans('l4-backoffice::auth.activated'),
 			'last_login' => trans('l4-backoffice::auth.last_login'),
 			'id',
-			'first_name',
-			'last_name',
 		]);
 
 		$columns = $listing->columns();
 		$columns
 			->hide([
 				'id',
-				'first_name',
-				'last_name',
 			])
 			->sortable([
+				'first_name',
+				'last_name',
 				'email',
 				'activated',
 				'last_login'
 		]);
-
-		$columns->setAccessor('name', function($row){
-			return trans('l4-backoffice::auth.user_name',
-				[
-					'name'     => $row['first_name'],
-					'lastname' => $row['last_name']
-				]
-			);
-		});
 
 		return $listing;
 	}

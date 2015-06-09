@@ -58,7 +58,6 @@ return [
 	'permission_error' => "You don't have the required permissions to do this.",
 	'first_name' => 'First Name',
 	'last_name' => 'Last Name',
-	'full_name' => 'Fullname',
 	'name' => 'Name',
 	'activated' => 'Activated',
 	'activated_at' => 'Activated At',
