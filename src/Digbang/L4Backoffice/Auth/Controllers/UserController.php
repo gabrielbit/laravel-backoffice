@@ -1,6 +1,7 @@
 <?php namespace Digbang\L4Backoffice\Auth\Controllers;
 
 use Cartalyst\Sentry\Users\UserNotFoundException;
+use Digbang\Doctrine\Tools\PaginatorFactory;
 use Digbang\FontAwesome\Facade as FontAwesome;
 use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
@@ -82,7 +83,24 @@ class UserController extends Controller
 	 */
 	private $emailer;
 
-	public function __construct(Backoffice $backoffice, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, SecureUrl $secureUrl, UserService $userService, GroupService $groupService, Emailer $emailer, Request $request)
+	/**
+	 * @type PaginatorFactory
+	 */
+	private $paginatorFactory;
+
+	/**
+	 * @param Backoffice           $backoffice
+	 * @param Excel                $excelExporter
+	 * @param PermissionRepository $permissionRepository
+	 * @param PermissionParser     $permissionParser
+	 * @param SecureUrl            $secureUrl
+	 * @param UserService          $userService
+	 * @param GroupService         $groupService
+	 * @param Emailer              $emailer
+	 * @param Request              $request
+	 * @param PaginatorFactory     $paginatorFactory
+	 */
+	public function __construct(Backoffice $backoffice, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, SecureUrl $secureUrl, UserService $userService, GroupService $groupService, Emailer $emailer, Request $request, PaginatorFactory $paginatorFactory)
 	{
 		$this->backoffice            = $backoffice;
 		$this->permissionsRepository = $permissionRepository;
@@ -96,6 +114,7 @@ class UserController extends Controller
 
 		$this->title       = trans('l4-backoffice::auth.user');
 		$this->titlePlural = trans('l4-backoffice::auth.users');
+		$this->paginatorFactory = $paginatorFactory;
 	}
 
 	public function index()
@@ -595,16 +614,18 @@ class UserController extends Controller
 	 */
 	protected function getData($limit = 10)
 	{
-		return $this->userService->search(
-            $this->request->get('email') ?: null,
-			$this->request->get('first_name') ?: null,
-			$this->request->get('last_name') ?: null,
-			$this->request->get('activated') ? (strtolower($this->request->get('activated')) == 'true') : null,
-            camel_case($this->request->get('sort_by')) ?: 'email',
-            $this->request->get('sort_sense') ?: 'asc',
-            $limit,
-			($this->request->get('page', 1) - 1) * $limit
-        );
+		$this->paginatorFactory->fromDoctrinePaginator(
+			$this->userService->search(
+	            $this->request->get('email') ?: null,
+				$this->request->get('first_name') ?: null,
+				$this->request->get('last_name') ?: null,
+				$this->request->get('activated') ? (strtolower($this->request->get('activated')) == 'true') : null,
+	            camel_case($this->request->get('sort_by')) ?: 'email',
+	            $this->request->get('sort_sense') ?: 'asc',
+	            $limit,
+				($this->request->get('page', 1) - 1) * $limit
+            )
+		);
 	}
 
 	/**

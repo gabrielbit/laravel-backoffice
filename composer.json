@@ -12,8 +12,8 @@
 	    "illuminate/validation":  "~4.2",
 	    "way/generators":         "~2.0",
 	    "digbang/font-awesome":   "~1.0",
-	    "mustache/mustache":      "~2.4",
-	    "digbang/security":       "~2.0",
+        "digbang/security":       "~2.1",
+        "mustache/mustache":      "~2.4",
 	    "maatwebsite/excel":      "~1.0",
         "laravelba/route-binder": "~1.0",
         "nette/reflection": "~2.3"

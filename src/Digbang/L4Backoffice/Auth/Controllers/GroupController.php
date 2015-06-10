@@ -1,5 +1,6 @@
 <?php namespace Digbang\L4Backoffice\Auth\Controllers;
 
+use Digbang\Doctrine\Tools\PaginatorFactory;
 use Digbang\FontAwesome\Facade as FontAwesome;
 use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
 use Digbang\L4Backoffice\Backoffice;
@@ -66,6 +67,11 @@ class GroupController extends Controller
 	private $request;
 
 	/**
+	 * @type PaginatorFactory
+	 */
+	private $paginatorFactory;
+
+	/**
 	 * @param Backoffice           $backoffice
 	 * @param Excel                $excelExporter
 	 * @param PermissionRepository $permissionRepository
@@ -73,6 +79,7 @@ class GroupController extends Controller
 	 * @param SecureUrl            $secureUrl
 	 * @param GroupService         $groupService
 	 * @param Request              $request
+	 * @param PaginatorFactory     $paginatorFactory
 	 */
 	public function __construct(
 		Backoffice           $backoffice,
@@ -81,7 +88,8 @@ class GroupController extends Controller
 		PermissionParser     $permissionParser,
 		SecureUrl            $secureUrl,
 		GroupService         $groupService,
-		Request              $request
+		Request              $request,
+		PaginatorFactory     $paginatorFactory
 	)
 	{
 		$this->backoffice            = $backoffice;
@@ -91,6 +99,7 @@ class GroupController extends Controller
 		$this->secureUrl             = $secureUrl;
 		$this->groupService          = $groupService;
 		$this->request               = $request;
+		$this->paginatorFactory      = $paginatorFactory;
 
 		$this->title = trans('l4-backoffice::auth.group');
 		$this->titlePlural = trans('l4-backoffice::auth.groups');
@@ -396,14 +405,16 @@ class GroupController extends Controller
 	 */
 	protected function getData($limit = 10)
 	{
-		return $this->groupService->search(
-			$this->request->get('name') ?: null,
-			$this->request->get('permission') ?: null,
-            camel_case($this->request->get('sort_by')) ?: 'name',
-            $this->request->get('sort_sense') ?: 'asc',
-            $limit,
-			($this->request->get('page', 1) - 1) * $limit
-        );
+		return $this->paginatorFactory->fromDoctrinePaginator(
+			$this->groupService->search(
+				$this->request->get('name') ?: null,
+				$this->request->get('permission') ?: null,
+	            camel_case($this->request->get('sort_by')) ?: 'name',
+	            $this->request->get('sort_sense') ?: 'asc',
+	            $limit,
+				($this->request->get('page', 1) - 1) * $limit
+	        )
+		);
 	}
 
 	/**
