@@ -614,7 +614,7 @@ class UserController extends Controller
 	 */
 	protected function getData($limit = 10)
 	{
-		$this->paginatorFactory->fromDoctrinePaginator(
+		return $this->paginatorFactory->fromDoctrinePaginator(
 			$this->userService->search(
 	            $this->request->get('email') ?: null,
 				$this->request->get('first_name') ?: null,
