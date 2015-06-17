@@ -620,7 +620,7 @@ class UserController extends Controller
 				$this->request->get('first_name') ?: null,
 				$this->request->get('last_name') ?: null,
 				$this->request->get('activated') ? (strtolower($this->request->get('activated')) == 'true') : null,
-	            camel_case($this->request->get('sort_by')) ?: 'email',
+	            camel_case($this->request->get('sort_by')) ?: 'firstName',
 	            $this->request->get('sort_sense') ?: 'asc',
 	            $limit,
 				($this->request->get('page', 1) - 1) * $limit
