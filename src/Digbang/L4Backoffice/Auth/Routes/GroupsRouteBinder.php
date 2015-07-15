@@ -40,9 +40,9 @@ class GroupsRouteBinder implements RouteBinder
 	{
 		$prefix = $this->config->get('l4-backoffice::auth.groups_url', 'backoffice-groups');
 
-		$router->group(['prefix' => "backoffice/$prefix", 'before' => 'backoffice.auth.withPermissions'], function() use ($router) {
+		$router->group(['prefix' => "backoffice/$prefix", 'before' => 'backoffice.auth.withPermissions|backoffice.urls.persistent'], function() use ($router) {
 			$router->get("export",                   ['as' => static::EXPORT,  "uses" => GroupController::class . '@export',  "permission" => Permission::GROUP_LIST]);
-			$router->get("/",                        ["as" => static::INDEX,   "uses" => GroupController::class . '@index',   "permission" => Permission::GROUP_LIST]);
+			$router->get("/",                        ["as" => static::INDEX,   "uses" => GroupController::class . '@index',   "permission" => Permission::GROUP_LIST, "persistent" => true]);
 			$router->get("create",                   ["as" => static::CREATE,  "uses" => GroupController::class . '@create',  "permission" => Permission::GROUP_CREATE]);
 			$router->post("/",                       ["as" => static::STORE,   "uses" => GroupController::class . '@store',   "permission" => Permission::GROUP_CREATE]);
 			$router->get("{backoffice_groups}",      ["as" => static::SHOW,    "uses" => GroupController::class . '@show',    "permission" => Permission::GROUP_READ]);

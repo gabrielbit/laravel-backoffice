@@ -7,10 +7,10 @@ use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Support\PermissionParser;
+use Digbang\L4Backoffice\Urls\PersistentUrl;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Services\GroupService;
-use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
@@ -42,9 +42,9 @@ class GroupController extends Controller
 	protected $permissionParser;
 
 	/**
-	 * @type SecureUrl
+	 * @type PersistentUrl
 	 */
-	protected $secureUrl;
+	protected $persistentUrl;
 
 	/**
 	 * @type GroupService
@@ -76,7 +76,7 @@ class GroupController extends Controller
 	 * @param Excel                $excelExporter
 	 * @param PermissionRepository $permissionRepository
 	 * @param PermissionParser     $permissionParser
-	 * @param SecureUrl            $secureUrl
+	 * @param PersistentUrl            $persistentUrl
 	 * @param GroupService         $groupService
 	 * @param Request              $request
 	 * @param PaginatorFactory     $paginatorFactory
@@ -86,7 +86,7 @@ class GroupController extends Controller
 		Excel                $excelExporter,
 		PermissionRepository $permissionRepository,
 		PermissionParser     $permissionParser,
-		SecureUrl            $secureUrl,
+		PersistentUrl        $persistentUrl,
 		GroupService         $groupService,
 		Request              $request,
 		PaginatorFactory     $paginatorFactory
@@ -96,7 +96,7 @@ class GroupController extends Controller
 		$this->excelExporter         = $excelExporter;
 		$this->permissionsRepository = $permissionRepository;
 		$this->permissionParser      = $permissionParser;
-		$this->secureUrl             = $secureUrl;
+		$this->persistentUrl             = $persistentUrl;
 		$this->groupService          = $groupService;
 		$this->request               = $request;
 		$this->paginatorFactory      = $paginatorFactory;
@@ -132,10 +132,10 @@ class GroupController extends Controller
 		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route(GroupsRouteBinder::STORE),
+			$this->persistentUrl->route(GroupsRouteBinder::STORE),
 			$label,
 			'POST',
-			$this->secureUrl->route(GroupsRouteBinder::INDEX)
+			$this->persistentUrl->route(GroupsRouteBinder::INDEX)
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -166,7 +166,7 @@ class GroupController extends Controller
 
 			$groups->save();
 
-			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::SHOW, $groups->getId()));
+			return Redirect::to($this->persistentUrl->route(GroupsRouteBinder::SHOW, $groups->getId()));
 		}
 		catch (ValidationException $e)
 		{
@@ -190,11 +190,11 @@ class GroupController extends Controller
 		];
 
 		$actions = $this->backoffice->actions()
-			->link($this->secureUrl->route(GroupsRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
-			->link($this->secureUrl->route(GroupsRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			->link($this->persistentUrl->route(GroupsRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
+			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
 
 		$topActions = $this->backoffice->actions()
-			->link($this->secureUrl->route(GroupsRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
+			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
 
 		return View::make('l4-backoffice::show', [
 			'title'      => $this->titlePlural,
@@ -211,10 +211,10 @@ class GroupController extends Controller
 		$group = $this->groupService->find($id);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route(GroupsRouteBinder::UPDATE, $id),
+			$this->persistentUrl->route(GroupsRouteBinder::UPDATE, $id),
 			trans('l4-backoffice::default.edit') . ' ' . $group->getName(),
 			'PUT',
-			$this->secureUrl->route(GroupsRouteBinder::SHOW, $id)
+			$this->persistentUrl->route(GroupsRouteBinder::SHOW, $id)
 		);
 
 		$form->fill([
@@ -255,7 +255,7 @@ class GroupController extends Controller
 			);
 
 			// Redirect to show
-			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::SHOW, [$group->getId()]));
+			return Redirect::to($this->persistentUrl->route(GroupsRouteBinder::SHOW, [$group->getId()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -269,12 +269,12 @@ class GroupController extends Controller
 		try
 		{
 			$group = $this->groupService->find($id);
-			
+
 			// Try to destroy the entity
 			$this->groupService->delete($id);
 
 			// Redirect to the listing
-			return Redirect::to($this->secureUrl->route(GroupsRouteBinder::INDEX))
+			return Redirect::to($this->persistentUrl->route(GroupsRouteBinder::INDEX))
 				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $group->getName()]));
 		}
 		catch (ValidationException $e)
@@ -291,7 +291,7 @@ class GroupController extends Controller
 
 		$columns = $list->columns()->hide(['id'])->sortable([]);
 		$rows = $list->rows();
-		
+
 		$fileName = (new \DateTime())->format('Y-m-d') . '_' . $this->titlePlural;
 
 		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
@@ -360,8 +360,8 @@ class GroupController extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link($this->secureUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
-				->link($this->secureUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
+				->link($this->persistentUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
+				->link($this->persistentUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
 		);
 
 		$list->setRowActions(
@@ -369,20 +369,20 @@ class GroupController extends Controller
 				// View icon
 				->link(function(Collection $row) {
 					try {
-						return $this->secureUrl->route(GroupsRouteBinder::SHOW, $row['id']);
+						return $this->persistentUrl->route(GroupsRouteBinder::SHOW, $row['id']);
 					} catch (PermissionException $e) { return false; }
 				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.show')])
 				// Edit icon
 				->link(function(Collection $row){
 					try {
-						return $this->secureUrl->route(GroupsRouteBinder::EDIT, $row['id']);
+						return $this->persistentUrl->route(GroupsRouteBinder::EDIT, $row['id']);
 					} catch (PermissionException $e) { return false; }
 				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.edit')])
 				// Delete icon
 				->form(
 					function(Collection $row){
 						try {
-							return $this->secureUrl->route(GroupsRouteBinder::DESTROY, $row['id']);
+							return $this->persistentUrl->route(GroupsRouteBinder::DESTROY, $row['id']);
 						} catch (PermissionException $e) { return false; }
 					},
 					FontAwesome::icon('times'),

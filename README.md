@@ -46,6 +46,18 @@ The Backoffice will associate `users` and `groups` resources for you, and will b
 
 Use this CRUDs to administrate users and groups. Make sure only administrators can access this pages!
 
+## Persistent URLs
+The Backoffice can use persistent URLs to improve navigation (i.e.: Keeping filters used in listings).
+To use this the route to persist should have the configuration option `persistent => true` and 
+your backoffice route group should include the filter:
+
+* `backoffice.urls.persist` (will save the url in session)
+
+The package provides a `PersistentUrl` object, that will help you build the urls that are persisted (falling 
+back to the original url if no session key is found. `PersistentUrl` will use `digbang/security` `SecureUrl` 
+to build secure URLs. *Be aware that the object will only persist GET requests. All other methods will not get 
+persisted, but will be handled transparently by `SecureUrl`.*
+
 ## Contributing
 This project is being developed with [PHPSpec](http://phpspec.net).
 It is recommended to generate specifications for each new feature added.

@@ -9,13 +9,13 @@ use Digbang\L4Backoffice\Backoffice;
 use Digbang\L4Backoffice\Exceptions\ValidationException;
 use Digbang\L4Backoffice\Listings\Listing;
 use Digbang\L4Backoffice\Support\PermissionParser;
+use Digbang\L4Backoffice\Urls\PersistentUrl;
 use Digbang\Security\Auth\Emailer;
 use Digbang\Security\Contracts\Group;
 use Digbang\Security\Permissions\Exceptions\PermissionException;
 use Digbang\Security\Permissions\PermissionRepository;
 use Digbang\Security\Services\UserService;
 use Digbang\Security\Services\GroupService;
-use Digbang\Security\Urls\SecureUrl;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
@@ -49,9 +49,9 @@ class UserController extends Controller
 	protected $permissionParser;
 
 	/**
-	 * @type \Digbang\Security\Urls\SecureUrl
+	 * @type PersistentUrl
 	 */
-	protected $secureUrl;
+	protected $persistentUrl;
 
 	/**
 	 * @type \Digbang\Security\Services\UserService
@@ -93,20 +93,20 @@ class UserController extends Controller
 	 * @param Excel                $excelExporter
 	 * @param PermissionRepository $permissionRepository
 	 * @param PermissionParser     $permissionParser
-	 * @param SecureUrl            $secureUrl
+	 * @param PersistentUrl        $persistentUrl
 	 * @param UserService          $userService
 	 * @param GroupService         $groupService
 	 * @param Emailer              $emailer
 	 * @param Request              $request
 	 * @param PaginatorFactory     $paginatorFactory
 	 */
-	public function __construct(Backoffice $backoffice, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, SecureUrl $secureUrl, UserService $userService, GroupService $groupService, Emailer $emailer, Request $request, PaginatorFactory $paginatorFactory)
+	public function __construct(Backoffice $backoffice, Excel $excelExporter, PermissionRepository $permissionRepository, PermissionParser $permissionParser, PersistentUrl $persistentUrl, UserService $userService, GroupService $groupService, Emailer $emailer, Request $request, PaginatorFactory $paginatorFactory)
 	{
 		$this->backoffice            = $backoffice;
 		$this->permissionsRepository = $permissionRepository;
 		$this->excelExporter         = $excelExporter;
 		$this->permissionParser      = $permissionParser;
-		$this->secureUrl             = $secureUrl;
+		$this->persistentUrl             = $persistentUrl;
 		$this->userService           = $userService;
 		$this->groupService          = $groupService;
 		$this->request               = $request;
@@ -144,10 +144,10 @@ class UserController extends Controller
 		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route(UsersRouteBinder::STORE),
+			$this->persistentUrl->route(UsersRouteBinder::STORE),
 			$label,
 			'POST',
-			$this->secureUrl->route(UsersRouteBinder::INDEX)
+			$this->persistentUrl->route(UsersRouteBinder::INDEX)
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
@@ -195,7 +195,7 @@ class UserController extends Controller
 				);
 			}
 
-			return Redirect::to($this->secureUrl->route(UsersRouteBinder::SHOW, $user->getId()));
+			return Redirect::to($this->persistentUrl->route(UsersRouteBinder::SHOW, $user->getId()));
 		}
 		catch (ValidationException $e)
 		{
@@ -203,7 +203,7 @@ class UserController extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->secureUrl->route('backoffice.index'));
+			return Redirect::to($this->persistentUrl->route('backoffice.index'));
 		}
 	}
 
@@ -237,16 +237,16 @@ class UserController extends Controller
 		// Actions with security concerns
 		$actions = $this->backoffice->actions();
 		try {
-			$actions->link($this->secureUrl->route(UsersRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 		try {
-			$actions->link($this->secureUrl->route(UsersRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 
 		$topActions = $this->backoffice->actions();
 
 		try {
-			$topActions->link($this->secureUrl->route(UsersRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
+			$topActions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
 		} catch (PermissionException $e) { /* Do nothing */ }
 
 		return View::make('l4-backoffice::show', [
@@ -268,10 +268,10 @@ class UserController extends Controller
 		$user = $this->userService->find($id);
 
 		$form = $this->buildForm(
-			$this->secureUrl->route(UsersRouteBinder::UPDATE, $id),
+			$this->persistentUrl->route(UsersRouteBinder::UPDATE, $id),
 			trans('l4-backoffice::default.edit') . ' ' . trans('l4-backoffice::auth.user_name', ['name' => $user->getFirstName(),'lastname' => $user->getLastName()]),
 			'PUT',
-			$this->secureUrl->route(UsersRouteBinder::SHOW, $id)
+			$this->persistentUrl->route(UsersRouteBinder::SHOW, $id)
 		);
 
 		$permissions = array_map(function($permission){
@@ -340,7 +340,7 @@ class UserController extends Controller
 				$this->request->get('permissions', [])
 			);
 
-			return Redirect::to($this->secureUrl->route(UsersRouteBinder::SHOW, [$user->getId()]));
+			return Redirect::to($this->persistentUrl->route(UsersRouteBinder::SHOW, [$user->getId()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -348,7 +348,7 @@ class UserController extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->secureUrl->route('backoffice.index'));
+			return Redirect::to($this->persistentUrl->route('backoffice.index'));
 		}
 	}
 
@@ -357,12 +357,12 @@ class UserController extends Controller
 		try
 		{
 			$user = $this->userService->find($id);
-			
+
 			// Try to destroy the entity
 			$this->userService->delete($id);
 
 			// Redirect to the listing
-			return Redirect::to($this->secureUrl->route(UsersRouteBinder::INDEX))->withSuccess(
+			return Redirect::to($this->persistentUrl->route(UsersRouteBinder::INDEX))->withSuccess(
 				trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $user->getEmail()])
 			);
 		}
@@ -372,7 +372,7 @@ class UserController extends Controller
 		}
 		catch(PermissionException $e)
 		{
-			return Redirect::to($this->secureUrl->route('backoffice.index'))->withDanger(
+			return Redirect::to($this->persistentUrl->route('backoffice.index'))->withDanger(
 				trans('l4-backoffice::auth.permission_error')
 			);
 		}
@@ -386,7 +386,7 @@ class UserController extends Controller
 
 		$columns = $list->columns()->hide(['id', 'first_name', 'last_name'])->sortable([]);
 		$rows = $list->rows();
-		
+
 		$fileName = (new \DateTime())->format('Y-m-d') . '_' . $this->titlePlural;
 
 		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
@@ -496,7 +496,7 @@ class UserController extends Controller
 	protected function getListing()
 	{
 		\Carbon\Carbon::setToStringFormat(trans('l4-backoffice::default.datetime_format'));
-		
+
 		$listing = $this->backoffice->listing([
 			'first_name'  => trans('l4-backoffice::auth.first_name'),
 			'last_name' => trans('l4-backoffice::auth.last_name'),
@@ -527,10 +527,10 @@ class UserController extends Controller
 		$actions = $this->backoffice->actions();
 
 		try {
-			$actions->link($this->secureUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
 		} catch (PermissionException $e) { /* Do nothing */}
 		try {
-			$actions->link($this->secureUrl->route(UsersRouteBinder::EXPORT, Input::all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::EXPORT, Input::all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */}
 
 		$list->setActions($actions);
@@ -540,14 +540,14 @@ class UserController extends Controller
 		// View icon
 		$rowActions->link(function(Collection $row) {
 			try {
-				return $this->secureUrl->route(UsersRouteBinder::SHOW, $row['id']);
+				return $this->persistentUrl->route(UsersRouteBinder::SHOW, $row['id']);
 			} catch (PermissionException $e) { return false; }
 		}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.show')]);
 
 		// Edit icon
 		$rowActions->link(function(Collection $row){
 			try {
-				return $this->secureUrl->route(UsersRouteBinder::EDIT, $row['id']);
+				return $this->persistentUrl->route(UsersRouteBinder::EDIT, $row['id']);
 			} catch (PermissionException $e) { return false; }
 		}, FontAwesome::icon('edit'), ['class' => 'text-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.edit')]);
 
@@ -555,7 +555,7 @@ class UserController extends Controller
 		$rowActions->form(
 			function(Collection $row){
 				try {
-				return $this->secureUrl->route(UsersRouteBinder::DESTROY, $row['id']);
+				return $this->persistentUrl->route(UsersRouteBinder::DESTROY, $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('times'),
@@ -573,7 +573,7 @@ class UserController extends Controller
 		$rowActions->form(
 			function(Collection $row){
 				try {
-				return $this->secureUrl->route(UsersRouteBinder::RESET_PASSWORD, $row['id']);
+				return $this->persistentUrl->route(UsersRouteBinder::RESET_PASSWORD, $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('unlock-alt'),
@@ -591,7 +591,7 @@ class UserController extends Controller
 			function(Collection $row){
 				if ($row['activated']) return false;
 				try {
-					return $this->secureUrl->route(UsersRouteBinder::RESEND_ACTIVATION, $row['id']);
+					return $this->persistentUrl->route(UsersRouteBinder::RESEND_ACTIVATION, $row['id']);
 				} catch (PermissionException $e) { return false; }
 			},
 			FontAwesome::icon('reply-all'),

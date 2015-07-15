@@ -43,9 +43,9 @@ class UsersRouteBinder implements RouteBinder
 	{
 		$prefix = $this->config->get('l4-backoffice::auth.users_url', 'backoffice-users');
 
-		$router->group(['prefix' => "backoffice/$prefix", 'before' => 'backoffice.auth.withPermissions'], function() use ($router) {
+		$router->group(['prefix' => "backoffice/$prefix", 'before' => 'backoffice.auth.withPermissions|backoffice.urls.persistent'], function() use ($router) {
 			$router->get("export",                  ['as' => static::EXPORT,  "uses" => UserController::class . '@export',  "permission" => Permission::USERS_LIST]);
-			$router->get("/",                       ["as" => static::INDEX,   "uses" => UserController::class . '@index',   "permission" => Permission::USERS_LIST]);
+			$router->get("/",                       ["as" => static::INDEX,   "uses" => UserController::class . '@index',   "permission" => Permission::USERS_LIST, "persistent" => true]);
 			$router->get("create",                  ["as" => static::CREATE,  "uses" => UserController::class . '@create',  "permission" => Permission::USERS_CREATE]);
 			$router->post("/",                      ["as" => static::STORE,   "uses" => UserController::class . '@store',   "permission" => Permission::USERS_CREATE]);
 			$router->get("{backoffice_users}",      ["as" => static::SHOW,    "uses" => UserController::class . '@show',    "permission" => Permission::USERS_READ]);

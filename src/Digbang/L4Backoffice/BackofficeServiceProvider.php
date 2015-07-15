@@ -5,6 +5,7 @@ use Digbang\L4Backoffice\Auth\Routes\AuthRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\GroupsRouteBinder;
 use Digbang\L4Backoffice\Auth\Routes\UsersRouteBinder;
 use Digbang\L4Backoffice\Generator\Routes\GenRouteBinder;
+use Digbang\L4Backoffice\Urls\PersistentUrlFilter;
 use Digbang\Security\Filters\Auth;
 use Digbang\Security\SecurityServiceProvider;
 use Digbang\Security\SentryWithDoctrineServiceProvider;
@@ -45,6 +46,8 @@ class BackofficeServiceProvider extends ServiceProvider
 		{
 			$this->registerGenRoutes($router);
 		}
+
+		$this->registerPersistentUrlFilters($router);
 
 		require_once 'composers.php';
 	}
@@ -104,5 +107,10 @@ class BackofficeServiceProvider extends ServiceProvider
 	{
 		$this->app->make(UsersRouteBinder::class)->bind($router);
 		$this->app->make(GroupsRouteBinder::class)->bind($router);
+	}
+
+	protected function registerPersistentUrlFilters(Router $router)
+	{
+		$router->filter('backoffice.urls.persistent', PersistentUrlFilter::class . '@persist');
 	}
 }
