@@ -51,7 +51,7 @@ The Backoffice can use persistent URLs to improve navigation (i.e.: Keeping filt
 To use this the route to persist should have the configuration option `persistent => true` and 
 your backoffice route group should include the filter:
 
-* `backoffice.urls.persist` (will save the url in session)
+* `backoffice.urls.persistent` (will save the url in session)
 
 The package provides a `PersistentUrl` object, that will help you build the urls that are persisted (falling 
 back to the original url if no session key is found. `PersistentUrl` will use `digbang/security` `SecureUrl` 
