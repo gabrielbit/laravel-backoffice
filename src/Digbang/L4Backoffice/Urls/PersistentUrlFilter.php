@@ -28,7 +28,7 @@ class PersistentUrlFilter
 	 */
 	public function persist(Route $route, Request $request)
 	{
-		if($route->getParameter('persistent'))
+		if(isset($route->getAction()['persistent']) && $route->getAction()['persistent'] == true)
 		{//Should be persisted
 			$this->persistentUrl->persist($route, $request);
 		}
