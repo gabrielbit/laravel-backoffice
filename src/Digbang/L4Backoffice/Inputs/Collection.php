@@ -169,7 +169,7 @@ class Collection implements \IteratorAggregate
 	 */
 	public function getVisible()
 	{
-		return $this->collection->filter(function(Input $input){
+		return $this->collection->filter(function(InputInterface $input){
 			return $input->isVisible();
 		});
 	}
@@ -179,7 +179,7 @@ class Collection implements \IteratorAggregate
 	 */
 	public function getHidden()
 	{
-		return $this->collection->filter(function(Input $input){
+		return $this->collection->filter(function(InputInterface $input){
 			return ! $input->isVisible();
 		});
 	}
