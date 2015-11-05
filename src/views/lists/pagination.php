@@ -7,7 +7,7 @@ $paginator->setupPaginationContext();
 ?>
 <div class="pagination-container">
 	<span class="showing"><?=
-		Lang::choice('l4-backoffice::paginator.showing', $paginator->getTotal(), [
+		Lang::choice('backoffice::paginator.showing', $paginator->getTotal(), [
 			'from'  => $paginator->getFrom(),
 			'to'    => $paginator->getTo(),
 			'total' => $paginator->getTotal()

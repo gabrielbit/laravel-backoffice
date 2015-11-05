@@ -58,7 +58,7 @@ class PermissionParser
 
 	public function toViewTable(array $allPermissions, $userOrGroup)
 	{
-		return \View::make('l4-backoffice::auth.partials.permissions', [
+		return \View::make('backoffice::auth.partials.permissions', [
 			'allPermissions' => $this->toDropdownArray($allPermissions),
 			'userOrGroup' => $userOrGroup
 		]);
@@ -66,14 +66,14 @@ class PermissionParser
 
 	public function trans($resource, $method, $default = null)
 	{
-		if ($this->translator->has("l4-backoffice::permissions.$resource.$method"))
+		if ($this->translator->has("backoffice::permissions.$resource.$method"))
 		{
-			return $this->translator->get("l4-backoffice::permissions.$resource.$method");
+			return $this->translator->get("backoffice::permissions.$resource.$method");
 		}
 
-		if ($this->translator->has("l4-backoffice::permissions.system-defaults.$method"))
+		if ($this->translator->has("backoffice::permissions.system-defaults.$method"))
 		{
-			return $this->translator->get("l4-backoffice::permissions.system-defaults.$method");
+			return $this->translator->get("backoffice::permissions.system-defaults.$method");
 		}
 
 		if($default !== null)

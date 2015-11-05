@@ -59,7 +59,7 @@ class GenController extends Controller
 	public function modelSelection()
 	{
 		// Look for available backoffice APIs
-		$apis = $this->apiFinder->all($this->config->get('l4-backoffice::gen.apis_path'));
+		$apis = $this->apiFinder->all($this->config->get('backoffice::gen.apis_path'));
 
 		// Build a form with checkboxes for each of them
 		$form = $this->backoffice->form(
@@ -80,7 +80,7 @@ class GenController extends Controller
 			$title
 		]);
 
-		return $this->view->make('l4-backoffice::gen.model-selection', [
+		return $this->view->make('backoffice::gen.model-selection', [
 			'title'      => $title,
 			'breadcrumb' => $breadcrumb,
 			'form'       => $form
@@ -103,11 +103,11 @@ class GenController extends Controller
 
 		$inputs->text('controller_namespace', 'Controllers Namespace');
 		$inputs->find('controller_namespace')->defaultsTo(
-			$this->config->get('l4-backoffice::gen.controllers_namespace')
+			$this->config->get('backoffice::gen.controllers_namespace')
 		);
 		$inputs->text('controllers_dir', 'Controllers Directory');
 		$inputs->find('controllers_dir')->defaultsTo(
-			$this->config->get('l4-backoffice::gen.controllers_dir')
+			$this->config->get('backoffice::gen.controllers_dir')
 		);
 
 		foreach (array_keys($this->request->except('_token')) as $api)
@@ -147,7 +147,7 @@ class GenController extends Controller
 		]);
 
 		// Return it
-		return $this->view->make('l4-backoffice::gen.customization', [
+		return $this->view->make('backoffice::gen.customization', [
 			'title'      => $title,
 			'breadcrumb' => $breadcrumb,
 			'form'       => $form
@@ -200,7 +200,7 @@ class GenController extends Controller
 		]);
 
 		// Return
-		return $this->view->make('l4-backoffice::gen.generation', [
+		return $this->view->make('backoffice::gen.generation', [
 			'title' => $title,
 			'breadcrumb' => $breadcrumb,
 			'controllers' => $controllers,
@@ -218,7 +218,7 @@ class GenController extends Controller
 			$title
 		]);
 
-		return View::make('l4-backoffice::gen.generation', [
+		return View::make('backoffice::gen.generation', [
 			'title' => $title,
 			'breadcrumb' => $breadcrumb,
 			'tables' => ['foos', 'bars', 'bazes', 'a_really_long_tables'],

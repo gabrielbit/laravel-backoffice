@@ -1,4 +1,4 @@
 suites:
-  l4-backoffice:
+  backoffice:
     namespace: Digbang\L4Backoffice
     spec_path: tests

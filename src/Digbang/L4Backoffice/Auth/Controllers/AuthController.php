@@ -22,7 +22,7 @@ class AuthController extends Controller
 	/**
 	 * @type string
 	 */
-	protected $layout = 'l4-backoffice::layouts.default';
+	protected $layout = 'backoffice::layouts.default';
 
 	/**
 	 * @type Sentry
@@ -79,7 +79,7 @@ class AuthController extends Controller
 	 */
 	public function login()
 	{
-		return View::make('l4-backoffice::auth.login');
+		return View::make('backoffice::auth.login');
 	}
 
 	/**
@@ -101,23 +101,23 @@ class AuthController extends Controller
 		}
 		catch (LoginRequiredException $e)
 		{
-			$errors->add('email', trans('l4-backoffice::auth.validation.login-required'));
+			$errors->add('email', trans('backoffice::auth.validation.login-required'));
 		}
 		catch (PasswordRequiredException $e)
 		{
-			$errors->add('password', trans('l4-backoffice::auth.validation.password.required'));
+			$errors->add('password', trans('backoffice::auth.validation.password.required'));
 		}
 		catch (WrongPasswordException $e)
 		{
-			$errors->add('password', trans('l4-backoffice::auth.validation.password.wrong'));
+			$errors->add('password', trans('backoffice::auth.validation.password.wrong'));
 		}
 		catch (UserNotFoundException $e)
 		{
-			$errors->add('email', trans('l4-backoffice::auth.validation.user.not-found'));
+			$errors->add('email', trans('backoffice::auth.validation.user.not-found'));
 		}
 		catch (UserNotActivatedException $e)
 		{
-			$errors->add('email', trans('l4-backoffice::auth.validation.user.not-activated'));
+			$errors->add('email', trans('backoffice::auth.validation.user.not-activated'));
 		}
 		
 		return $this->redirector->route('backoffice.auth.login')->withInput()->withErrors($errors);
@@ -146,23 +146,23 @@ class AuthController extends Controller
 			{
 				return $this->redirector->route('backoffice.auth.login')
 					->with([
-						'success' => trans('l4-backoffice::auth.activation.success')
+						'success' => trans('backoffice::auth.activation.success')
 					]);
 			}
 
-			return View::make('l4-backoffice::auth.activation-expired', [
-				'email' => $this->config->get('l4-backoffice::auth.contact')
+			return View::make('backoffice::auth.activation-expired', [
+				'email' => $this->config->get('backoffice::auth.contact')
 			]);
 		}
 		catch (UserNotFoundException $e)
 		{
 			return $this->redirector->route('backoffice.auth.login')
-				->with(['danger' => trans('l4-backoffice::auth.validation.user.not-found')]);
+				->with(['danger' => trans('backoffice::auth.validation.user.not-found')]);
 		}
 		catch (UserAlreadyActivatedException $e)
 		{
 			return $this->redirector->route('backoffice.auth.login')
-				->with(['warning' => trans('l4-backoffice::auth.validation.user.already-active')]);
+				->with(['warning' => trans('backoffice::auth.validation.user.already-active')]);
 		}
 	}
 
@@ -176,13 +176,13 @@ class AuthController extends Controller
 	{
 		if ($this->accessControl->checkResetPasswordCode($id, $resetCode))
 		{
-			return View::make('l4-backoffice::auth.reset-password', [
+			return View::make('backoffice::auth.reset-password', [
 				'id'        => $id,
 				'resetCode' => $resetCode
 			]);
 		}
 
-		return $this->redirector->route('backoffice.auth.login')->with('danger', trans('l4-backoffice::auth.validation.reset-password.incorrect'));
+		return $this->redirector->route('backoffice.auth.login')->with('danger', trans('backoffice::auth.validation.reset-password.incorrect'));
 	}
 
 	/**
@@ -211,16 +211,16 @@ class AuthController extends Controller
 			if ($this->accessControl->resetPassword($this->request->get('reset_password_code'), $input['password']))
 			{
 				return $this->redirector->route('backoffice.auth.login')
-					->with('success', trans('l4-backoffice::auth.reset-password.success'));
+					->with('success', trans('backoffice::auth.reset-password.success'));
 			}
 
 			return $this->redirector->route('backoffice.auth.login')
-				->with('danger', trans('l4-backoffice::auth.validation.reset-password.incorrect'));
+				->with('danger', trans('backoffice::auth.validation.reset-password.incorrect'));
 		}
 		catch (UserNotFoundException $e)
 		{
 			return $this->redirector->route('backoffice.auth.login')
-				->with('danger', trans('l4-backoffice::auth.validation.user.not-found'));
+				->with('danger', trans('backoffice::auth.validation.user.not-found'));
 		}
 	}
 
@@ -229,7 +229,7 @@ class AuthController extends Controller
 	 */
 	public function forgotPassword()
 	{
-		return View::make('l4-backoffice::auth.request-reset-password');
+		return View::make('backoffice::auth.request-reset-password');
 	}
 
 	/**
@@ -242,7 +242,7 @@ class AuthController extends Controller
 			$email = trim($this->request->get('email'));
 			if (!$email)
 			{
-				throw new UserNotFoundException(trans('l4-backoffice::auth.validation.reset-password.email'));
+				throw new UserNotFoundException(trans('backoffice::auth.validation.reset-password.email'));
 			}
 
 			/* @var $user \Digbang\Security\Contracts\User */
@@ -254,11 +254,11 @@ class AuthController extends Controller
 			);
 
 			return $this->redirector->route('backoffice.auth.login')
-				->with('info', trans('l4-backoffice::auth.reset-password.email-sent', ['email' => $user->getEmail()]));
+				->with('info', trans('backoffice::auth.reset-password.email-sent', ['email' => $user->getEmail()]));
 		}
 		catch (UserNotFoundException $e)
 		{
-			return $this->redirector->back()->withErrors(['email' => trans('l4-backoffice::auth.validation.user.not-found')]);
+			return $this->redirector->back()->withErrors(['email' => trans('backoffice::auth.validation.user.not-found')]);
 		}
 	}
 }

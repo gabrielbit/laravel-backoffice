@@ -79,8 +79,8 @@ class AuthGenerationCommand extends Command
 	protected function getOptions()
 	{
 		return [
-			['controllerNamespace', 'cn', InputOption::VALUE_OPTIONAL, 'The controllers\' namespace.', \Config::get('l4-backoffice::gen.backoffice.namespace')],
-			['entitiesNamespace',   'en', InputOption::VALUE_OPTIONAL, 'The entities namespace.',      \Config::get('l4-backoffice::gen.entities.namespace')]
+			['controllerNamespace', 'cn', InputOption::VALUE_OPTIONAL, 'The controllers\' namespace.', \Config::get('backoffice::gen.backoffice.namespace')],
+			['entitiesNamespace',   'en', InputOption::VALUE_OPTIONAL, 'The entities namespace.',      \Config::get('backoffice::gen.entities.namespace')]
 		];
 	}
 

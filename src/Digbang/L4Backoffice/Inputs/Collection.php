@@ -52,7 +52,7 @@ class Collection implements \IteratorAggregate
 
 	public function boolean($name, $label, $options = [])
 	{
-		return $this->add($this->factory->dropdown($name, $label, [''=> '', 'true' => trans('l4-backoffice::default.yes'), 'false' => trans('l4-backoffice::default.no')], $options));
+		return $this->add($this->factory->dropdown($name, $label, [''=> '', 'true' => trans('backoffice::default.yes'), 'false' => trans('backoffice::default.no')], $options));
 	}
 
 	public function hidden($name, $options = [])

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="l4-backoffice" default="unit-tests">
+<project name="backoffice" default="unit-tests">
 	<property name="toolsdir" value="" />
 
 	<target name="unit-tests" depends="prepare,lint,dependencies,phpspec" />

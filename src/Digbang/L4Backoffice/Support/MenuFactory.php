@@ -35,7 +35,7 @@ class MenuFactory
 		{
 			$this->menu = [];
 
-			$menus = $this->config->get('l4-backoffice::menu.menu');
+			$menus = $this->config->get('backoffice::menu.menu');
 
 			foreach ($menus as $title => $menu)
 			{
@@ -61,7 +61,7 @@ class MenuFactory
 	{
 		return new Menu(
 			$this->controlFactory->make(
-				'l4-backoffice::menu.main',
+				'backoffice::menu.main',
 				$title,
 				['class' => 'nav nav-pills nav-stacked nav-bracket']),
 			$actionTree);
@@ -111,7 +111,7 @@ class MenuFactory
 	{
 		try
 		{
-			$root->link($this->getUrlFromConfig($config), $label, [], 'l4-backoffice::menu.link', array_get($config, 'icon'));
+			$root->link($this->getUrlFromConfig($config), $label, [], 'backoffice::menu.link', array_get($config, 'icon'));
 		}
 		catch (PermissionException $e)
 		{
@@ -127,7 +127,7 @@ class MenuFactory
 	 */
 	protected function iterateChildren(ActionCollection $root, $label, $children, $icon = null)
 	{
-		$branch = $root->dropdown($label, ['class' => 'nav-parent'], 'l4-backoffice::menu.dropdown', $icon);
+		$branch = $root->dropdown($label, ['class' => 'nav-parent'], 'backoffice::menu.dropdown', $icon);
 
 		foreach ($children as $leafLabel => $config)
 		{

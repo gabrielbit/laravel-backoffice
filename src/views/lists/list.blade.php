@@ -9,14 +9,14 @@
 		@foreach($columns as $column)
 		<th>
 			@if($column->sortable())
-				@include('l4-backoffice::actions.sort', ['column' => $column])
+				@include('backoffice::actions.sort', ['column' => $column])
 			@else
 				{{ $column->getLabel() }}
 			@endif
 		</th>
 		@endforeach
 		@if($rowActions)
-		<th>{{ Lang::get('l4-backoffice::default.actions') }}</th>
+		<th>{{ Lang::get('backoffice::default.actions') }}</th>
 		@endif
 	</tr>
 	</thead>
@@ -44,7 +44,7 @@
 	@else
 	<tr>
 		<td colspan="{{ count($columns) + 1 }}" class="text-danger">
-			{{ Lang::get('l4-backoffice::default.empty_listing') }}
+			{{ Lang::get('backoffice::default.empty_listing') }}
 		</td>
 	</tr>
 	@endif

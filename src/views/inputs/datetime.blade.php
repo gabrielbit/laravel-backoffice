@@ -9,7 +9,7 @@
 		</div>
 		<div class="col-xs-6">
 			<div class="input-group">
-				@include('l4-backoffice::inputs.time', ['name' => "{$name}_time", 'label' => "$label time", 'options' => ['style' => 'position: relative; z-index: 2000'], 'value' => $value ? $value->format('H:i:s') : ''])
+				@include('backoffice::inputs.time', ['name' => "{$name}_time", 'label' => "$label time", 'options' => ['style' => 'position: relative; z-index: 2000'], 'value' => $value ? $value->format('H:i:s') : ''])
 				<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
 			</div>
 		</div>

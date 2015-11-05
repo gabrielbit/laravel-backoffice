@@ -104,7 +104,7 @@ class InstallCommand extends Command
 
 		foreach (new \FilesystemIterator($myLangPath, \FilesystemIterator::SKIP_DOTS) as $languageDir) /* @type $languageDir \DirectoryIterator */
 		{
-			$targetDir = $projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice';
+			$targetDir = $projectLangPath . '/' . $languageDir->getBasename() . '/backoffice';
 
 			$dooEet = true;
 			if ($filesystem->exists($targetDir))
@@ -116,7 +116,7 @@ class InstallCommand extends Command
 			{
 				$this->info(
 					'Copying ' . $languageDir->getPathname() . ' to ' .
-					$projectLangPath . '/' . $languageDir->getBasename() . '/l4-backoffice'
+					$projectLangPath . '/' . $languageDir->getBasename() . '/backoffice'
 				);
 
 				$filesystem->copyDirectory($languageDir->getPathname(), $targetDir);
@@ -206,7 +206,7 @@ class InstallCommand extends Command
 	private function fireConfigPublishing()
 	{
 		$this->info("Publishing backoffice and security configuration files...");
-		$this->call('config:publish', ['digbang/l4-backoffice']);
+		$this->call('config:publish', ['digbang/backoffice']);
 		$this->call('config:publish', ['digbang/security']);
 	}
 

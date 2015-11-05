@@ -1,7 +1,7 @@
-@extends('l4-backoffice::layouts.empty')
+@extends('backoffice::layouts.empty')
 
 @section('body.navigation')
-	@include('l4-backoffice::menu')
+	@include('backoffice::menu')
 @stop
 
 @if(Cookie::get('leftpanel-collapsed'))
@@ -12,7 +12,7 @@
 <div class="leftpanel">
 	@section('body.logo')
 	<div class="logopanel">
-		<h1><span>[</span> @yield('body.title', Lang::get('l4-backoffice::default.backoffice')) <span>]</span></h1>
+		<h1><span>[</span> @yield('body.title', Lang::get('backoffice::default.backoffice')) <span>]</span></h1>
 	</div>
 	@show
 	<div class="leftpanelinner">
@@ -24,7 +24,7 @@
 	<div class="headerbar">
 		<a class="menutoggle"><i class="fa fa-bars"></i></a>
 		<div class="header-right">
-			@include('l4-backoffice::auth.partials.menu')
+			@include('backoffice::auth.partials.menu')
 		</div>
 	</div>
 	@show

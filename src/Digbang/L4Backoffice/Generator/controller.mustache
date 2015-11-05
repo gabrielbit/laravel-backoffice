@@ -114,7 +114,7 @@ class {{ className.studly }}Controller extends Controller
 		{
 			$listActions->build()
                 ->to($this->url->route('backoffice.{{ className.snake.plural }}.create'))
-				->labeled(fa::icon('plus') . trans('l4-backoffice::default.new', ['model' => $this->title]))
+				->labeled(fa::icon('plus') . trans('backoffice::default.new', ['model' => $this->title]))
 				->addClass('btn btn-primary')
 				->asLink();
         }
@@ -126,7 +126,7 @@ class {{ className.studly }}Controller extends Controller
         {
             $listActions->build()
                 ->to($this->url->route('backoffice.{{ className.snake.plural }}.export', $this->request->all()))
-                ->labeled(fa::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'))
+                ->labeled(fa::icon('file-excel-o') . ' ' . trans('backoffice::default.export'))
                 ->addClass('btn btn-success')
                 ->asLink();
         }
@@ -147,7 +147,7 @@ class {{ className.studly }}Controller extends Controller
 			->labeled(fa::icon('eye'))
 			->addDataToggle('tooltip')
 			->addDataPlacement('top')
-			->addTitle(trans('l4-backoffice::default.show'))
+			->addTitle(trans('backoffice::default.show'))
 			->asLink();
 		{{/ methods.hasRead }}
 		{{# methods.hasUpdate }}
@@ -161,7 +161,7 @@ class {{ className.studly }}Controller extends Controller
 			->addClass('text-success')
 			->addDataToggle('tooltip')
 			->addDataPlacement('top')
-			->addTitle(trans('l4-backoffice::default.edit'))
+			->addTitle(trans('backoffice::default.edit'))
 			->asLink();
 		{{/ methods.hasUpdate }}
 		{{# methods.hasDelete }}
@@ -175,8 +175,8 @@ class {{ className.studly }}Controller extends Controller
 			->addClass('text-danger')
 			->addDataToggle('tooltip')
 			->addDataPlacement('top')
-			->addDataConfirm(trans('l4-backoffice::default.delete-confirm'))
-			->addTitle(trans('l4-backoffice::default.delete'))
+			->addDataConfirm(trans('backoffice::default.delete-confirm'))
+			->addTitle(trans('backoffice::default.delete'))
 			->asForm('DELETE');
 		{{/ methods.hasDelete }}
 
@@ -189,11 +189,11 @@ class {{ className.studly }}Controller extends Controller
 		$listing->fill($results);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural
 		]);
 
-		return View::make('l4-backoffice::index', [
+		return View::make('backoffice::index', [
 			'title'      => $this->titlePlural,
 			'list'       => $listing,
 			'breadcrumb' => $breadcrumb
@@ -209,7 +209,7 @@ class {{ className.studly }}Controller extends Controller
 	 */
 	public function create()
 	{
-		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
+		$label = trans('backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->backoffice->form(
 			$this->url->route('backoffice.{{ className.snake.plural }}.store'),
@@ -226,12 +226,12 @@ class {{ className.studly }}Controller extends Controller
 		{{/ params }}
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
 			$label
 		]);
 
-		return View::make('l4-backoffice::create', [
+		return View::make('backoffice::create', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -273,7 +273,7 @@ class {{ className.studly }}Controller extends Controller
 		${{ className.camel }} = $this->api->{{ apiMethod }}($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
 			$id
 		]);
@@ -290,7 +290,7 @@ class {{ className.studly }}Controller extends Controller
 		{
 			$actions->build()
 				->to($this->url->route('backoffice.{{ className.snake.plural }}.edit', $id))
-				->labeled(fa::icon('edit') . ' ' . trans('l4-backoffice::default.edit'))
+				->labeled(fa::icon('edit') . ' ' . trans('backoffice::default.edit'))
 				->addClass('btn btn-success')
 				->asLink();
 		}
@@ -302,7 +302,7 @@ class {{ className.studly }}Controller extends Controller
 		{
 			$actions->build()
 				->to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
-				->labeled(trans('l4-backoffice::default.back'))
+				->labeled(trans('backoffice::default.back'))
 				->addClass('btn btn-default')
 				->asLink();
 		}
@@ -312,13 +312,13 @@ class {{ className.studly }}Controller extends Controller
 		{
 			$topActions->build()
 				->to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
-				->labeled(fa::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'))
+				->labeled(fa::icon('arrow-left') . ' ' . trans('backoffice::default.back'))
 				->asLink();
 		}
 		catch (PermissionException $e) { /* User doesn't have permission to do this */ }
 		{{/ methods.hasIndex }}
 
-		return View::make('l4-backoffice::show', [
+		return View::make('backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
 			'label'      => $id,
@@ -347,7 +347,7 @@ class {{ className.studly }}Controller extends Controller
 		${{ className.camel }} = $this->api->find($id);
 		{{/ methods.hasRead }}
 
-		$label = trans('l4-backoffice::default.edit_model', ['model' => $this->title]);
+		$label = trans('backoffice::default.edit_model', ['model' => $this->title]);
 
 		$form = $this->backoffice->form(
 			$this->url->route('backoffice.{{ className.snake.plural }}.store'),
@@ -370,13 +370,13 @@ class {{ className.studly }}Controller extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => 'backoffice.{{ className.snake.plural }}.index',
 			$id                                  => ['backoffice.{{ className.snake.plural }}.show', $id],
-			trans('l4-backoffice::default.edit')
+			trans('backoffice::default.edit')
 		]);
 
-		return View::make('l4-backoffice::edit', [
+		return View::make('backoffice::edit', [
 			'title'      => $label,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -418,7 +418,7 @@ class {{ className.studly }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('backoffice::auth.permission_error'));
 		}
 	}
 	{{/ methods.update }}
@@ -435,7 +435,7 @@ class {{ className.studly }}Controller extends Controller
 
 			// Redirect to the listing
 			return Redirect::to($this->url->route('backoffice.{{ className.snake.plural }}.index'))
-				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
+				->withSuccess(trans('backoffice::default.delete_msg', ['model' => $this->title, 'id' => $id]));
 		}
 		catch (ValidationException $e)
 		{
@@ -443,7 +443,7 @@ class {{ className.studly }}Controller extends Controller
 		}
 		catch (PermissionException $e)
 		{
-			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('l4-backoffice::auth.permission_error'));
+			return Redirect::to($this->url->route('backoffice.index'))->withDanger(trans('backoffice::auth.permission_error'));
 		}
 	}
 	{{/ methods.delete }}
@@ -477,7 +477,7 @@ class {{ className.studly }}Controller extends Controller
 
 		$this->excel->create(\Str::slug($this->titlePlural), function($excel) use ($columns, $rows) {
 			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
-				$sheet->loadView('l4-backoffice::lists.list', [
+				$sheet->loadView('backoffice::lists.list', [
 					'bulkActions' => [],
 					'rowActions' => [],
 					'columns' => $columns->visible(),

@@ -1,4 +1,4 @@
-@extends('l4-backoffice::layouts.default')
+@extends('backoffice::layouts.default')
 
 @if(isset($title))
 	@section('head.title', $title)

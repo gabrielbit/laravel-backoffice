@@ -41,7 +41,7 @@ class UsersRouteBinder implements RouteBinder
 	 */
 	public function bind(Router $router)
 	{
-		$prefix = $this->config->get('l4-backoffice::auth.users_url', 'backoffice-users');
+		$prefix = $this->config->get('backoffice::auth.users_url', 'backoffice-users');
 
 		$router->group(['prefix' => "backoffice/$prefix", 'before' => 'backoffice.auth.withPermissions|backoffice.urls.persistent'], function() use ($router) {
 			$router->get("export",                  ['as' => static::EXPORT,  "uses" => UserController::class . '@export',  "permission" => Permission::USERS_LIST]);

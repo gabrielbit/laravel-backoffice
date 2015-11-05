@@ -101,8 +101,8 @@ class GroupController extends Controller
 		$this->request               = $request;
 		$this->paginatorFactory      = $paginatorFactory;
 
-		$this->title = trans('l4-backoffice::auth.group');
-		$this->titlePlural = trans('l4-backoffice::auth.groups');
+		$this->title = trans('backoffice::auth.group');
+		$this->titlePlural = trans('backoffice::auth.groups');
 	}
 
 	public function index()
@@ -116,11 +116,11 @@ class GroupController extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural
 		]);
 
-		return View::make('l4-backoffice::index', [
+		return View::make('backoffice::index', [
 			'title'      => $this->titlePlural,
 			'list'       => $list,
 			'breadcrumb' => $breadcrumb
@@ -129,7 +129,7 @@ class GroupController extends Controller
 
 	public function create()
 	{
-		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
+		$label = trans('backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
 			$this->persistentUrl->route(GroupsRouteBinder::STORE),
@@ -139,12 +139,12 @@ class GroupController extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => GroupsRouteBinder::INDEX,
 			$label
 		]);
 
-		return View::make('l4-backoffice::create', [
+		return View::make('backoffice::create', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -179,24 +179,24 @@ class GroupController extends Controller
 		$group = $this->groupService->find($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => GroupsRouteBinder::INDEX,
 			$group->getName()
 		]);
 
 		$data = [
-			trans('l4-backoffice::auth.name') => $group->getName(),
-			trans('l4-backoffice::auth.permissions') => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $group),
+			trans('backoffice::auth.name') => $group->getName(),
+			trans('backoffice::auth.permissions') => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $group),
 		];
 
 		$actions = $this->backoffice->actions()
-			->link($this->persistentUrl->route(GroupsRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success'])
-			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			->link($this->persistentUrl->route(GroupsRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('backoffice::default.edit'), ['class' => 'btn btn-success'])
+			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), trans('backoffice::default.back'), ['class' => 'btn btn-default']);
 
 		$topActions = $this->backoffice->actions()
-			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
+			->link($this->persistentUrl->route(GroupsRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('backoffice::default.back'));
 
-		return View::make('l4-backoffice::show', [
+		return View::make('backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
 			'label'      => $group->getName(),
@@ -212,7 +212,7 @@ class GroupController extends Controller
 
 		$form = $this->buildForm(
 			$this->persistentUrl->route(GroupsRouteBinder::UPDATE, $id),
-			trans('l4-backoffice::default.edit') . ' ' . $group->getName(),
+			trans('backoffice::default.edit') . ' ' . $group->getName(),
 			'PUT',
 			$this->persistentUrl->route(GroupsRouteBinder::SHOW, $id)
 		);
@@ -223,13 +223,13 @@ class GroupController extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural => GroupsRouteBinder::INDEX,
 			$group->getName()  => [GroupsRouteBinder::SHOW, $id],
-			trans('l4-backoffice::default.edit')
+			trans('backoffice::default.edit')
 		]);
 
-		return View::make('l4-backoffice::edit', [
+		return View::make('backoffice::edit', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -275,7 +275,7 @@ class GroupController extends Controller
 
 			// Redirect to the listing
 			return Redirect::to($this->persistentUrl->route(GroupsRouteBinder::INDEX))
-				->withSuccess(trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $group->getName()]));
+				->withSuccess(trans('backoffice::default.delete_msg', ['model' => $this->title, 'id' => $group->getName()]));
 		}
 		catch (ValidationException $e)
 		{
@@ -296,7 +296,7 @@ class GroupController extends Controller
 
 		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
 			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
-				$sheet->loadView('l4-backoffice::lists.export', [
+				$sheet->loadView('backoffice::lists.export', [
 					'bulkActions' => [],
 					'rowActions' => [],
 					'columns' => $columns->visible(),
@@ -312,10 +312,10 @@ class GroupController extends Controller
 
 		$inputs = $form->inputs();
 
-		$inputs->text('name', trans('l4-backoffice::auth.name'));
+		$inputs->text('name', trans('backoffice::auth.name'));
 		$inputs->dropdown(
 			'permissions',
-			trans('l4-backoffice::auth.permissions'),
+			trans('backoffice::auth.permissions'),
 			$this->permissionParser->toDropdownArray($this->permissionsRepository->all()),
 			['multiple' => 'multiple', 'class' => 'multiselect']
 		);
@@ -331,10 +331,10 @@ class GroupController extends Controller
 		$filters = $list->filters();
 
 		// Here we add filters to the list
-		$filters->string('name', trans('l4-backoffice::auth.name'), ['class' => 'form-control']);
+		$filters->string('name', trans('backoffice::auth.name'), ['class' => 'form-control']);
 		$filters->dropdown(
 			'permission',
-			trans('l4-backoffice::auth.permissions'),
+			trans('backoffice::auth.permissions'),
 			$this->permissionParser->toDropdownArray($this->permissionsRepository->all(), true),
 			['class' => 'form-control']
 		);
@@ -346,7 +346,7 @@ class GroupController extends Controller
 	protected function getListing()
 	{
 		$listing = $this->backoffice->listing([
-			'name' => trans('l4-backoffice::auth.name'),
+			'name' => trans('backoffice::auth.name'),
 			'id'
 		]);
 
@@ -360,8 +360,8 @@ class GroupController extends Controller
 	{
 		$list->setActions(
 			$this->backoffice->actions()
-				->link($this->persistentUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
-				->link($this->persistentUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success'])
+				->link($this->persistentUrl->route(GroupsRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary'])
+				->link($this->persistentUrl->route(GroupsRouteBinder::EXPORT, $this->request->all()), FontAwesome::icon('file-excel-o') . ' ' . trans('backoffice::default.export'), ['class' => 'btn btn-success'])
 		);
 
 		$list->setRowActions(
@@ -371,13 +371,13 @@ class GroupController extends Controller
 					try {
 						return $this->persistentUrl->route(GroupsRouteBinder::SHOW, $row['id']);
 					} catch (PermissionException $e) { return false; }
-				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.show')])
+				}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('backoffice::default.show')])
 				// Edit icon
 				->link(function(Collection $row){
 					try {
 						return $this->persistentUrl->route(GroupsRouteBinder::EDIT, $row['id']);
 					} catch (PermissionException $e) { return false; }
-				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.edit')])
+				}, FontAwesome::icon('edit'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('backoffice::default.edit')])
 				// Delete icon
 				->form(
 					function(Collection $row){
@@ -391,8 +391,8 @@ class GroupController extends Controller
 						'class'          => 'text-danger',
 						'data-toggle'    => 'tooltip',
 						'data-placement' => 'top',
-						'data-confirm'   => trans('l4-backoffice::default.delete-confirm'),
-						'title'          => trans('l4-backoffice::default.delete')
+						'data-confirm'   => trans('backoffice::default.delete-confirm'),
+						'title'          => trans('backoffice::default.delete')
 					],
 					true
 				)
@@ -427,7 +427,7 @@ class GroupController extends Controller
         $rules = ['name' => 'required'];
 
         $messages = [
-            'name.required' => trans('l4-backoffice::auth.validation.group.name'),
+            'name.required' => trans('backoffice::auth.validation.group.name'),
         ];
 
 	    /** @type \Illuminate\Validation\Validator $validator */

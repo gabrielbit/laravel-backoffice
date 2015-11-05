@@ -55,7 +55,7 @@ class MenuFactorySpec extends ObjectBehavior
 	{
 		$config = $this->prophet->prophesize('Illuminate\Config\Repository');
 
-		$config->get('l4-backoffice::menu.menu')->willReturn($this->inkitConfig());
+		$config->get('backoffice::menu.menu')->willReturn($this->inkitConfig());
 
 		return $config;
 	}
@@ -64,7 +64,7 @@ class MenuFactorySpec extends ObjectBehavior
 	{
 		$config = $this->prophet->prophesize('Illuminate\Config\Repository');
 
-		$config->get('l4-backoffice::menu.menu')->willReturn([
+		$config->get('backoffice::menu.menu')->willReturn([
 			'Navigation' => [
 				'A Menu item' => [
 					'permision' => 'a.valid.permission',

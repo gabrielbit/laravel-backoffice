@@ -17,7 +17,7 @@ class ActionFactory
 
 	public function link($target, $label = null, $options = [], $view = null, $icon = null)
     {
-	    $view = $view ?: 'l4-backoffice::actions.link';
+	    $view = $view ?: 'backoffice::actions.link';
         $action = new Action($this->controlFactory->make($view, $label, $options), $target, $icon);
 
 	    if ($this->request && ! $target instanceof \Closure)
@@ -30,7 +30,7 @@ class ActionFactory
 
     public function form($target, $label, $method = 'POST', $options = [], $view = null)
     {
-	    $view = $view ?: 'l4-backoffice::actions.form';
+	    $view = $view ?: 'backoffice::actions.form';
 	    $options['class'] = $this->uniqueClasses(array_get($options, 'class', ''), ['btn-action']);
 
 	    return new Form(
@@ -43,7 +43,7 @@ class ActionFactory
 	{
 		return new Modal(
 			$form,
-			$this->controlFactory->make('l4-backoffice::actions.modal', $label, $options),
+			$this->controlFactory->make('backoffice::actions.modal', $label, $options),
 			$icon
 		);
 	}
@@ -53,7 +53,7 @@ class ActionFactory
 		return new Collection($this, new DigbangCollection());
 	}
 
-	public function dropdown($label, $options = [], $view = 'l4-backoffice::actions.dropdown', $icon = null)
+	public function dropdown($label, $options = [], $view = 'backoffice::actions.dropdown', $icon = null)
 	{
 		$action = new Composite(
 			$this->controlFactory->make($view, $label, $options),

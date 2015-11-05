@@ -42,7 +42,7 @@ class ListingFactory
     public function make(ColumnCollection $columns)
     {
         $listing = new Listing(
-	        $this->controlFactory->make('l4-backoffice::listing', ''),
+	        $this->controlFactory->make('backoffice::listing', ''),
 	        new DigbangCollection(),
 	        $this->inputFactory->collection(),
 	        new ValueExtractorFacade(),

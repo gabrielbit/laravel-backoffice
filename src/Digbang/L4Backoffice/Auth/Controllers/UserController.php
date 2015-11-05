@@ -112,8 +112,8 @@ class UserController extends Controller
 		$this->request               = $request;
 		$this->emailer               = $emailer;
 
-		$this->title       = trans('l4-backoffice::auth.user');
-		$this->titlePlural = trans('l4-backoffice::auth.users');
+		$this->title       = trans('backoffice::auth.user');
+		$this->titlePlural = trans('backoffice::auth.users');
 		$this->paginatorFactory = $paginatorFactory;
 	}
 
@@ -128,11 +128,11 @@ class UserController extends Controller
 		$list->fill($this->getData());
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural
 		]);
 
-		return View::make('l4-backoffice::index', [
+		return View::make('backoffice::index', [
 			'title'      => $this->titlePlural,
 			'list'       => $list,
 			'breadcrumb' => $breadcrumb
@@ -141,7 +141,7 @@ class UserController extends Controller
 
 	public function create()
 	{
-		$label = trans('l4-backoffice::default.new', ['model' => $this->title]);
+		$label = trans('backoffice::default.new', ['model' => $this->title]);
 
 		$form = $this->buildForm(
 			$this->persistentUrl->route(UsersRouteBinder::STORE),
@@ -151,12 +151,12 @@ class UserController extends Controller
 		);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => UsersRouteBinder::INDEX,
 			$label
 		]);
 
-		return View::make('l4-backoffice::create', [
+		return View::make('backoffice::create', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -213,23 +213,23 @@ class UserController extends Controller
 		$user = $this->userService->find($id);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => UsersRouteBinder::INDEX,
 			trans(
-				'l4-backoffice::auth.user_name',
+				'backoffice::auth.user_name',
 				['name' => $user->getFirstName(), 'lastname' => $user->getLastName()]
 			)
 		]);
 
 		$data = [
-			trans('l4-backoffice::auth.first_name')   => $user->getFirstName(),
-			trans('l4-backoffice::auth.last_name')    => $user->getLastName(),
-			trans('l4-backoffice::auth.email')        => $user->getEmail(),
-			trans('l4-backoffice::auth.permissions')  => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $user),
-			trans('l4-backoffice::auth.activated')    => trans('l4-backoffice::default.' . ($user->isActivated() ? 'yes' : 'no')),
-			trans('l4-backoffice::auth.activated_at') => $user->getActivatedAt() ? $user->getActivatedAt()->format(trans('l4-backoffice::default.datetime_format')) : '-',
-			trans('l4-backoffice::auth.last_login')   => $user->getLastLogin() ? $user->getLastLogin()->format(trans('l4-backoffice::default.datetime_format')) : '-',
-			trans('l4-backoffice::auth.groups')       => implode(' ', array_map(function(Group $group){
+			trans('backoffice::auth.first_name')   => $user->getFirstName(),
+			trans('backoffice::auth.last_name')    => $user->getLastName(),
+			trans('backoffice::auth.email')        => $user->getEmail(),
+			trans('backoffice::auth.permissions')  => $this->permissionParser->toViewTable($this->permissionsRepository->all(), $user),
+			trans('backoffice::auth.activated')    => trans('backoffice::default.' . ($user->isActivated() ? 'yes' : 'no')),
+			trans('backoffice::auth.activated_at') => $user->getActivatedAt() ? $user->getActivatedAt()->format(trans('backoffice::default.datetime_format')) : '-',
+			trans('backoffice::auth.last_login')   => $user->getLastLogin() ? $user->getLastLogin()->format(trans('backoffice::default.datetime_format')) : '-',
+			trans('backoffice::auth.groups')       => implode(' ', array_map(function(Group $group){
 				return $group->getName();
 			}, $user->getGroups()))
 		];
@@ -237,22 +237,22 @@ class UserController extends Controller
 		// Actions with security concerns
 		$actions = $this->backoffice->actions();
 		try {
-			$actions->link($this->persistentUrl->route(UsersRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('l4-backoffice::default.edit'), ['class' => 'btn btn-success']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::EDIT, $id), FontAwesome::icon('edit') . ' ' . trans('backoffice::default.edit'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 		try {
-			$actions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), trans('l4-backoffice::default.back'), ['class' => 'btn btn-default']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), trans('backoffice::default.back'), ['class' => 'btn btn-default']);
 		} catch (PermissionException $e) { /* Do nothing */ }
 
 		$topActions = $this->backoffice->actions();
 
 		try {
-			$topActions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('l4-backoffice::default.back'));
+			$topActions->link($this->persistentUrl->route(UsersRouteBinder::INDEX), FontAwesome::icon('arrow-left') . ' ' . trans('backoffice::default.back'));
 		} catch (PermissionException $e) { /* Do nothing */ }
 
-		return View::make('l4-backoffice::show', [
+		return View::make('backoffice::show', [
 			'title'      => $this->titlePlural,
 			'breadcrumb' => $breadcrumb,
-			'label'      => trans('l4-backoffice::auth.user_name', [
+			'label'      => trans('backoffice::auth.user_name', [
 				'name'     => $user->getFirstName(),
 				'lastname' => $user->getLastName()
 			]),
@@ -269,7 +269,7 @@ class UserController extends Controller
 
 		$form = $this->buildForm(
 			$this->persistentUrl->route(UsersRouteBinder::UPDATE, $id),
-			trans('l4-backoffice::default.edit') . ' ' . trans('l4-backoffice::auth.user_name', ['name' => $user->getFirstName(),'lastname' => $user->getLastName()]),
+			trans('backoffice::default.edit') . ' ' . trans('backoffice::auth.user_name', ['name' => $user->getFirstName(),'lastname' => $user->getLastName()]),
 			'PUT',
 			$this->persistentUrl->route(UsersRouteBinder::SHOW, $id)
 		);
@@ -290,16 +290,16 @@ class UserController extends Controller
 		]);
 
 		$breadcrumb = $this->backoffice->breadcrumb([
-			trans('l4-backoffice::default.home') => 'backoffice.index',
+			trans('backoffice::default.home') => 'backoffice.index',
 			$this->titlePlural                   => UsersRouteBinder::INDEX,
-			trans('l4-backoffice::auth.user_name', [
+			trans('backoffice::auth.user_name', [
 					'name' => $user->getFirstName(),
 					'lastname' => $user->getLastName()
 			]) => [UsersRouteBinder::SHOW, $id],
-			trans('l4-backoffice::default.edit')
+			trans('backoffice::default.edit')
 		]);
 
-		return View::make('l4-backoffice::edit', [
+		return View::make('backoffice::edit', [
 			'title'      => $this->titlePlural,
 			'form'       => $form,
 			'breadcrumb' => $breadcrumb
@@ -363,7 +363,7 @@ class UserController extends Controller
 
 			// Redirect to the listing
 			return Redirect::to($this->persistentUrl->route(UsersRouteBinder::INDEX))->withSuccess(
-				trans('l4-backoffice::default.delete_msg', ['model' => $this->title, 'id' => $user->getEmail()])
+				trans('backoffice::default.delete_msg', ['model' => $this->title, 'id' => $user->getEmail()])
 			);
 		}
 		catch (ValidationException $e)
@@ -373,7 +373,7 @@ class UserController extends Controller
 		catch(PermissionException $e)
 		{
 			return Redirect::to($this->persistentUrl->route('backoffice.index'))->withDanger(
-				trans('l4-backoffice::auth.permission_error')
+				trans('backoffice::auth.permission_error')
 			);
 		}
 	}
@@ -391,7 +391,7 @@ class UserController extends Controller
 
 		$this->excelExporter->create(\Str::slug($fileName), function($excel) use ($columns, $rows) {
 			$excel->sheet($this->titlePlural, function($sheet) use ($columns, $rows) {
-				$sheet->loadView('l4-backoffice::lists.export', [
+				$sheet->loadView('backoffice::lists.export', [
 					'bulkActions' => [],
 					'rowActions' => [],
 					'columns' => $columns->visible(),
@@ -410,7 +410,7 @@ class UserController extends Controller
 			route(AuthRouteBinder::RESET_PASSWORD, [$user->getId(), $user->getResetPasswordCode()])
 		);
 
-		return Redirect::back()->withSuccess(trans('l4-backoffice::auth.reset-password.email-sent', ['email' => $user->getEmail()]));
+		return Redirect::back()->withSuccess(trans('backoffice::auth.reset-password.email-sent', ['email' => $user->getEmail()]));
 	}
 
 	public function resendActivation($id)
@@ -422,7 +422,7 @@ class UserController extends Controller
 			route(AuthRouteBinder::ACTIVATE, [$user->getActivationCode()])
 		);
 
-		return Redirect::back()->withSuccess(trans('l4-backoffice::auth.activation.email-sent', ['email' => $user->getEmail()]));
+		return Redirect::back()->withSuccess(trans('backoffice::auth.activation.email-sent', ['email' => $user->getEmail()]));
 	}
 
 	protected function buildForm($target, $label, $method = 'POST', $cancelAction = '', $options = [])
@@ -431,11 +431,11 @@ class UserController extends Controller
 
 		$inputs = $form->inputs();
 
-		$inputs->text('first_name',    trans('l4-backoffice::auth.first_name'));
-		$inputs->text('last_name',     trans('l4-backoffice::auth.last_name'));
-		$inputs->text('email',         trans('l4-backoffice::auth.email'));
-		$inputs->password('password',  trans('l4-backoffice::auth.password'));
-		$inputs->checkbox('activated', trans('l4-backoffice::auth.activated'));
+		$inputs->text('first_name',    trans('backoffice::auth.first_name'));
+		$inputs->text('last_name',     trans('backoffice::auth.last_name'));
+		$inputs->text('email',         trans('backoffice::auth.email'));
+		$inputs->password('password',  trans('backoffice::auth.password'));
+		$inputs->checkbox('activated', trans('backoffice::auth.activated'));
 
 		$groups = $this->groupService->all();
 
@@ -453,10 +453,10 @@ class UserController extends Controller
 
 		$inputs->dropdown(
 			'groups',
-			trans('l4-backoffice::auth.groups'),
+			trans('backoffice::auth.groups'),
 			$options,
 			[
-				'placeholder'      => trans('l4-backoffice::auth.groups'),
+				'placeholder'      => trans('backoffice::auth.groups'),
 				'multiple'         => 'multiple',
 				'class'            => 'user-groups form-control',
 				'data-permissions' => json_encode($groupPermissions)
@@ -466,7 +466,7 @@ class UserController extends Controller
 		$permissions = $this->permissionsRepository->all();
 		$inputs->dropdown(
 			'permissions',
-			trans('l4-backoffice::auth.permissions'),
+			trans('backoffice::auth.permissions'),
 			$this->permissionParser->toDropdownArray($permissions),
 			[
 				'multiple' => 'multiple',
@@ -484,10 +484,10 @@ class UserController extends Controller
 	{
 		$filters = $list->filters();
 
-		$filters->string('email',      trans('l4-backoffice::auth.email'),      ['class' => 'form-control']);
-		$filters->string('first_name', trans('l4-backoffice::auth.first_name'), ['class' => 'form-control']);
-		$filters->string('last_name',  trans('l4-backoffice::auth.last_name'),  ['class' => 'form-control']);
-		$filters->boolean('activated', trans('l4-backoffice::auth.activated'),  ['class' => 'form-control']);
+		$filters->string('email',      trans('backoffice::auth.email'),      ['class' => 'form-control']);
+		$filters->string('first_name', trans('backoffice::auth.first_name'), ['class' => 'form-control']);
+		$filters->string('last_name',  trans('backoffice::auth.last_name'),  ['class' => 'form-control']);
+		$filters->boolean('activated', trans('backoffice::auth.activated'),  ['class' => 'form-control']);
 	}
 
 	/**
@@ -495,14 +495,14 @@ class UserController extends Controller
 	 */
 	protected function getListing()
 	{
-		\Carbon\Carbon::setToStringFormat(trans('l4-backoffice::default.datetime_format'));
+		\Carbon\Carbon::setToStringFormat(trans('backoffice::default.datetime_format'));
 
 		$listing = $this->backoffice->listing([
-			'first_name'  => trans('l4-backoffice::auth.first_name'),
-			'last_name' => trans('l4-backoffice::auth.last_name'),
-			'email'      => trans('l4-backoffice::auth.email'),
-			'activated'  => trans('l4-backoffice::auth.activated'),
-			'last_login' => trans('l4-backoffice::auth.last_login'),
+			'first_name'  => trans('backoffice::auth.first_name'),
+			'last_name' => trans('backoffice::auth.last_name'),
+			'email'      => trans('backoffice::auth.email'),
+			'activated'  => trans('backoffice::auth.activated'),
+			'last_login' => trans('backoffice::auth.last_login'),
 			'id',
 		]);
 
@@ -527,10 +527,10 @@ class UserController extends Controller
 		$actions = $this->backoffice->actions();
 
 		try {
-			$actions->link($this->persistentUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('l4-backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::CREATE), FontAwesome::icon('plus') . ' ' . trans('backoffice::default.new', ['model' => $this->title]), ['class' => 'btn btn-primary']);
 		} catch (PermissionException $e) { /* Do nothing */}
 		try {
-			$actions->link($this->persistentUrl->route(UsersRouteBinder::EXPORT, Input::all()), FontAwesome::icon('file-excel-o') . ' ' . trans('l4-backoffice::default.export'), ['class' => 'btn btn-success']);
+			$actions->link($this->persistentUrl->route(UsersRouteBinder::EXPORT, Input::all()), FontAwesome::icon('file-excel-o') . ' ' . trans('backoffice::default.export'), ['class' => 'btn btn-success']);
 		} catch (PermissionException $e) { /* Do nothing */}
 
 		$list->setActions($actions);
@@ -542,14 +542,14 @@ class UserController extends Controller
 			try {
 				return $this->persistentUrl->route(UsersRouteBinder::SHOW, $row['id']);
 			} catch (PermissionException $e) { return false; }
-		}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.show')]);
+		}, FontAwesome::icon('eye'), ['data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('backoffice::default.show')]);
 
 		// Edit icon
 		$rowActions->link(function(Collection $row){
 			try {
 				return $this->persistentUrl->route(UsersRouteBinder::EDIT, $row['id']);
 			} catch (PermissionException $e) { return false; }
-		}, FontAwesome::icon('edit'), ['class' => 'text-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('l4-backoffice::default.edit')]);
+		}, FontAwesome::icon('edit'), ['class' => 'text-success', 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => trans('backoffice::default.edit')]);
 
 		// Delete icon
 		$rowActions->form(
@@ -564,8 +564,8 @@ class UserController extends Controller
 				'class'          => 'text-danger',
 				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
-				'data-confirm'   => trans('l4-backoffice::default.delete-confirm'),
-				'title'          => trans('l4-backoffice::default.delete')
+				'data-confirm'   => trans('backoffice::default.delete-confirm'),
+				'title'          => trans('backoffice::default.delete')
 			],
 			true
 		);
@@ -582,8 +582,8 @@ class UserController extends Controller
 				'class'          => 'text-warning',
 				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
-				'data-confirm'   => trans('l4-backoffice::auth.reset-password.confirm'),
-				'title'          => trans('l4-backoffice::auth.reset-password.title')
+				'data-confirm'   => trans('backoffice::auth.reset-password.confirm'),
+				'title'          => trans('backoffice::auth.reset-password.title')
 			]
 		);
 
@@ -600,8 +600,8 @@ class UserController extends Controller
 				'class'          => 'text-primary',
 				'data-toggle'    => 'tooltip',
 				'data-placement' => 'top',
-				'data-confirm'   => trans('l4-backoffice::auth.activation.confirm'),
-				'title'          => trans('l4-backoffice::auth.activation.title')
+				'data-confirm'   => trans('backoffice::auth.activation.confirm'),
+				'title'          => trans('backoffice::auth.activation.title')
 			]
 		);
 
@@ -654,9 +654,9 @@ class UserController extends Controller
 	    });
 
         $messages = [
-            'email.required'    => trans('l4-backoffice::auth.validation.user.email-required'),
-	        'email.user_email_unique' => trans('l4-backoffice::auth.validation.user.user-email-repeated'),
-            'password.required' => trans('l4-backoffice::auth.validation.user.password-required')
+            'email.required'    => trans('backoffice::auth.validation.user.email-required'),
+	        'email.user_email_unique' => trans('backoffice::auth.validation.user.user-email-repeated'),
+            'password.required' => trans('backoffice::auth.validation.user.password-required')
         ];
 
 	    /* @var $validator \Illuminate\Validation\Validator */

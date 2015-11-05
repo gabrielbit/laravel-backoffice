@@ -15,7 +15,7 @@ class Listing implements RenderableInterface, Countable
 	/**
 	 * @type string
 	 */
-	protected $view = 'l4-backoffice::listing';
+	protected $view = 'backoffice::listing';
 
 	/**
 	 * @var FilterCollection

@@ -1,4 +1,4 @@
-@include('l4-backoffice::actions.link', compact($target, $options, $label))
+@include('backoffice::actions.link', compact($target, $options, $label))
 
 @section('body.content')
 @parent

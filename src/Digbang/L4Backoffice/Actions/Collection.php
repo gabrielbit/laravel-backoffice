@@ -11,7 +11,7 @@ class Collection implements \IteratorAggregate, \Countable
 		$this->collection = $collection;
 	}
 
-	public function link($target, $label = null, $options = [], $view = 'l4-backoffice::actions.link', $icon = null)
+	public function link($target, $label = null, $options = [], $view = 'backoffice::actions.link', $icon = null)
 	{
 		$this->collection->push($this->factory->link($target, $label, $options, $view, $icon));
 

@@ -62,7 +62,7 @@ class Backoffice
 		    $routes[] = $current;
 
 		    return new Breadcrumb(
-			    $this->controlFactory->make('l4-backoffice::breadcrumb', $label, $options),
+			    $this->controlFactory->make('backoffice::breadcrumb', $label, $options),
 			    new \Illuminate\Support\Collection($routes)
 	        );
 	    }

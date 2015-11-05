@@ -23,7 +23,7 @@ class InputFactory
 	public function text($name, $label = null, $options = [])
     {
 	    return $this->make(
-		    'l4-backoffice::inputs.text',
+		    'backoffice::inputs.text',
 		    $label,
 		    $this->buildOptions($options, $label),
 		    $name
@@ -47,7 +47,7 @@ class InputFactory
 
 	    return new DropDown(
 		    $this->controlFactory->make(
-			    'l4-backoffice::inputs.dropdown',
+			    'backoffice::inputs.dropdown',
 			    $label,
 			    $this->buildOptions($options, $label)),
 		    $name,
@@ -69,7 +69,7 @@ class InputFactory
 		}
 
 		return $this->make(
-			'l4-backoffice::inputs.button',
+			'backoffice::inputs.button',
 			$label,
 			$options,
 			$name
@@ -78,13 +78,13 @@ class InputFactory
 
 	public function checkbox($name, $label, $options = [])
 	{
-		return $this->make('l4-backoffice::inputs.checkbox', $label, $options, $name);
+		return $this->make('backoffice::inputs.checkbox', $label, $options, $name);
 	}
 
 	public function integer($name, $label, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.number',
+			'backoffice::inputs.number',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -98,7 +98,7 @@ class InputFactory
 		$options['class'] = trim("$class form-date");
 
 		return $this->make(
-			'l4-backoffice::inputs.text',
+			'backoffice::inputs.text',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -108,7 +108,7 @@ class InputFactory
 	public function datetime($name, $label, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.datetime',
+			'backoffice::inputs.datetime',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -118,7 +118,7 @@ class InputFactory
 	public function time($name, $label, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.time',
+			'backoffice::inputs.time',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -128,7 +128,7 @@ class InputFactory
 	public function password($name, $label, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.password',
+			'backoffice::inputs.password',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -138,7 +138,7 @@ class InputFactory
 	public function textarea($name, $label = null, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.textarea',
+			'backoffice::inputs.textarea',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -150,7 +150,7 @@ class InputFactory
 		$options['class'] = trim(array_get($options, 'class', '') . " wysiwyg");
 
 		return $this->make(
-			'l4-backoffice::inputs.textarea',
+			'backoffice::inputs.textarea',
 			$label,
 			$this->buildOptions($options, $label),
 			$name
@@ -166,7 +166,7 @@ class InputFactory
 	{
 		return new Composite(
 			$name,
-			$this->controlFactory->make('l4-backoffice::inputs.composite', $label, $options),
+			$this->controlFactory->make('backoffice::inputs.composite', $label, $options),
 			$collection
 		);
 	}
@@ -174,7 +174,7 @@ class InputFactory
 	public function hidden($name, $options = [])
 	{
 		$input = $this->make(
-			'l4-backoffice::inputs.hidden',
+			'backoffice::inputs.hidden',
 			$name,
 			$options,
 			$name
@@ -189,7 +189,7 @@ class InputFactory
 	public function colorPicker($name, $label, $options = [])
 	{
 		return $this->make(
-			'l4-backoffice::inputs.colorpicker',
+			'backoffice::inputs.colorpicker',
 			$label,
 			$options,
 			$name
@@ -201,7 +201,7 @@ class InputFactory
 		return new File(
 			new FileUploadHandler(),
 			$this->controlFactory->make(
-				'l4-backoffice::inputs.file',
+				'backoffice::inputs.file',
 				$label,
 				$options
 			),

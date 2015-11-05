@@ -1,5 +1,5 @@
 {
-    "name": "digbang/l4-backoffice",
+    "name": "digbang/backoffice",
     "description": "A set of libraries, helpers and templates for a backoffice (admin / panel) project.",
     "require": {
         "php":                    ">=5.6",

@@ -27,7 +27,7 @@ class Str
 	{
 		if (is_bool($value))
 		{
-			return $value ? $this->lang->get('l4-backoffice::default.yes') : $this->lang->get('l4-backoffice::default.no');
+			return $value ? $this->lang->get('backoffice::default.yes') : $this->lang->get('backoffice::default.no');
 		}
 
 		return value($value);

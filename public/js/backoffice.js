@@ -5244,7 +5244,7 @@ $(document).ready(function(){
 				}
 			}
 		},
-		stylesheets: ['../../../packages/digbang/laravel4-backoffice-scaffold/css/custom.css']
+		stylesheets: []
 	});
 
 	$selects.filter('.multiselect').each(function(){

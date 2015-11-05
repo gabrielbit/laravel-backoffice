@@ -1,4 +1,4 @@
-@extends('l4-backoffice::layouts.default')
+@extends('backoffice::layouts.default')
 
 @if(isset($title))
 	@section('head.title', $title)
@@ -10,5 +10,5 @@
 @endif
 
 @section('panel.content')
-	@include('l4-backoffice::read', compact($label, $data, $actions, $topActions))
+	@include('backoffice::read', compact($label, $data, $actions, $topActions))
 @stop

@@ -23,7 +23,7 @@ class BackofficeServiceProvider extends ServiceProvider
 {
 	public function boot()
 	{
-		$this->package('digbang/l4-backoffice');
+		$this->package('digbang/backoffice');
 
 		/** @type Repository $config */
 		$config = $this->app->make('config');
