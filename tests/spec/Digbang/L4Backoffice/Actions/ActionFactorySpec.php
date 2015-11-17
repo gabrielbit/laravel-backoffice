@@ -4,6 +4,7 @@ use Digbang\L4Backoffice\Controls\ControlFactory;
 use Digbang\L4Backoffice\Forms\Form;
 use Digbang\L4Backoffice\Forms\FormFactory;
 use Digbang\L4Backoffice\Inputs\InputFactory;
+use Illuminate\Http\Request;
 use Illuminate\View\Factory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -16,9 +17,9 @@ use Prophecy\Argument;
  */
 class ActionFactorySpec extends ObjectBehavior
 {
-	function let(Factory $viewFactory)
+	function let(Factory $viewFactory, Request $request)
 	{
-		$this->beConstructedWith(new ControlFactory($viewFactory->getWrappedObject()));
+		$this->beConstructedWith(new ControlFactory($viewFactory->getWrappedObject()), $request);
 	}
 
     function it_is_initializable()
@@ -46,8 +47,35 @@ class ActionFactorySpec extends ObjectBehavior
 
 	function it_should_create_modal_actions_with_a_closure(Form $form)
 	{
-		$this->modal(function($row){
+		$this->modal(function($row) use ($form) {
 				return $form;
 			}, 'aLabel', ['some' => 'options'], 'anIcon')->shouldBeAnInstanceOf('Digbang\L4Backoffice\Actions\Modal');
+	}
+
+	function it_should_create_active_actions_for_the_current_url(Request $request)
+	{
+		$request->url()->willReturn('http://the.current/url');
+
+		$action = $this->link('http://the.current/url');
+
+		$action->isActive()->shouldBe(true);
+	}
+
+	function it_should_create_inactive_actions_for_other_urls(Request $request)
+	{
+		$request->url()->willReturn('http://the.current/foo');
+
+		$action = $this->link('http://the.current/url');
+
+		$action->isActive()->shouldBe(false);
+	}
+
+	function it_should_create_active_actions_for_the_current_url_no_matter_what_params_it_has(Request $request)
+	{
+		$request->url()->willReturn('http://the.current/url');
+
+		$action = $this->link('http://the.current/url?foo=bar&baz=true');
+
+		$action->isActive()->shouldBe(true);
 	}
 }

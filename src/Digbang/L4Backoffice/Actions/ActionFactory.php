@@ -22,7 +22,7 @@ class ActionFactory
 
 	    if ($this->request && ! $target instanceof \Closure)
 	    {
-		    $action->setActive($this->request->url() == $target);
+		    $action->setActive($this->isCurrentUrl($target));
 	    }
 
 	    return $action;
@@ -68,5 +68,20 @@ class ActionFactory
 	protected function uniqueClasses($current, array $newClasses)
 	{
 		return implode(' ', array_unique(array_merge(explode(' ', $current), $newClasses)));
+	}
+
+	/**
+	 * @param string $target
+	 *
+	 * @return bool
+	 */
+	protected function isCurrentUrl($target)
+	{
+		if (strpos($target, '?') === false)
+		{
+			return $this->request->url() == $target;
+		}
+
+		return $this->request->url() == rtrim(preg_replace('/\?.*/', '', $target), '/');
 	}
 }
