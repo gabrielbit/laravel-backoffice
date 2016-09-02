@@ -39,6 +39,7 @@
 		}
 	},
 	"repositories": [
+
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-font-awesome.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-security.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-doctrine.git" },
