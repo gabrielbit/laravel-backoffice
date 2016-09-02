@@ -47,6 +47,10 @@
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-backoffice-template.git" }
 
 	],
+    "config": {
+      "preferred-install": "dist",
+      "github-oauth": { "github.com": "2c78ae5def83bc7516267a4bcd169e1be5236f95" }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
