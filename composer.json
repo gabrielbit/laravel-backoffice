@@ -11,7 +11,7 @@
 	    "illuminate/translation": "~4.2",
 	    "illuminate/validation":  "~4.2",
 	    "way/generators":         "~2.0",
-	    "lucasruroken/laravel-font-awesome":   "~1.0",
+        "lucasruroken/laravel-font-awesome":     "dev-master",
         "lucasruroken/laravel-security":       "~2.1",
         "mustache/mustache":      "~2.4",
 	    "maatwebsite/excel":      "~1.0",
