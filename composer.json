@@ -11,7 +11,6 @@
 	    "illuminate/translation": "~4.2",
 	    "illuminate/validation":  "~4.2",
 	    "way/generators":         "~2.0",
-        "lucasruroken/laravel-font-awesome":     "~1.0",
         "lucasruroken/laravel-security":       "~2.1",
         "mustache/mustache":      "~2.4",
 	    "maatwebsite/excel":      "~1.0",
@@ -41,7 +40,6 @@
 	},
 	"repositories": [
 
-		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-font-awesome.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-security.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-doctrine.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-backoffice-template.git" }
