@@ -19,6 +19,7 @@
         "nette/reflection": "~2.3"
     },
     "require-dev": {
+
         "laravel/framework":                 "~4.2",
         "doctrine/common":                   "2.5.*@dev",
         "lucasruroken/laravel-doctrine":                  "dev-laravel4",
