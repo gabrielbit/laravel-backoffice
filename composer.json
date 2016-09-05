@@ -14,6 +14,7 @@
         "mustache/mustache":      "~2.4",
 	    "maatwebsite/excel":      "~1.0",
         "laravelba/route-binder": "~1.0",
+        "lucasruroken/laravel-security":           "~2.1",
         "nette/reflection": "~2.3"
     },
     "require-dev": {
@@ -40,6 +41,7 @@
 	"repositories": [
 
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-doctrine.git" },
+        { "type": "vcs", "url": "git@github.com:lucasruroken/laravel-security.git" },
 		{ "type": "vcs", "url": "git@github.com:lucasruroken/laravel-backoffice-template.git" }
 
 	],
